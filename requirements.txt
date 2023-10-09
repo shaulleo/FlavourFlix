@@ -124,6 +124,7 @@ HeapDict @ file:///Users/ktietz/demo/mc3/conda-bld/heapdict_1630598515714/work
 hijri-converter @ file:///tmp/build/80754af9/hijri-converter_1634064010501/work
 holidays @ file:///tmp/build/80754af9/holidays_1634075247071/work
 holoviews @ file:///opt/conda/conda-bld/holoviews_1645454331194/work
+huggingface-hub==0.17.3
 hvplot @ file:///tmp/build/80754af9/hvplot_1627305124151/work
 hyperlink @ file:///tmp/build/80754af9/hyperlink_1610130746837/work
 idna @ file:///tmp/build/80754af9/idna_1637925883363/work
@@ -313,6 +314,7 @@ rsa @ file:///tmp/build/80754af9/rsa_1614366226499/work
 Rtree @ file:///C:/ci/rtree_1618421015405/work
 ruamel-yaml-conda @ file:///C:/ci/ruamel_yaml_1616016898638/work
 s3transfer @ file:///tmp/build/80754af9/s3transfer_1626435152308/work
+safetensors==0.4.0
 scikit-image @ file:///C:/ci/scikit-image_1648214340990/work
 scikit-learn @ file:///C:/ci/scikit-learn_1642617276183/work
 scikit-learn-intelex==2021.20220215.102710
@@ -370,12 +372,14 @@ three-merge @ file:///tmp/build/80754af9/three-merge_1607553261110/work
 tifffile @ file:///tmp/build/80754af9/tifffile_1627275862826/work
 tinycss @ file:///tmp/build/80754af9/tinycss_1617713798712/work
 tldextract @ file:///opt/conda/conda-bld/tldextract_1646638314385/work
+tokenizers==0.14.1
 toml @ file:///tmp/build/80754af9/toml_1616166611790/work
 tomli @ file:///tmp/build/80754af9/tomli_1637314251069/work
 toolz @ file:///tmp/build/80754af9/toolz_1636545406491/work
 tornado @ file:///C:/ci/tornado_1606924294691/work
 tqdm @ file:///C:/ci/tqdm_1650636210717/work
 traitlets @ file:///tmp/build/80754af9/traitlets_1636710298902/work
+transformers==4.34.0
 trio==0.22.1
 trio-websocket==0.10.3
 tslearn==0.5.2
