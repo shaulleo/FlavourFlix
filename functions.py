@@ -38,26 +38,6 @@ def find_my_address():
         print(f"Error: {e}")
         return None
     
-
-# def find_coordinates(address):
-#     """Find coordinates from a given address
-#         Parameters:
-#         - address (str): Address to find coordinates of
-#         Returns:
-#         - latitude (float): Latitude of the user
-#         - longitude (float): Longitude of the user"""
-    
-#     geolocator = Nominatim(user_agent="get_lat_long")  # Initialize the geocoder
-#     location = geolocator.geocode(address)  # Geocode the address
-
-#     if location is not None:
-#         latitude = location.latitude
-#         longitude = location.longitude
-#         return latitude, longitude
-#     else:
-#         print("Address could not be geocoded.")
-#         return None
-
     
 #Pre-processing of the restaurant schedule data
 def clean_openinghours(observation):
@@ -135,9 +115,34 @@ def to_euros(row):
     return np.round(euros, 2)
 
 
+def preprocess_address(address):
+    """Preprocesses the address of a restaurant.
+        Parameters:
+        - address (str): Address of the restaurant.
+        Returns:
+        - address (str): Preprocessed address of the restaurant. """
+    #Add a whitespace after every comma in the address column
+    address = address.replace(',', ',')
+    #Remove the second last value in the address (postal code)
+    address = address.split(',')
+    address.remove(address[-2])
+    #Add Portugal to the address list
+    address.append(' Portugal')
+    #Join the address list into a string
+    address = ','.join(address)
+    return address
+
 
 
 def find_coordinates2(address):
+
+    """Find coordinates from address using Bing Maps API
+        Parameters:
+        - address (str): Address of the restaurant.
+        Returns:
+        - latitude (float): Latitude of the restaurant.
+        - longitude (float): Longitude of the restaurant. """
+    
     # Replace 'YOUR_BING_MAPS_API_KEY' with your actual API key
     api_key = 'AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP'
 
@@ -161,9 +166,14 @@ def find_coordinates2(address):
             latitude = location['point']['coordinates'][0]
             longitude = location['point']['coordinates'][1]
 
-            print(f"Latitude: {latitude}")
-            print(f"Longitude: {longitude}")
+            return latitude, longitude
         else:
             print("No location data found in the response.")
+            latitude = None
+            longitude = None
     else:
         print("Error making API request:", response.status_code, response.text)
+        latitude = None
+        longitude = None
+    
+    return latitude, longitude
