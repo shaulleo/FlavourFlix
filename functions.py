@@ -37,6 +37,27 @@ def find_my_address():
         print(f"Error: {e}")
         return None
     
+
+# def find_coordinates(address):
+#     """Find coordinates from a given address
+#         Parameters:
+#         - address (str): Address to find coordinates of
+#         Returns:
+#         - latitude (float): Latitude of the user
+#         - longitude (float): Longitude of the user"""
+    
+#     geolocator = Nominatim(user_agent="get_lat_long")  # Initialize the geocoder
+#     location = geolocator.geocode(address)  # Geocode the address
+
+#     if location is not None:
+#         latitude = location.latitude
+#         longitude = location.longitude
+#         return latitude, longitude
+#     else:
+#         print("Address could not be geocoded.")
+#         return None
+
+    
 #Pre-processing of the restaurant schedule data
 def clean_openinghours(observation):
     """Cleans the schedule of a given restaurant into a readable dictionary.
@@ -111,3 +132,37 @@ def to_euros(row):
     else:
         euros = row['averagePrice']
     return np.round(euros, 2)
+
+
+
+
+def find_coordinates2(address):
+    # Replace 'YOUR_BING_MAPS_API_KEY' with your actual API key
+    api_key = 'AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP'
+
+    # Define the API endpoint and parameters
+    base_url = 'http://dev.virtualearth.net/REST/v1/Locations'
+    params = {
+        'q': address,
+        'key': api_key,
+    }
+
+    # Make the API request
+    response = requests.get(base_url, params=params)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        data = response.json()
+
+        # Extract the coordinates (latitude and longitude) from the response
+        if 'resourceSets' in data and data['resourceSets'] and 'resources' in data['resourceSets'][0]:
+            location = data['resourceSets'][0]['resources'][0]
+            latitude = location['point']['coordinates'][0]
+            longitude = location['point']['coordinates'][1]
+
+            print(f"Latitude: {latitude}")
+            print(f"Longitude: {longitude}")
+        else:
+            print("No location data found in the response.")
+    else:
+        print("Error making API request:", response.status_code, response.text)
