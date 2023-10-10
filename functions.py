@@ -5,6 +5,7 @@ import datetime
 import requests
 from geopy.geocoders import Nominatim
 
+
 #Find address from IP address
 def find_my_address():
 
@@ -36,6 +37,7 @@ def find_my_address():
     except Exception as e:
         print(f"Error: {e}")
         return None
+    
     
 #Pre-processing of the restaurant schedule data
 def clean_openinghours(observation):
@@ -111,3 +113,67 @@ def to_euros(row):
     else:
         euros = row['averagePrice']
     return np.round(euros, 2)
+
+
+def preprocess_address(address):
+    """Preprocesses the address of a restaurant.
+        Parameters:
+        - address (str): Address of the restaurant.
+        Returns:
+        - address (str): Preprocessed address of the restaurant. """
+    #Add a whitespace after every comma in the address column
+    address = address.replace(',', ',')
+    #Remove the second last value in the address (postal code)
+    address = address.split(',')
+    address.remove(address[-2])
+    #Add Portugal to the address list
+    address.append(' Portugal')
+    #Join the address list into a string
+    address = ','.join(address)
+    return address
+
+
+
+def find_coordinates2(address):
+
+    """Find coordinates from address using Bing Maps API
+        Parameters:
+        - address (str): Address of the restaurant.
+        Returns:
+        - latitude (float): Latitude of the restaurant.
+        - longitude (float): Longitude of the restaurant. """
+    
+    # Replace 'YOUR_BING_MAPS_API_KEY' with your actual API key
+    api_key = 'AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP'
+
+    # Define the API endpoint and parameters
+    base_url = 'http://dev.virtualearth.net/REST/v1/Locations'
+    params = {
+        'q': address,
+        'key': api_key,
+    }
+
+    # Make the API request
+    response = requests.get(base_url, params=params)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        data = response.json()
+
+        # Extract the coordinates (latitude and longitude) from the response
+        if 'resourceSets' in data and data['resourceSets'] and 'resources' in data['resourceSets'][0]:
+            location = data['resourceSets'][0]['resources'][0]
+            latitude = location['point']['coordinates'][0]
+            longitude = location['point']['coordinates'][1]
+
+            return latitude, longitude
+        else:
+            print("No location data found in the response.")
+            latitude = None
+            longitude = None
+    else:
+        print("Error making API request:", response.status_code, response.text)
+        latitude = None
+        longitude = None
+    
+    return latitude, longitude
