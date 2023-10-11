@@ -7,6 +7,8 @@ from geopy.geocoders import Nominatim
 
 
 #Find address from IP address
+
+#Restaurants in your city.
 def find_my_address():
 
     """Find address from IP address
