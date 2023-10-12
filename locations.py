@@ -8,21 +8,73 @@ import requests
 from geopy.geocoders import Nominatim
 import requests
 import numpy as np
+from env_colors import Color, TerminalTextColor
 
 
 
 class Distance:
+    """Class Distance: Defines an object representing the distance between two points.
+    - Attributes:
+        - km (float): Distance in kilometers.
+        - meters (float): Distance in meters.
+        - miles (float): Distance in miles.
+        - minutes (int): Travel time in minutes.
+        - hours (str): Travel time in hours and minutes.
+    - Methods:
+        - __init__(self, km=None, meters=None, miles = None, minutes=None, hours=None): Constructor of the class.
+        - __str__(self): Description method of the class.
+        
+    """
     def __init__(self, km=None, meters=None, miles = None, minutes=None, hours=None):
+        """ Class Constructor """
         self.km = km
         self.meters = meters
         self.miles = miles
         self.minutes = minutes
         self.hours = hours
     
+    def __str__(self):
+        """
+        Prints the description of the Class Distance.
+        """
+        shift = "   "
+        attributes = ""
+        n_repeat = 80
+
+        class_name = str(type(self)).split('.')[-1].replace("'>", "")
+
+        print(
+            f" 🗺️ Class: {TerminalTextColor.BLUE}{class_name}{TerminalTextColor.RESET}\n{'-' * n_repeat}")
+
+        for k in self.__dict__:
+            attributes += f"\n{shift}{shift}- {k}: {TerminalTextColor.BLUE}{self.__dict__[k]}{TerminalTextColor.RESET}"
+
+        print(f"\n{shift}🏷️ Attributes: ")
+        print(attributes)
+
+
+
+        title = '- END -'
+        print(f'\n{title}{"-" * (n_repeat-len(title))}')
 
 
 class Location:
+    """Class Location: Defines an object representing a location.
+    - Attributes:
+        - latitude (float): Latitude of the location.
+        - longitude (float): Longitude of the location.
+        - region (str): Region of the location.
+        - city (str): City of the location.
+    - Methods:
+        - __init__(self, latitude=None, longitude=None, region=None, city=None): Constructor of the class.
+        - getLocation(self): Gets the current location of the user.
+        - getDirections(self, end_latitude, end_longitude, travel_modes): Gets the distance between the 
+        location object and a given point.
+        - __str__(self): Description method of the class.
+    """
+
     def __init__(self, latitude=None, longitude=None, region=None, city=None):
+        """ Class Constructor """
         self.latitude = latitude
         self.longitude = longitude
         self.region = region
@@ -30,6 +82,11 @@ class Location:
         self.__api_key = "AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP"
 
     def getLocation(self):
+        """ Gets the current location of the user. 
+        Parameters:
+        - None
+        Returns:
+        - None """
         #if self.latitude is None and self.longitude is None and self.region is None:
         options = Options()
         options.add_argument("--use--fake-ui-for-media-stream")
@@ -48,6 +105,16 @@ class Location:
 
 
     def getDirections(self, end_latitude, end_longitude, travel_modes):
+
+        """ Gets the distance between the location object and a given point.
+        Parameters:
+        - end_latitude (float): Latitude of the end point.
+        - end_longitude (float): Longitude of the end point.
+        - travel_modes (str or list): Travel modes to be used in the calculation. can be either "walking", "driving" or "transit".
+        Returns:
+        - all_results (dict): Dictionary containing the distance and travel time between the two points for each travel mode.
+        """
+
         if self.latitude is None or self.longitude is None:
             raise Exception("Location coordinates not found. Please run getLocation() first or specify initial point coordinates.")
 
@@ -97,6 +164,31 @@ class Location:
             return None
         else:
             return all_results
+        
+
+    def __str__(self):
+        """
+        Prints the description of the Class Location.
+        """
+        shift = "   "
+        attributes = ""
+        n_repeat = 80
+
+        class_name = str(type(self)).split('.')[-1].replace("'>", "")
+
+        print(
+            f" 📍 Class: {TerminalTextColor.BLUE}{class_name}{TerminalTextColor.RESET}\n{'-' * n_repeat}")
+
+        for k in self.__dict__:
+            attributes += f"\n{shift}{shift}- {k}: {TerminalTextColor.BLUE}{self.__dict__[k]}{TerminalTextColor.RESET}"
+
+        print(f"\n{shift}🏷️ Attributes: ")
+        print(attributes)
+
+
+
+        title = '- END -'
+        print(f'\n{title}{"-" * (n_repeat-len(title))}')
 
         
 
