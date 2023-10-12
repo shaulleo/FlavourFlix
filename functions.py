@@ -11,15 +11,18 @@ def clean_openinghours(observation):
         - observation (str): Opening hours of the restaurant.
         Returns:
         - opening_hours_dict (dict): Dictionary with the opening hours of the restaurant. """
-    opening_hours_dict = {}
-    for day in str(observation).split('\r\n'):
-        day_week = f'{day.partition("y")[0]}y'
-        opening_hours_dict[day_week] = day.partition("y")[2].strip()
-        if opening_hours_dict[day_week] == '-':
-            opening_hours_dict[day_week] = 'Closed'
-        if day_week == 'y':
-            del opening_hours_dict['y']
-    return opening_hours_dict
+    if observation == 'Not Available':
+        return 'Not Available'
+    else:   
+        opening_hours_dict = {}
+        for day in str(observation).split('\r\n'):
+            day_week = f'{day.partition("y")[0]}y'
+            opening_hours_dict[day_week] = day.partition("y")[2].strip()
+            if opening_hours_dict[day_week] == '-':
+                opening_hours_dict[day_week] = 'Closed'
+            if day_week == 'y':
+                del opening_hours_dict['y']
+        return opening_hours_dict
 
 
 #Checks if the restaurant is currently open
@@ -49,7 +52,9 @@ def check_if_open(restaurant_schedule):
         else:
             return False
 
-    if restaurant_schedule[day_of_week] == 'Closed':
+    if restaurant_schedule == 'Not Available':
+        return 'Not Available'
+    elif restaurant_schedule[day_of_week] == 'Closed':
          return 'Closed'
     else:
         if "," not in restaurant_schedule[day_of_week]:
