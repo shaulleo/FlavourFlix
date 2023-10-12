@@ -8,16 +8,24 @@ import requests
 from geopy.geocoders import Nominatim
 
 
-class Location:
-    """This class is used to get the location of the user"""
+import requests
+import numpy as np
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+import time
 
-    def __init__(self, latitude = None, longitude = None, region = None, city=None):
+class Location:
+    def __init__(self, latitude=None, longitude=None, region=None, city=None):
         self.latitude = latitude
         self.longitude = longitude
         self.region = region
-        self.city = None
+        self.city = city
+        self.api_key = "AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP"
 
     def getLocation(self):
+        #if self.latitude is None and self.longitude is None and self.region is None:
         options = Options()
         options.add_argument("--use--fake-ui-for-media-stream")
         driver = webdriver.Chrome()
@@ -26,12 +34,69 @@ class Location:
         wait = WebDriverWait(driver, timeout)
         time.sleep(20)
 
-        self.longitude = str(driver.find_element(By.XPATH, '//*[@id="detail-latitude"]').text)
-        self.latitude = str(driver.find_element(By.XPATH, '//*[@id="detail-longitude"]').text)
-        self.region = str(driver.find_element(By.XPATH, '//*[@id="detail-location-name"]').text)
-        self.city = self.region.split(',')[0]
+        self.longitude = driver.find_element(By.XPATH, '//*[@id="detail-latitude"]').text
+        self.latitude = driver.find_element(By.XPATH, '//*[@id="detail-longitude"]').text
+        self.region = driver.find_element(By.XPATH, '//*[@id="detail-location-name"]').text
+        self.city = self.region.split(',')[1]
+
         driver.quit()
 
+
+    def getDirections(self, end_latitude, end_longitude, travel_modes, time=True, distance=True):
+        all_results = {}
+
+        if type(travel_modes) == str:
+            travel_modes = [travel_modes]
+
+        for mode in travel_modes:
+            base_url = "https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix"
+            params = {
+                "origins": f"{self.latitude},{self.longitude}",
+                "destinations": f"{end_latitude},{end_longitude}",
+                "travelMode": mode,
+                "key": self.api_key
+            }
+
+            response = requests.get(base_url, params=params)
+
+            if response.status_code == 200:
+                data = response.json()
+
+                if "resourceSets" in data and len(data["resourceSets"]) > 0:
+                    resources = data["resourceSets"][0]["resources"]
+                    if resources and len(resources) > 0:
+                        result = resources[0]
+                        travel_min = result["results"][0]["travelDuration"] #curretly in minutes
+                        travel_km = result["results"][0]["travelDistance"] #currently in kms
+                        travel_hr = np.round(travel_min/60, 2)
+                        
+                        if travel_min >= 60:
+                            mode_results = {'duration': f'{travel_hr} hr', 'distance': f'{np.round(travel_km,2)} km'}
+                        else:
+                            mode_results = {'duration': f'{np.round(travel_min,2)} min', 'distance': f'{np.round(travel_km,2)} km'}
+
+                        all_results[mode] = mode_results
+
+                    else:
+                        print(f"No results found for Travel Mode: {mode}")
+                else:
+                    print(f"No resources found for Travel Mode: {mode}")
+            else:
+                print(f"Request failed with status code {response.status_code} for Travel Mode: {mode}")
+
+        if all_results == {}:
+            return None
+        else:
+            if time and distance:
+                return all_results
+            elif time and not distance:
+                return {k: v['duration'] for k, v in all_results.items()}
+            elif not time and distance:
+                return {k: v['distance'] for k, v in all_results.items()}
+            
+
+
+            
 # -------------------- This fuction is not used in the project --------------------
 #Find address from IP address
 #Restaurants in your city.
