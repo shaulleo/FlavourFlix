@@ -39,8 +39,8 @@ class Location:
         wait = WebDriverWait(driver, timeout)
         time.sleep(20)
 
-        self.longitude = driver.find_element(By.XPATH, '//*[@id="detail-latitude"]').text
-        self.latitude = driver.find_element(By.XPATH, '//*[@id="detail-longitude"]').text
+        self.latitude = driver.find_element(By.XPATH, '//*[@id="detail-latitude"]').text
+        self.longitude = driver.find_element(By.XPATH, '//*[@id="detail-longitude"]').text
         self.region = driver.find_element(By.XPATH, '//*[@id="detail-location-name"]').text
         self.city = self.region.strip().split(',')[1]
 
@@ -59,10 +59,12 @@ class Location:
         for mode in travel_modes:
             base_url = "https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix"
             params = {
-                "origins": f"{self.latitude},{self.longitude}",
+                "origins": f"{self.latitude}, {self.longitude}",
                 "destinations": f"{end_latitude},{end_longitude}",
                 "travelMode": mode,
-                "key": self.__api_key
+                "key": self.__api_key,
+                "distanceUnit": "km",
+                "timeUnit": "minute"
             }
 
             response = requests.get(base_url, params=params)
@@ -74,14 +76,14 @@ class Location:
                     resources = data["resourceSets"][0]["resources"]
                     if resources and len(resources) > 0:
                         result = resources[0]
-                        # travel_min = result["results"][0]["travelDuration"] #curretly in minutes
-                        # travel_km = result["results"][0]["travelDistance"] #currently in kms
+                        travel_min = result["results"][0]["travelDuration"] #curretly in minutes
+                        travel_km = result["results"][0]["travelDistance"] #currently in kms
                         
-                        # all_results[mode] = Distance(minutes = int(travel_min), 
-                        #                         hours = f'{int(travel_min//60)}h{int(travel_min%60)}', 
-                        #                         meters = np.round(travel_km*1000, 2),
-                        #                         km = np.round(travel_km, 2),
-                        #                         miles= np.round(travel_km/1.609, 2))
+                        all_results[mode] = Distance(minutes = int(travel_min), 
+                                                hours = f'{int(travel_min//60)}h{int(travel_min%60)}', 
+                                                meters = np.round(travel_km*1000, 2),
+                                                km = np.round(travel_km, 2),
+                                                miles= np.round(travel_km/1.609, 2))
                         
 
                     else:
@@ -91,11 +93,11 @@ class Location:
             else:
                 print(f"Request failed with status code {response.status_code} for Travel Mode: {mode}")
         
-        # if all_results == {}:
-        #     return result
-        # else:
-        #     return all_results
-        return result
+        if all_results == {}:
+            return None
+        else:
+            return all_results
+
         
 
 
