@@ -6,15 +6,20 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import requests
 from geopy.geocoders import Nominatim
-
-
 import requests
 import numpy as np
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-import time
+
+
+
+class Distance:
+    def __init__(self, km=None, meters=None, miles = None, minutes=None, hours=None):
+        self.km = km
+        self.meters = meters
+        self.miles = miles
+        self.minutes = minutes
+        self.hours = hours
+    
+
 
 class Location:
     def __init__(self, latitude=None, longitude=None, region=None, city=None):
@@ -22,7 +27,7 @@ class Location:
         self.longitude = longitude
         self.region = region
         self.city = city
-        self.api_key = "AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP"
+        self.__api_key = "AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP"
 
     def getLocation(self):
         #if self.latitude is None and self.longitude is None and self.region is None:
@@ -37,12 +42,15 @@ class Location:
         self.longitude = driver.find_element(By.XPATH, '//*[@id="detail-latitude"]').text
         self.latitude = driver.find_element(By.XPATH, '//*[@id="detail-longitude"]').text
         self.region = driver.find_element(By.XPATH, '//*[@id="detail-location-name"]').text
-        self.city = self.region.split(',')[1]
+        self.city = self.region.strip().split(',')[1]
 
         driver.quit()
 
 
-    def getDirections(self, end_latitude, end_longitude, travel_modes, time=True, distance=True):
+    def getDirections(self, end_latitude, end_longitude, travel_modes):
+        if self.latitude is None or self.longitude is None:
+            raise Exception("Location coordinates not found. Please run getLocation() first or specify initial point coordinates.")
+
         all_results = {}
 
         if type(travel_modes) == str:
@@ -54,7 +62,7 @@ class Location:
                 "origins": f"{self.latitude},{self.longitude}",
                 "destinations": f"{end_latitude},{end_longitude}",
                 "travelMode": mode,
-                "key": self.api_key
+                "key": self.__api_key
             }
 
             response = requests.get(base_url, params=params)
@@ -66,16 +74,15 @@ class Location:
                     resources = data["resourceSets"][0]["resources"]
                     if resources and len(resources) > 0:
                         result = resources[0]
-                        travel_min = result["results"][0]["travelDuration"] #curretly in minutes
-                        travel_km = result["results"][0]["travelDistance"] #currently in kms
-                        travel_hr = np.round(travel_min/60, 2)
+                        # travel_min = result["results"][0]["travelDuration"] #curretly in minutes
+                        # travel_km = result["results"][0]["travelDistance"] #currently in kms
                         
-                        if travel_min >= 60:
-                            mode_results = {'duration': f'{travel_hr} hr', 'distance': f'{np.round(travel_km,2)} km'}
-                        else:
-                            mode_results = {'duration': f'{np.round(travel_min,2)} min', 'distance': f'{np.round(travel_km,2)} km'}
-
-                        all_results[mode] = mode_results
+                        # all_results[mode] = Distance(minutes = int(travel_min), 
+                        #                         hours = f'{int(travel_min//60)}h{int(travel_min%60)}', 
+                        #                         meters = np.round(travel_km*1000, 2),
+                        #                         km = np.round(travel_km, 2),
+                        #                         miles= np.round(travel_km/1.609, 2))
+                        
 
                     else:
                         print(f"No results found for Travel Mode: {mode}")
@@ -83,17 +90,14 @@ class Location:
                     print(f"No resources found for Travel Mode: {mode}")
             else:
                 print(f"Request failed with status code {response.status_code} for Travel Mode: {mode}")
+        
+        # if all_results == {}:
+        #     return result
+        # else:
+        #     return all_results
+        return result
+        
 
-        if all_results == {}:
-            return None
-        else:
-            if time and distance:
-                return all_results
-            elif time and not distance:
-                return {k: v['duration'] for k, v in all_results.items()}
-            elif not time and distance:
-                return {k: v['distance'] for k, v in all_results.items()}
-            
 
 
             
@@ -158,7 +162,7 @@ def find_coordinates(address):
         - latitude (float): Latitude of the restaurant.
         - longitude (float): Longitude of the restaurant. """
     
-    # Replace 'YOUR_BING_MAPS_API_KEY' with your actual API key
+
     api_key = 'AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP'
 
     # Define the API endpoint and parameters
@@ -192,3 +196,7 @@ def find_coordinates(address):
         longitude = None
     
     return latitude, longitude
+
+
+
+
