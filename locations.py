@@ -99,12 +99,16 @@ class Location:
         self.latitude = driver.find_element(By.XPATH, '//*[@id="detail-latitude"]').text
         self.longitude = driver.find_element(By.XPATH, '//*[@id="detail-longitude"]').text
         self.region = driver.find_element(By.XPATH, '//*[@id="detail-location-name"]').text
-        self.city = self.region.strip().split(',')[1]
+
+        if self.region is None or self.region == ' ':
+            pass
+        else:
+            self.city = self.region.strip().split(',')[1]
 
         driver.quit()
 
 
-    def getDirections(self, end_latitude, end_longitude, travel_modes):
+    def getDirections(self, end_latitude, end_longitude, travel_modes='driving'):
 
         """ Gets the distance between the location object and a given point.
         Parameters:

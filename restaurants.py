@@ -1,5 +1,5 @@
 class Restaurant:
-    def __init__(self, name, cuisine, price, ratingsummary,address, phone, website, schedule, menu, reviews, style, latitude, longitude,  city, photo, averageprice):
+    def __init__(self, name, cuisine, price, ratingsummary,address, phone, website, schedule,  reviews, style, latitude, longitude,  city, photo, averageprice):
         self.name = name
         self.cuisine = cuisine
         self.price = price
@@ -8,14 +8,13 @@ class Restaurant:
         self.phone = phone
         self.website = website
         self.schedule = schedule
-        self.menu = menu
+        self.menu = None
         self.reviews = reviews
         self.style = style
         self.latitude = latitude
         self.longitude = longitude
         self.city = city
         self.photo = photo
-        self.menu = None
 
     def get_menu():
         pass
