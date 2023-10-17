@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from currency_converter import CurrencyConverter
 import datetime
+import random
 
 
 #Pre-processing of the restaurant schedule data
@@ -103,3 +104,71 @@ def preprocess_address(address):
     return address
 
 
+def promotion_generator(schedule, num_promotions, prob):
+    """Generates a promotion schedule for a restaurant.
+        Parameters:
+        - schedule (dict): Restaurant Schedule.
+        - num_promotions (int): Maximum number of promotions to generate per restaurant.
+        - prob (float): Probability of a restaurant having promotions.
+        Returns:
+        - promotion_schedules (list): List of restaurant's promotion type and schedule.
+        """
+
+    # Define the days of the week the restaurant is open.
+    if type(schedule) == str:
+        return 'No Offers'
+    else:
+        days_of_week = [key for key, value in schedule.items() if value != 'Closed']
+        if days_of_week == []:
+            return 'No Offers'
+
+    # Define the promotion types
+    promotion_types = ['Happy Hour', '10% off', '20% off','30% off', 'Free dessert']
+
+    if random.random() < prob:
+        # Create a list of promotion schedules
+        promotion_schedules = []
+
+        # Loop over each promotion
+        i = 0
+        while i < num_promotions:
+            # Choose a random day of the week
+
+            day_of_week = random.choice(days_of_week)
+            # Choose a random promotion type
+            promotion_type = random.choice(promotion_types)
+
+            # Choose a random start time and end time based on promotion type
+            if promotion_type == 'Happy Hour':
+                start_time = f"{random.randint(2, 4)}:{random.choice(['00', '15', '30', '45'])}pm"
+                end_time = f"{random.randint(5, 7)}:{random.choice(['00', '15', '30', '45'])}pm"
+            elif promotion_type == '20% off':
+                start_time = f"{random.randint(6, 8)}:{random.choice(['00', '15', '30', '45'])}pm"
+                end_time = f"{random.randint(9, 11)}:{random.choice(['00', '15', '30', '45'])}pm"
+            elif promotion_type == 'None':
+                start_time = 'None'
+                end_time = 'None'
+            else:
+                start_time = f"{random.randint(5, 7)}:{random.choice(['00', '15', '30', '45'])}pm"
+                end_time = f"{random.randint(8, 10)}:{random.choice(['00', '15', '30', '45'])}pm"
+
+            # Add the promotion schedule to the list
+            promotion_schedules.append({
+                'promotion_type': promotion_type,
+                'day_of_week': day_of_week,
+                'start_time': start_time,
+                'end_time': end_time,
+            })
+
+            i += 1
+            if random.random() < 0.2:
+                i = num_promotions
+
+        # Print the promotion schedules
+        # for i, schedule in enumerate(promotion_schedules):
+        #     print(f"Promotion {i+1}: {schedule['promotion_type']} at Restaurant {schedule['restaurant_id']} on {schedule['day_of_week']} from {schedule['start_time']} to {schedule['end_time']}")
+
+        return promotion_schedules
+    
+    else:
+        return 'No Offers'
