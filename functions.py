@@ -27,14 +27,20 @@ def clean_openinghours(observation):
 
 
 #Checks if the restaurant is currently open
-def check_if_open(restaurant_schedule):
+def check_if_open(restaurant_schedule, date=None):
     """Checks if a given restaurant is open at the current time.
         Parameters:
         - restaurant_schedule (dict): Opening hours of the restaurant.
+        - date (str): Date to check if the restaurant is open. If None, the current date is used.
         Returns:
         - open (str): 'Open' if the restaurant is open, 'Closed' otherwise. """
     
-    current_date = datetime.date.today()
+    #Confirmar se está a funcionar 100%
+    if date is None:
+        current_date = datetime.date.today()
+    else:
+        current_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+
     day_of_week = current_date.strftime("%A")
     hour_format = "%H:%M"
     current_time = datetime.datetime.now().strftime(hour_format)

@@ -8,6 +8,8 @@ import requests
 from geopy.geocoders import Nominatim
 import requests
 import numpy as np
+from sklearn.metrics.pairwise import haversine_distances
+from math import radians
 from env_colors import Color, TerminalTextColor
 
 
@@ -99,12 +101,16 @@ class Location:
         self.latitude = driver.find_element(By.XPATH, '//*[@id="detail-latitude"]').text
         self.longitude = driver.find_element(By.XPATH, '//*[@id="detail-longitude"]').text
         self.region = driver.find_element(By.XPATH, '//*[@id="detail-location-name"]').text
-        self.city = self.region.strip().split(',')[1]
+
+        if self.region is None or self.region == ' ':
+            pass
+        else:
+            self.city = self.region.split(',')[1].strip()
 
         driver.quit()
 
 
-    def getDirections(self, end_latitude, end_longitude, travel_modes):
+    def getDirections(self, end_latitude, end_longitude, travel_modes='driving'):
 
         """ Gets the distance between the location object and a given point.
         Parameters:
@@ -291,6 +297,21 @@ def find_coordinates(address):
     
     return latitude, longitude
 
-
+def nearYou(location, df, top):
+    """Finds the top nearest restaurants to the user.
+        Parameters:
+        - location (Location): Location object of the user.
+        - df (pandas.DataFrame): DataFrame containing the restaurants.
+        - top (int): Number of restaurants to be returned.
+        Returns:
+        - distances_df (pandas.DataFrame): DataFrame containing the top nearest restaurants to the user. """
+    distances_df = df.copy()
+    current_radians = [radians(float(location.latitude)), radians(float(location.longitude))]
+    distances_df['haversine_distances'] = distances_df.apply(lambda row: haversine_distances([current_radians, [radians(row.latitude), radians(row.longitude)]]), axis=1)
+    distances_df['haversine_distances'] = distances_df['haversine_distances']  * 6371000/1000
+    distances_df['haversine_distances'] = distances_df['haversine_distances'].apply(lambda x: x[1][0])
+    distances_df.sort_values(by='haversine_distances', inplace=True)
+    
+    return distances_df.head(top)
 
 
