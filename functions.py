@@ -129,7 +129,7 @@ def promotion_generator(schedule, num_promotions, prob):
             return 'No Offers'
 
     # Define the promotion types
-    promotion_types = ['Happy Hour', '10% off', '20% off','30% off', 'Free dessert']
+    promotion_types = ['Happy Hour', '10% off', '20% off','30% off', 'Free dessert', 'Free drink']
 
     if random.random() < prob:
         # Create a list of promotion schedules
