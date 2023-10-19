@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from currency_converter import CurrencyConverter
+#from currency_converter import CurrencyConverter
 import datetime
 import random
 
