@@ -3,10 +3,14 @@ import pandas as pd
 #from currency_converter import CurrencyConverter
 import datetime
 import random
+import re
+import unicodedata
 
+# ------------------------------- General Functions --------------------------------
 
 #Pre-processing of the restaurant schedule data
 def clean_openinghours(observation):
+
     """Cleans the schedule of a given restaurant into a readable dictionary.
         Parameters:
         - observation (str): Opening hours of the restaurant.
@@ -27,7 +31,9 @@ def clean_openinghours(observation):
 
 
 #Checks if the restaurant is currently open
-def check_if_open(restaurant_schedule, date=None):
+def check_if_open(restaurant_schedule, date=None, time=None):
+    #Ajustar consoante horas também
+
     """Checks if a given restaurant is open at the current time.
         Parameters:
         - restaurant_schedule (dict): Opening hours of the restaurant.
@@ -77,19 +83,6 @@ def check_if_open(restaurant_schedule, date=None):
     return 'Closed'
 
 
-# #Converts the average price of a restaurant to euros
-# def to_euros(row):
-#     """Converts the average price of a restaurant to euros.
-#         Parameters:
-#         - row (pandas.Series): Row of the dataframe.
-#         Returns:
-#         - euros (float): Average price of the restaurant in euros. """
-#     c = CurrencyConverter()
-#     if row['currency'] != 'EUR':
-#         euros = c.convert(row['averagePrice'], row['currency'], 'EUR')
-#     else:
-#         euros = row['averagePrice']
-#     return np.round(euros, 2)
 
 
 def preprocess_address(address):
@@ -111,6 +104,7 @@ def preprocess_address(address):
 
 
 def promotion_generator(schedule, num_promotions, prob):
+    #ajustar consoante horas
     """Generates a promotion schedule for a restaurant.
         Parameters:
         - schedule (dict): Restaurant Schedule.
@@ -170,11 +164,101 @@ def promotion_generator(schedule, num_promotions, prob):
             if random.random() < 0.2:
                 i = num_promotions
 
-        # Print the promotion schedules
-        # for i, schedule in enumerate(promotion_schedules):
-        #     print(f"Promotion {i+1}: {schedule['promotion_type']} at Restaurant {schedule['restaurant_id']} on {schedule['day_of_week']} from {schedule['start_time']} to {schedule['end_time']}")
-
         return promotion_schedules
     
     else:
         return 'No Offers'
+    
+
+def clean_chef_names(name):
+    """Cleans the name of a chef.
+        Parameters:
+        - name (str): Name of the chef.
+        Returns:
+        - cleaned_name (str): Cleaned name of the chef. """
+    
+    if name == 'Not Applicable':
+        return name
+    else:
+        #Remove unwanted terms from chef names
+        expressions_to_remove = ['Chefes', 'Chefe', 'Chef', 'executivos', 'executivo', 'Pizzaiolo', 'Sommelier']
+        pattern = '|'.join(re.escape(expr) for expr in expressions_to_remove)
+        regex_pattern = re.compile(pattern, re.IGNORECASE)
+        cleaned_name = regex_pattern.sub('', name)
+
+        #Remove accents from chef names
+        cleaned_name = unicodedata.normalize('NFKD', cleaned_name).encode('ascii', 'ignore').decode('utf-8')
+
+        #Remove hashtags from chef names
+        cleaned_name = re.sub(r'#\w*', '', cleaned_name)
+        
+        #Remove ponctuation from chef names
+        cleaned_name = re.sub(r'[^\w\s]', '', cleaned_name)
+        return cleaned_name.strip()
+    
+
+def get_chef_name(name):
+    """Preprocesses the name of a chef.
+        Parameters:
+        - name (str): Name of the chef.
+        Returns:
+        - name (str or list): Preprocessed name of the chef. """
+    name = re.split(r' e |, ', name)
+    if len(name) == 1:
+        name = clean_chef_names(str(name[0]))
+    else:
+        name = [clean_chef_names(str(x)) for x in name]
+    return name
+
+
+def preprocess_chefs(index, chef_list):
+    if isinstance(chef_list, list) and len(chef_list) > index:
+        return chef_list[index]
+    else:
+        if index == 0:
+            return chef_list
+        else:
+            return 'Not Applicable'
+        
+
+def standardize_location(location):
+    """Standardizes a location string.
+        Parameters:
+        - location (str): Location of the restaurant.
+        Returns:
+        - location (str): Standardized location of the restaurant."""
+
+    #Tinha que ser...
+    if location == 'Alamansil':
+        location = 'Almancil'
+
+    #remove abbreviations
+    location = re.sub(r's\.', 'São', location, flags=re.IGNORECASE)
+    location = re.sub(r'sta\.', 'Santa', location, flags=re.IGNORECASE)
+    location = re.sub(r'q\.ta', 'Quinta', location, flags=re.IGNORECASE)
+
+    return standardize_filters(location)
+
+def standardize_filters(user_input_text):
+    """Standardizes a user input string for better matches.
+        Parameters:
+        - user_input_text (str): User input.
+        Returns:
+        - user_input_text (str): Standardized user input."""
+
+    #Convert to lower the string location
+    user_input_text = user_input_text.lower()
+
+    #Remove accents from the string
+    user_input_text = unicodedata.normalize('NFKD', user_input_text).encode('ASCII', 'ignore').decode('utf-8')
+
+    #Remove ponctuation except numbers
+    user_input_text = re.sub(r'[^\w\s]', ' ', user_input_text)
+
+    #Remove single characters
+    user_input_text = re.sub(r'\b\w\b', '', user_input_text)
+
+    #remove multiple spaces
+    user_input_text = re.sub(r'\s+', ' ', user_input_text)
+
+    return user_input_text.strip()
