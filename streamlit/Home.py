@@ -2,10 +2,13 @@ import streamlit as st
 import pandas as pd
 
 data = pd.read_csv('/Users/madalena.frango/Desktop/capstone/FlavourFlix/data/all_thefork_scrapes.csv')
+#Tentar assim
+#data = pd.read_csv('FlavourFlix/data/preprocessed_restaurant_data.csv')
 
 
 st.set_page_config(page_title="FlavourFlix", page_icon=":movie_camera:",  layout='wide')
 
+#Aqui basta acrescentar ao repositório o logo da FlavourFlix e colocar o path
 header_image = "https://purepng.com/public/uploads/large/purepng.com-disney-logologobrand-logoiconslogos-251519939495wtv86.png"  # Replace with the URL or path to your image
 st.image(header_image, width=100)
 

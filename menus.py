@@ -7,46 +7,46 @@ import re
 
 #Não sei se nao fará sentido fazermos classes
 
-class MenuSection:
-    def __init__(self, menu, section_name):
-         self.section_name = section_name
-         self.all_foods = []
-         for i in menu[section_name]:
-            self.food[i] = Food(self.food[i])
-            self.all_foods.append(self.food[i].name)
+# class MenuSection:
+#     def __init__(self, menu, section_name):
+#          self.section_name = section_name
+#          self.all_foods = []
+#          for i in menu[section_name]:
+#             self.food[i] = Food(self.food[i])
+#             self.all_foods.append(self.food[i].name)
 
-    def print_section():
-        #printar a secção de forma muito bonita
-        print(self.section_name)
-        print('-------------------//-------------------\n')
-        for food in self.all_foods:
-            self.food[food].print_food()
-            print('-------------------')
+#     def print_section():
+#         #printar a secção de forma muito bonita
+#         print(self.section_name)
+#         print('-------------------//-------------------\n')
+#         for food in self.all_foods:
+#             self.food[food].print_food()
+#             print('-------------------')
         
 
-class Menu:
-    def __init__(self, menu):
-        self.menu = menu
-        self.all_sections = []
-        for i in self.menu.keys:
-            self.menu[i] = MenuSection(self.menu[i])
-            self.all_sections.append(self.menu[i].section_name)
+# class Menu:
+#     def __init__(self, menu):
+#         self.menu = menu
+#         self.all_sections = []
+#         for i in self.menu.keys:
+#             self.menu[i] = MenuSection(self.menu[i])
+#             self.all_sections.append(self.menu[i].section_name)
 
-    def print_menu():
-        for section in self.all_sections:
-            self.menu[section].print_section()
-            print('\n\n')
+#     def print_menu():
+#         for section in self.all_sections:
+#             self.menu[section].print_section()
+#             print('\n\n')
 
     
-class Food:
-    def __init__(self, food):
-        self.name = food['name']
-        self.price = food['price']
-        self.description = food['description']
-        self.isMainDish = food['isMainDish']
+# class Food:
+#     def __init__(self, food):
+#         self.name = food['name']
+#         self.price = food['price']
+#         self.description = food['description']
+#         self.isMainDish = food['isMainDish']
 
-    def print_food():
-        print(f'{self.name}, {self.price}€')
+#     def print_food():
+#         print(f'{name}, {self.price}€')
 
 
 
