@@ -253,7 +253,6 @@ def preprocess_address(address):
     return address
 
 
-
 def find_coordinates(address):
     """Find latitude and longitude coordinates from address using Bing Maps API
         Parameters:
@@ -296,6 +295,7 @@ def find_coordinates(address):
         longitude = None
     
     return latitude, longitude
+
 
 def nearYou(location, df, top):
     """Finds the top nearest restaurants to the user.
