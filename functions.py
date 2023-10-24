@@ -77,19 +77,19 @@ def check_if_open(restaurant_schedule, date=None):
     return 'Closed'
 
 
-#Converts the average price of a restaurant to euros
-def to_euros(row):
-    """Converts the average price of a restaurant to euros.
-        Parameters:
-        - row (pandas.Series): Row of the dataframe.
-        Returns:
-        - euros (float): Average price of the restaurant in euros. """
-    c = CurrencyConverter()
-    if row['currency'] != 'EUR':
-        euros = c.convert(row['averagePrice'], row['currency'], 'EUR')
-    else:
-        euros = row['averagePrice']
-    return np.round(euros, 2)
+# #Converts the average price of a restaurant to euros
+# def to_euros(row):
+#     """Converts the average price of a restaurant to euros.
+#         Parameters:
+#         - row (pandas.Series): Row of the dataframe.
+#         Returns:
+#         - euros (float): Average price of the restaurant in euros. """
+#     c = CurrencyConverter()
+#     if row['currency'] != 'EUR':
+#         euros = c.convert(row['averagePrice'], row['currency'], 'EUR')
+#     else:
+#         euros = row['averagePrice']
+#     return np.round(euros, 2)
 
 
 def preprocess_address(address):
