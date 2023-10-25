@@ -102,7 +102,7 @@ class Location:
         self.longitude = driver.find_element(By.XPATH, '//*[@id="detail-longitude"]').text
         self.region = driver.find_element(By.XPATH, '//*[@id="detail-location-name"]').text
 
-        if self.region is None or self.region == ' ':
+        if self.region is None or self.region == '' or self.region == '':
             pass
         else:
             self.city = self.region.split(',')[1].strip()
