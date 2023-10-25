@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import datetime
+from datetime import datetime, timedelta
 import random
 import re
 import unicodedata
@@ -11,7 +12,6 @@ from functions.location import *
 
 
 
-#Pre-processing of the restaurant schedule data
 def clean_openinghours(observation):
 
     """Cleans the schedule of a given restaurant into a readable dictionary.
@@ -19,35 +19,25 @@ def clean_openinghours(observation):
         - observation (str): Opening hours of the restaurant.
         Returns:
         - opening_hours_dict (dict): Dictionary with the opening hours of the restaurant. """
+    
     if observation == 'Not Available':
         return 'Not Available'
     else:   
         opening_hours_dict = {}
+
+        #Split the schedule by day
         for day in str(observation).split('\r\n'):
+            #Remove unwanted characters
             day_week = f'{day.partition("y")[0]}y'
             opening_hours_dict[day_week] = day.partition("y")[2].strip()
+            #Verify if restaurant is closed
             if opening_hours_dict[day_week] == '-':
                 opening_hours_dict[day_week] = 'Closed'
+            #Remove unwanted characters
             if day_week == 'y':
                 del opening_hours_dict['y']
         return opening_hours_dict
 
-def preprocess_address(address):
-    """Preprocesses the address of a restaurant.
-        Parameters:
-        - address (str): Address of the restaurant.
-        Returns:
-        - address (str): Preprocessed address of the restaurant. """
-    #Add a whitespace after every comma in the address column
-    address = address.replace(',', ',')
-    #Remove the second last value in the address (postal code)
-    address = address.split(',')
-    address.remove(address[-2])
-    #Add Portugal to the address list
-    address.append(' Portugal')
-    #Join the address list into a string
-    address = ','.join(address)
-    return address
 
 
 def preprocess_address(address):
@@ -58,13 +48,17 @@ def preprocess_address(address):
         - address (str): Preprocessed address of the restaurant. """
     #Add a whitespace after every comma in the address column
     address = address.replace(',', ',')
+
     #Remove the second last value in the address (postal code)
     address = address.split(',')
     address.remove(address[-2])
+
     #Add Portugal to the address list
     address.append(' Portugal')
+
     #Join the address list into a string
     address = ','.join(address)
+
     return address
 
 
@@ -79,21 +73,21 @@ def find_coordinates(address):
 
     api_key = 'AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP'
 
-    # Define the API endpoint and parameters
+    #Define the API endpoint and parameters
     base_url = 'http://dev.virtualearth.net/REST/v1/Locations'
     params = {
         'q': address,
         'key': api_key,
     }
 
-    # Make the API request
+    #Make the API request
     response = requests.get(base_url, params=params)
 
-    # Check if the request was successful
+    #Check if the request was successful
     if response.status_code == 200:
         data = response.json()
 
-        # Extract the coordinates (latitude and longitude) from the response
+        #Extract the coordinates (latitude and longitude) from the response
         if 'resourceSets' in data and data['resourceSets'] and 'resources' in data['resourceSets'][0]:
             location = data['resourceSets'][0]['resources'][0]
             latitude = location['point']['coordinates'][0]
@@ -112,18 +106,50 @@ def find_coordinates(address):
     return latitude, longitude
 
 
-def read_schedule_time(schedule, weekday):
-    working_hours = []
-    working_minutes = []
-    schedule_time = schedule[weekday].split(',')
-    for i in schedule_time:
-        times = i.strip()
-        working_hours.append(times[0:2])
-        working_minutes.append(times[3:5])
-        working_hours.append(times[8:10])
-        working_minutes.append(times[11:13])
 
-    return working_hours, working_minutes
+def find_random_time(time_string, start=True):
+    """Finds a random time within a given time range.
+        Parameters:
+        - time_string (str): Time range.
+        - start (bool): Whether the random time should be the start or end of the time range.
+        Returns: 
+        - random_time_str (str): Random time within the provided time range."""
+
+    #Split in case of having multiple time slots
+    start_time_str, end_time_str = time_string.split(" - ")
+
+    #Define format for parsing time
+    time_format = "%H:%M"
+
+    # Parse the start and end times
+    start_time = datetime.strptime(start_time_str, time_format)
+    end_time = datetime.strptime(end_time_str, time_format)
+
+    #Calculate the time difference in minutes
+    time_diff_minutes = (end_time - start_time).total_seconds() / 60
+
+    if start == True:
+        #Ensure the random time is at least 1 hour earlier than closing hour
+        min_time = start_time 
+        max_time = end_time  - timedelta(hours=1)
+    else:
+        #Ensure the random time is at least 15 minutes earlier than closing hour
+        min_time = start_time 
+        max_time = end_time - timedelta(minutes= 15)
+
+    #Calculate the number of quarter-hour intervals within the time range
+    num_intervals = int(time_diff_minutes / 15)
+
+    #Generate a random number of quarter-hour intervals to subtract
+    random_intervals = random.randint(0, num_intervals)
+
+    # Calculate the random time
+    random_time = min_time + timedelta(minutes=random_intervals * 15)
+
+    # Format the random time as a string
+    random_time_str = random_time.strftime("%H:%M")
+
+    return random_time_str
 
 
 def promotion_generator(schedule, prob):
@@ -132,7 +158,7 @@ def promotion_generator(schedule, prob):
         - schedule (dict): Restaurant Schedule.
         - prob (float): Probability of a restaurant having a promotion.
         Returns:
-        - promotion_schedules (list): List of restaurant's promotion type and schedule.
+        - promotion_schedules (dict): Information about the restaurant's promotional offers.
         """
 
     # Define the days of the week the restaurant is open.
@@ -152,32 +178,28 @@ def promotion_generator(schedule, prob):
         # Choose a random promotion type
         promotion_type = random.choice(promotion_types)
 
-        working_hours, working_minutes = read_schedule_time(schedule, day_of_week)
-        
-        # Define the promotion schedule
-        if promotion_type == 'Happy Hour':
-            start_time = f"{random.randint(6, 8)}:{random.choice(['00', '15', '30', '45'])}pm"
-            end_time = f"{random.randint(9, 11)}:{random.choice(['00', '15', '30', '45'])}pm"
-        elif promotion_type == '20% off':
-            start_time = f"{random.randint(6, 8)}:{random.choice(['00', '15', '30', '45'])}pm"
-            end_time = f"{random.randint(9, 11)}:{random.choice(['00', '15', '30', '45'])}pm"
-        elif promotion_type == 'None':
-            start_time = 'None'
-            end_time = 'None'
-        else:
-            start_time = f"{random.randint(5, 7)}:{random.choice(['00', '15', '30', '45'])}pm"
-            end_time = f"{random.randint(8, 10)}:{random.choice(['00', '15', '30', '45'])}pm"
+        schedule_time = schedule[day_of_week].split(',')
 
-            
+        # Define the promotion schedule
+        if promotion_type == 'Happy Hour' or  promotion_type == '20% off' or promotion_type == '30% off':
+            start_time = find_random_time(schedule_time[0], start=True)
+            end_time =  find_random_time(schedule_time[0], start=False)        
+        else:
+            if len(schedule_time) > 1:
+                start_time = find_random_time(schedule_time[1], start=True)
+                end_time =  find_random_time(schedule_time[1], start=False)
+            else:
+                start_time = find_random_time(schedule_time[0], start=True)
+                end_time =  find_random_time(schedule_time[0], start=False)
+
+        #Store all promotion info in a dictionary
         promo_info = {
                 'promotion_type': promotion_type,
                 'day_of_week': day_of_week,
                 'start_time': start_time,
                 'end_time': end_time,}
 
-
-        return promo_info
-    
+        return promo_info    
     else:
         return 'No Offers'
     
