@@ -3,7 +3,7 @@ import pandas as pd
 import datetime
 import random
 import re
-
+from functions.env_colors import *
 
 #Não sei se nao fará sentido fazermos classes
 
