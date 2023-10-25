@@ -1,16 +1,17 @@
 import numpy as np
 import pandas as pd
-#from currency_converter import CurrencyConverter
 import datetime
 import random
 import re
 import unicodedata
-import ast
+import requests
+from functions.utils import *
+from functions.env_colors import *
+from functions.location import *
 
-# ------------------------------- General Functions --------------------------------
+#isto nao deveria ser necessário mas aparentemente é
+from functions.utils import standardize_text
 
-
-# ------------------------------- 1. Original Data Preprocessement --------------------------------
 
 #Pre-processing of the restaurant schedule data
 def clean_openinghours(observation):
@@ -33,6 +34,23 @@ def clean_openinghours(observation):
                 del opening_hours_dict['y']
         return opening_hours_dict
 
+def preprocess_address(address):
+    """Preprocesses the address of a restaurant.
+        Parameters:
+        - address (str): Address of the restaurant.
+        Returns:
+        - address (str): Preprocessed address of the restaurant. """
+    #Add a whitespace after every comma in the address column
+    address = address.replace(',', ',')
+    #Remove the second last value in the address (postal code)
+    address = address.split(',')
+    address.remove(address[-2])
+    #Add Portugal to the address list
+    address.append(' Portugal')
+    #Join the address list into a string
+    address = ','.join(address)
+    return address
+
 
 def preprocess_address(address):
     """Preprocesses the address of a restaurant.
@@ -50,6 +68,50 @@ def preprocess_address(address):
     #Join the address list into a string
     address = ','.join(address)
     return address
+
+
+def find_coordinates(address):
+    """Find latitude and longitude coordinates from address using Bing Maps API
+        Parameters:
+        - address (str): Address of the restaurant.
+        Returns:
+        - latitude (float): Latitude of the restaurant.
+        - longitude (float): Longitude of the restaurant. """
+    
+
+    api_key = 'AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP'
+
+    # Define the API endpoint and parameters
+    base_url = 'http://dev.virtualearth.net/REST/v1/Locations'
+    params = {
+        'q': address,
+        'key': api_key,
+    }
+
+    # Make the API request
+    response = requests.get(base_url, params=params)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        data = response.json()
+
+        # Extract the coordinates (latitude and longitude) from the response
+        if 'resourceSets' in data and data['resourceSets'] and 'resources' in data['resourceSets'][0]:
+            location = data['resourceSets'][0]['resources'][0]
+            latitude = location['point']['coordinates'][0]
+            longitude = location['point']['coordinates'][1]
+
+            return latitude, longitude
+        else:
+            print("No location data found in the response.")
+            latitude = None
+            longitude = None
+    else:
+        print("Error making API request:", response.status_code, response.text)
+        latitude = None
+        longitude = None
+    
+    return latitude, longitude
 
 
 def promotion_generator(schedule, prob):
@@ -198,97 +260,3 @@ def standardize_location(location):
     location = re.sub(r'q\.ta', 'Quinta', location, flags=re.IGNORECASE)
 
     return standardize_text(location)
-
-
-# --------------------------------- 2. Utility Functions --------------------------------
-
-#Standardizes user input when searching freely for a restaurant
-def standardize_text(user_input_text):
-    """Standardizes a user input string for better matches.
-        Parameters:
-        - user_input_text (str): User input.
-        Returns:
-        - user_input_text (str): Standardized user input."""
-
-    #Convert to lower the string location
-    user_input_text = user_input_text.lower()
-
-    #Remove accents from the string
-    user_input_text = unicodedata.normalize('NFKD', user_input_text).encode('ASCII', 'ignore').decode('utf-8')
-
-    #Remove ponctuation except numbers
-    user_input_text = re.sub(r'[^\w\s]', ' ', user_input_text)
-
-    #Remove single characters
-    user_input_text = re.sub(r'\b\w\b', '', user_input_text)
-
-    #remove multiple spaces
-    user_input_text = re.sub(r'\s+', ' ', user_input_text)
-
-    return user_input_text.strip()
-
-
-
-#Checks if the restaurant is currently open
-def check_if_open(restaurant_schedule, date=None, time=None):
-
-    """Checks if a given restaurant is open at the current time.
-        Parameters:
-        - restaurant_schedule (dict): Opening hours of the restaurant.
-        - date (str): Date to check if the restaurant is open. If None, the current date is used.
-        Returns:
-        - open (str): 'Open' if the restaurant is open, 'Closed' otherwise. """
-    
-
-    if date is None:
-        current_date = datetime.date.today()
-    else:
-        current_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-
-    if time is None:
-        # Get the current time and format it accordingly.
-        current_time = datetime.datetime.now().strftime("%H:%M")
-        current_time = datetime.datetime.strptime(current_time, "%H:%M").time()
-    else:
-        current_time = datetime.datetime.strptime(time, '%H:%M').time()
-
-    day_of_week = current_date.strftime("%A")
-
-    def check_schedule(schedule):
-        opening_hours = schedule[:5]
-        opening_hours = datetime.datetime.strptime(opening_hours, "%H:%M").time()
-        closing_hours = schedule[-5:]
-        if closing_hours == '24:00':
-            closing_hours = '23:59'
-        closing_hours = datetime.datetime.strptime(closing_hours, "%H:%M").time()
-        if  (opening_hours <= current_time) & (current_time <= closing_hours):
-            return True
-        else:
-            return False
-
-
-    if type(restaurant_schedule) == str:
-        restaurant_schedule = ast.literal_eval(restaurant_schedule)
-    elif type(restaurant_schedule) == dict:
-        pass
-    else: 
-        return 'Not Available'
-    
-
-    if restaurant_schedule == 'Not Available':
-        return 'Not Available'
-    elif restaurant_schedule[day_of_week] == 'Closed':
-         return 'Closed'
-    else:
-        if "," not in restaurant_schedule[day_of_week]:
-            open = check_schedule(restaurant_schedule[day_of_week].strip())
-            if open:
-                return 'Open'
-        else:
-            schedule = restaurant_schedule[day_of_week].partition(',')
-            open1 = check_schedule(schedule[0].strip())
-            open2 = check_schedule(schedule[-1].strip())
-            if open1 or open2:
-                 return 'Open'
-    return 'Closed'
-
