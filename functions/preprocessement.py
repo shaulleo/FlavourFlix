@@ -114,6 +114,14 @@ def find_coordinates(address):
     return latitude, longitude
 
 
+def read_schedule_time(schedule, weekday):
+    if schedule[weekday].str.contains(','):
+        schedule_time = schedule[weekday].str.split(',')
+        schedule_time = schedule_time.explode()
+    return schedule_time
+
+
+
 def promotion_generator(schedule, prob):
     """Generates a promotion schedule for a restaurant.
         Parameters:
