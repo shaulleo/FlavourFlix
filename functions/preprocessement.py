@@ -9,8 +9,6 @@ from functions.utils import *
 from functions.env_colors import *
 from functions.location import *
 
-#isto nao deveria ser necessário mas aparentemente é
-from functions.utils import standardize_text
 
 
 #Pre-processing of the restaurant schedule data
@@ -115,11 +113,17 @@ def find_coordinates(address):
 
 
 def read_schedule_time(schedule, weekday):
-    if schedule[weekday].str.contains(','):
-        schedule_time = schedule[weekday].str.split(',')
-        schedule_time = schedule_time.explode()
-    return schedule_time
+    working_hours = []
+    working_minutes = []
+    schedule_time = schedule[weekday].split(',')
+    for i in schedule_time:
+        times = i.strip()
+        working_hours.append(times[0:2])
+        working_minutes.append(times[3:5])
+        working_hours.append(times[8:10])
+        working_minutes.append(times[11:13])
 
+    return working_hours, working_minutes
 
 
 def promotion_generator(schedule, prob):
@@ -148,34 +152,12 @@ def promotion_generator(schedule, prob):
         # Choose a random promotion type
         promotion_type = random.choice(promotion_types)
 
-        schedule_time = schedule[day_of_week]
-        schedule_times = schedule_time.split(',')
-        if len(schedule_times) > 1:
-            first_period = schedule_times[0]
-            f_period_open = first_period[:5]
-            f_period_close = first_period[-5:]
-
-            second_period = schedule_times[-1]
-            s_period_open = second_period[:5]
-            s_period_close = second_period[-5:]
-        else:
-            whole_day = schedule_times[0]
-            w_day_open = whole_day[:5]
-            w_day_close = whole_day[-5:]
-
-
+        working_hours, working_minutes = read_schedule_time(schedule, day_of_week)
+        
         # Define the promotion schedule
         if promotion_type == 'Happy Hour':
-            if second_period:
-                start_time = f"{random.randint(2, 4)}:{random.choice(['00', '15', '30', '45'])}pm"
-                end_time = f"{random.randint(5, 7)}:{random.choice(['00', '15', '30', '45'])}pm"
-            elif first_period:
-                start_time = f"{random.randint(2, 4)}:{random.choice(['00', '15', '30', '45'])}pm"
-                end_time = f"{random.randint(5, 7)}:{random.choice(['00', '15', '30', '45'])}pm"
-            else:
-                start_time = f"{random.randint(2, 4)}:{random.choice(['00', '15', '30', '45'])}pm"
-                end_time = f"{random.randint(5, 7)}:{random.choice(['00', '15', '30', '45'])}pm"
-
+            start_time = f"{random.randint(6, 8)}:{random.choice(['00', '15', '30', '45'])}pm"
+            end_time = f"{random.randint(9, 11)}:{random.choice(['00', '15', '30', '45'])}pm"
         elif promotion_type == '20% off':
             start_time = f"{random.randint(6, 8)}:{random.choice(['00', '15', '30', '45'])}pm"
             end_time = f"{random.randint(9, 11)}:{random.choice(['00', '15', '30', '45'])}pm"
