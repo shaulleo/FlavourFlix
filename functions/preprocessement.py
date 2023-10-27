@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import datetime
 from datetime import datetime, timedelta
 import random
 import re
@@ -10,7 +9,7 @@ from functions.utils import *
 from functions.env_colors import *
 from functions.location import *
 
-
+# ------------------------------- Restaurant Data Preprocessing ------------------------------
 
 def clean_openinghours(observation):
 
@@ -33,6 +32,12 @@ def clean_openinghours(observation):
             #Verify if restaurant is closed
             if opening_hours_dict[day_week] == '-':
                 opening_hours_dict[day_week] = 'Closed'
+            temp = opening_hours_dict[day_week].split(',')
+            # Correct midnight to 23:59
+            temp = [i.replace('24:00', '23:59') for i in temp]
+            temp = ','.join(temp)
+            opening_hours_dict[day_week] = temp
+
             #Remove unwanted characters
             if day_week == 'y':
                 del opening_hours_dict['y']
@@ -122,11 +127,11 @@ def find_random_time(time_string, start=True):
     time_format = "%H:%M"
 
     # Parse the start and end times
-    start_time = datetime.strptime(start_time_str, time_format)
-    end_time = datetime.strptime(end_time_str, time_format)
+    start_time = datetime.datetime.strptime(start_time_str.strip(), time_format)
+    end_time = datetime.datetime.strptime(end_time_str.strip(), time_format)
 
-    #Calculate the time difference in minutes
-    time_diff_minutes = (end_time - start_time).total_seconds() / 60
+    # #Calculate the time difference in minutes
+    # time_diff_minutes = (end_time - start_time).total_seconds() / 60
 
     if start == True:
         #Ensure the random time is at least 1 hour earlier than closing hour
@@ -136,6 +141,10 @@ def find_random_time(time_string, start=True):
         #Ensure the random time is at least 15 minutes earlier than closing hour
         min_time = start_time 
         max_time = end_time - timedelta(minutes= 15)
+
+
+        #Calculate the time difference in minutes
+    time_diff_minutes = (max_time - min_time).total_seconds() / 60
 
     #Calculate the number of quarter-hour intervals within the time range
     num_intervals = int(time_diff_minutes / 15)
@@ -173,33 +182,39 @@ def promotion_generator(schedule, prob):
     promotion_types = ['Happy Hour', '10% off', '20% off','30% off', 'Free dessert', 'Free drink']
 
     if random.random() < prob:
-        # Choose a random day of the week
-        day_of_week = random.choice(days_of_week)
-        # Choose a random promotion type
-        promotion_type = random.choice(promotion_types)
 
-        schedule_time = schedule[day_of_week].split(',')
+        try:
+            # Choose a random day of the week
+            day_of_week = random.choice(days_of_week)
+            # Choose a random promotion type
+            promotion_type = random.choice(promotion_types)
 
-        # Define the promotion schedule
-        if promotion_type == 'Happy Hour' or  promotion_type == '20% off' or promotion_type == '30% off':
-            start_time = find_random_time(schedule_time[0], start=True)
-            end_time =  find_random_time(schedule_time[0], start=False)        
-        else:
-            if len(schedule_time) > 1:
-                start_time = find_random_time(schedule_time[1], start=True)
-                end_time =  find_random_time(schedule_time[1], start=False)
-            else:
+            schedule_time = schedule[day_of_week].split(',')
+
+
+
+            # Define the promotion schedule
+            if promotion_type == 'Happy Hour' or  promotion_type == '20% off' or promotion_type == '30% off':
                 start_time = find_random_time(schedule_time[0], start=True)
-                end_time =  find_random_time(schedule_time[0], start=False)
+                end_time =  find_random_time(schedule_time[0], start=False)        
+            else:
+                if len(schedule_time) > 1:
+                    start_time = find_random_time(schedule_time[1], start=True)
+                    end_time =  find_random_time(schedule_time[1], start=False)
+                else:
+                    start_time = find_random_time(schedule_time[0], start=True)
+                    end_time =  find_random_time(schedule_time[0], start=False)
 
-        #Store all promotion info in a dictionary
-        promo_info = {
-                'promotion_type': promotion_type,
-                'day_of_week': day_of_week,
-                'start_time': start_time,
-                'end_time': end_time,}
+            #Store all promotion info in a dictionary
+            promo_info = {
+                    'promotion_type': promotion_type,
+                    'day_of_week': day_of_week,
+                    'start_time': start_time,
+                    'end_time': end_time,}
 
-        return promo_info    
+            return promo_info    
+        except ValueError as v:
+            return 'No Offers'
     else:
         return 'No Offers'
     
