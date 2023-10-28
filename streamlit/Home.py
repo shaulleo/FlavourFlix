@@ -3,7 +3,7 @@ import pandas as pd
 
 data = pd.read_csv('/Users/madalena.frango/Desktop/capstone/FlavourFlix/data/all_thefork_scrapes.csv')
 #Tentar assim
-#data = pd.read_csv('FlavourFlix/data/preprocessed_restaurant_data.csv')
+#data = pd.read_csv('FlavourFlix/data/preprocessed_data.csv')
 
 
 st.set_page_config(page_title="FlavourFlix", page_icon=":movie_camera:",  layout='wide')
