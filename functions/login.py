@@ -11,17 +11,17 @@ class UserLogin:
         self.logged_on = False
         self.entry_code = None
 
-    def login(self):
-        #self.entry_code = self.generate_code()
-        #self.send_code(self.entry_code)
-        #user_code = self.request_code()
-        while user_code != self.entry_code:
-            print('Ups! It seems that your code is incorrect. Please try again.')
-            user_code = self.request_code()
-        self.logged_on = True
+    # def login(self):
+    #     #self.entry_code = self.generate_code()
+    #     #self.send_code(self.entry_code)
+    #     #user_code = self.request_code()
+    #     while user_code != self.entry_code:
+    #         print('Ups! It seems that your code is incorrect. Please try again.')
+    #         user_code = self.request_code()
+    #     self.logged_on = True
 
     def is_registered(self, userdatabase):
-        if (self.email in userdatabase['email'].values) or (self.username in userdatabase['username'].values):
+        if ((self.email in userdatabase['email'].values) or (self.username in userdatabase['username'].values)):
             return True
         else:
             return False
