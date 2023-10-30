@@ -1,6 +1,6 @@
 import streamlit as st
-
 import pandas as pd
+from functions.streamlitfunc import *
 
 # email - temos que arranjar forma de se o utilizador já tiver feito login o email aparecer automaticamente
 # e arranjar forma de caso o mail já exista e a pessoa fizer novamente fazer replace dos inputs
@@ -26,34 +26,6 @@ normal_price_range = st.slider("Normal Price Range", min_value=0, max_value=100,
 smoker = st.checkbox("Are you a smoker?")
 
 
-
-
-from streamlit.components.v1 import html
-
-def nav_page(page_name, timeout_secs=3):
-    nav_script = """
-        <script type="text/javascript">
-            function attempt_nav_page(page_name, start_time, timeout_secs) {
-                var links = window.parent.document.getElementsByTagName("a");
-                for (var i = 0; i < links.length; i++) {
-                    if (links[i].href.toLowerCase().endsWith("/" + page_name.toLowerCase())) {
-                        links[i].click();
-                        return;
-                    }
-                }
-                var elasped = new Date() - start_time;
-                if (elasped < timeout_secs * 1000) {
-                    setTimeout(attempt_nav_page, 100, page_name, start_time, timeout_secs);
-                } else {
-                    alert("Unable to navigate to page '" + page_name + "' after " + timeout_secs + " second(s).");
-                }
-            }
-            window.addEventListener("load", function() {
-                attempt_nav_page("%s", new Date(), %d);
-            });
-        </script>
-    """ % (page_name, timeout_secs)
-    html(nav_script)
 
 st.button(label="Discover Your Personality :)", on_click=lambda: nav_page("Personality"))
 
