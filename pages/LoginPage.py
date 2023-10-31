@@ -26,15 +26,12 @@ if 'stage' not in st.session_state:
     st.session_state.stage = 0
 
 
-
-
-
 st.title("Login to your account!")
 user_input = st.text_input("Enter your username or email address", key='user_email_or_name')
 st.button("Login", key='login_button', on_click=set_stage, args=(1,))
 
 
-if st.session_state.stage > 0:
+if st.session_state.stage == 1:
     user_login = UserLogin()
 
     if '@' in user_input:
@@ -57,22 +54,25 @@ if st.session_state.stage > 0:
         st.error('Login failed! That email or username was not found. Please try again or create an account!.')
 
 
-    if st.session_state.stage > 1:
+    if st.session_state.stage == 2:
         with st.spinner('Logging you in...'):
             time.sleep(3)
-        if user_code == user_login.entry_code:
-            #set_stage(3)
-            # if st.session_state.stage == 3:
-            st.write("Code is correct.")
-            user_login.logged_on = True
-            st.success('Done!')
-            nav_page("Profile")  
-        else:
-            # set_stage(4)
-            # if st.session_state.stage == 4:
-            st.error("Code is incorrect. Please try again.")
-            user_code = None
-            set_stage(1, 'input_code')
+            set_stage(7)
+        if st.session_state.stage == 7:
+            if user_code == user_login.entry_code:
+                #set_stage(3)
+                # if st.session_state.stage == 3:
+                st.write("Code is correct.")
+                user_login.logged_on = True
+                st.success('Done!')
+                
+                nav_page("Profile")
+            else:
+                # set_stage(4)
+                # if st.session_state.stage == 4:
+                st.error("Code is incorrect. Please try again.")
+                user_code = None
+                set_stage(1, 'input_code')
 
 if st.button('Sign up now!', key='signup_button'):
     nav_page("CreateAnAccount")
