@@ -31,9 +31,11 @@ user_input = st.text_input("Enter your username or email address", key='user_ema
 st.button("Login", key='login_button', on_click=set_stage, args=(1,))
 
 
-if st.session_state.stage == 1:
-    user_login = UserLogin()
+user_login = UserLogin()
+user_login.generate_code()
 
+if st.session_state.stage > 0:
+    st.write(user_login.entry_code)
     if '@' in user_input:
         user_login.email = user_input
     else:
@@ -41,20 +43,22 @@ if st.session_state.stage == 1:
     
     # Read the latest user data from the CSV file
     userdata = pd.read_csv('data/flavourflixusers.csv', sep=';')
+    st.write(f'username in stage before verifying registration: {user_login.username}')
 
     if user_login.is_registered(userdata):
-        user_login.generate_code()
+        st.write(f'username in stage after verifying registration: {user_login.username}')
+        st.write(f'email in stage after verifying registration: {user_login.email}')
+        st.write(f'entrycode in stage after verifying registration: {user_login.entry_code}')
         user_login.send_code(user_login.entry_code)
 
         user_code = st.text_input("Enter your code:", key='input_code')
-        st.write(user_login.entry_code)
 
         st.button('Submit Code', key='submit_entry_code', on_click=set_stage, args=(2,))
     else:
         st.error('Login failed! That email or username was not found. Please try again or create an account!.')
 
 
-    if st.session_state.stage == 2:
+    if st.session_state.stage > 1:
         with st.spinner('Logging you in...'):
             time.sleep(3)
             set_stage(7)
