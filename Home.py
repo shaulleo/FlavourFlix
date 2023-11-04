@@ -1,4 +1,3 @@
-
 import streamlit as st
 import extra_streamlit_components as stx
 
@@ -21,3 +20,4 @@ st.image(header_image, width=400)
 
 detail_placeholder = st.empty()
 
+    

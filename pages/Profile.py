@@ -4,6 +4,7 @@ from functions.streamlitfunc import *
 
 # email - temos que arranjar forma de se o utilizador já tiver feito login o email aparecer automaticamente
 # e arranjar forma de caso o mail já exista e a pessoa fizer novamente fazer replace dos inputs
+email = st.text_input("Email")
 first_name = st.text_input("First Name")
 last_name = st.text_input("Last Name")
 gender = st.selectbox("Gender", ["Male", "Female", "Other"])
@@ -28,4 +29,3 @@ smoker = st.checkbox("Are you a smoker?")
 
 
 st.button(label="Discover Your Personality :)", on_click=lambda: nav_page("Personality"))
-
