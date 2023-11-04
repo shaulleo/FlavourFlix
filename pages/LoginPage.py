@@ -2,13 +2,15 @@ import streamlit as st
 import time
 import pandas as pd
 from functions.streamlitfunc import *
+from streamlit_extras.stateful_button import button 
+
 
 from functions.login import *
 
 
 @st.cache_data
-def read_user_data():
-    return pd.read_csv('data/flavourflixusers.csv', sep=';')
+def read_user_data(path='data/flavourflixusers.csv', sep=';'):
+    return pd.read_csv(path, sep=sep)
 
 # def set_stage(stage):
 #     st.session_state.stage = stage
