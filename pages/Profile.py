@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from functions.streamlitfunc import *
 
+
 # email - temos que arranjar forma de se o utilizador já tiver feito login o email aparecer automaticamente
 # e arranjar forma de caso o mail já exista e a pessoa fizer novamente fazer replace dos inputs
 email = st.text_input("Email")
