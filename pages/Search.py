@@ -8,7 +8,7 @@ from streamlit_extras.stylable_container import stylable_container
 
 st.set_page_config(page_title='Search', page_icon=None, layout= "wide" , initial_sidebar_state="collapsed")
 
-data = pd.read_csv('/Users/madalena.frango/Desktop/capstone/FlavourFlix/data/preprocessed_data.csv')
+data = pd.read_csv('data/preprocessed_data.csv')
 
 st.header("Let us help you find the perfect restaurant for you!")
 

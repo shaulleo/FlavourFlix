@@ -4,9 +4,11 @@
 
 import streamlit as st
 import streamlit_authenticator as stauth
-from dependencies import sign_up, fetch_users
-from functions import streamlitfunc
+from functions.loginandsignup_func import sign_up, fetch_users
+from functions.streamlitfunc  import *
 import time
+
+#FALTA ACRESCENTAR BOTÃO LOGOUT
 
 
 st.set_page_config(page_title='FlavourFlix', page_icon=':movie_camera:', layout='wide', initial_sidebar_state='collapsed')
@@ -14,7 +16,7 @@ header_image = "logo.jpeg"
 st.image(header_image, width=400)
 
 
-sign_up_button = st.button('Sign up now!', key='signup_button', on_click=lambda: streamlitfunc.nav_page('SignUp'))
+sign_up_button = st.button('Sign up now!', key='signup_button', on_click=lambda: nav_page('SignUp'))
 
 users = fetch_users()
 emails = []
@@ -36,6 +38,8 @@ Authenticator = stauth.Authenticate(credentials, cookie_name='flavourflix_auth',
 
 email, authentication_status, username = Authenticator.login(':black[Login]', 'main')
 
+st.session_state['username'] = username
+st.session_state['email'] = email
 
 info, info1 = st.columns(2)
 
@@ -48,7 +52,7 @@ if username:
                 # let User see app
             st.sidebar.subheader(f'Welcome {username}!')
             Authenticator.logout('Log Out', 'sidebar')
-            streamlitfunc.nav_page('Profile')
+            nav_page('Profile2')
 
         elif not authentication_status:
             with info:
@@ -60,7 +64,7 @@ if username:
         with info:
             st.warning('Username does not exist, please sign up')
             if not authentication_status:
-                 sign_up()
+                 nav_page('SignUp')
 
 
 

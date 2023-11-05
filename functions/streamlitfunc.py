@@ -26,3 +26,8 @@ def nav_page(page_name, timeout_secs=3):
         </script>
     """ % (page_name, timeout_secs)
     html(nav_script)
+
+@st.cache_data
+def read_data(path='data/preprocessed_data.csv', sep=';'):
+    data = pd.read_csv(path, sep=sep)
+    return data

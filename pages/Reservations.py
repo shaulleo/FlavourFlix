@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from functions.streamlitfunc import *
 
-data = pd.read_csv('/Users/madalena.frango/Desktop/capstone/FlavourFlix/data/all_thefork_scrapes.csv')
+data = pd.read_csv('data/all_thefork_scrapes.csv')
 
 def reservations_page():
     st.title("Reservations Page")
