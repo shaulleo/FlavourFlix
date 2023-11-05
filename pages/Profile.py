@@ -3,6 +3,7 @@ import pandas as pd
 from functions.streamlitfunc import *
 
 
+
 user_data_df = pd.DataFrame(columns=[
     "Email", "First Name", "Last Name", "Gender", "Date of Birth", "Nationality",
     "City", "Has Travel Car", "Drinks Alcohol", "Dietary Restrictions",
@@ -19,7 +20,6 @@ user_data_df.to_csv("user_data.csv")
 def client_data():
     
    
-    
     first_name = st.text_input("First Name")
     last_name = st.text_input("Last Name")
     email = st.text_input("Email")

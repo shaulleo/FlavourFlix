@@ -3,6 +3,7 @@ import streamlit_authenticator as stauth
 import datetime
 import re
 from deta import Deta
+from functions.streamlitfunc import *
 
 DETA_KEY = 'a0pzxxqa8ye_JnxbPqmjR8rfF5hUGWXZrFy99VJqEkkP'
 
@@ -105,10 +106,10 @@ def sign_up():
                                         hashed_password = stauth.Hasher([password2]).generate()
                                         insert_user(email, username, hashed_password[0])
 
-                                        #Without hashing just to debug
-                                        # insert_user(email, username, password2)
-                                        # st.success(f'Your account was created successfully!')
                                         st.balloons()
+                                        nav_page('Login')
+
+
                                     else:
                                         st.warning('Passwords do not match')
                                 else:
@@ -129,9 +130,3 @@ def sign_up():
 
         with btn1:
             st.form_submit_button('Create your Account!')
-
-#sign_up()
-
-# password2 = 'testes22'
-# hashed_password = stauth.Hasher([password2]).generate()
-# insert_user('testes22@gmail.com', 'testes22', hashed_password[0])

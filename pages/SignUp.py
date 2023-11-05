@@ -4,11 +4,10 @@
 
 import streamlit as st
 import streamlit_authenticator as stauth
-from dependencies import sign_up, fetch_users
+from functions.loginandsignup_func import sign_up, fetch_users
 from functions import streamlitfunc
 import time
 
 sign_up()
 
-#FAZER CÓDIGO PARA QUANDO A PESSOA FAZ SING UP COM SUCESSO IR IMEDIATAMENTE PARA O LOGIN PAGE
 
