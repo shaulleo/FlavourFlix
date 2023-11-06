@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import os
 from streamlit.components.v1 import html
 
 def nav_page(page_name, timeout_secs=3):
@@ -26,6 +27,34 @@ def nav_page(page_name, timeout_secs=3):
         </script>
     """ % (page_name, timeout_secs)
     html(nav_script)
+
+
+def nav_page_from_home(page_name, timeout_secs=3):
+    relative_url = f"pages/{page_name}".lower()  # Construct the relative URL
+
+    nav_script = f"""
+        <script type="text/javascript">
+            function attempt_nav_page(page_name, start_time, timeout_secs) {{
+                var links = window.parent.document.getElementsByTagName("a");
+                for (var i = 0; i < links.length; i++) {{
+                    var href = links[i].href.toLowerCase();
+                    if (href.endsWith(page_name)) {{
+                        links[i].click();
+                        return;
+                    }}
+                }}
+                var elapsed = new Date() - start_time;
+                if (elapsed < timeout_secs * 1000) {{
+                    setTimeout(attempt_nav_page, 100, page_name, start_time, timeout_secs);
+                }} else {{
+                    alert("Unable to navigate to page '" + page_name + "' after " + timeout_secs + " second(s).");
+                }}
+            }}
+            attempt_nav_page("{relative_url}", new Date(), {timeout_secs});
+        </script>
+    """ % (page_name, timeout_secs)
+    html(nav_script)
+
 
 @st.cache_data
 def read_data(path='data/preprocessed_data.csv', sep=';'):

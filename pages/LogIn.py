@@ -8,10 +8,9 @@ from functions.loginandsignup_func import sign_up, fetch_users
 from functions.streamlitfunc  import *
 import time
 
-#FALTA ACRESCENTAR BOTÃO LOGOUT
 
 
-st.set_page_config(page_title='FlavourFlix', page_icon=':movie_camera:', layout='wide', initial_sidebar_state='collapsed')
+#st.set_page_config(page_title='FlavourFlix', page_icon=':movie_camera:', layout='wide', initial_sidebar_state='collapsed')
 header_image = "logo.jpeg"  
 st.image(header_image, width=400)
 
@@ -40,6 +39,7 @@ email, authentication_status, username = Authenticator.login(':black[Login]', 'm
 
 st.session_state['username'] = username
 st.session_state['email'] = email
+st.session_state['authentication_status'] = authentication_status
 
 info, info1 = st.columns(2)
 
