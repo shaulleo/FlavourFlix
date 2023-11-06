@@ -6,6 +6,8 @@ from streamlit_extras.switch_page_button import switch_page
 from functions.streamlitfunc import nav_page
 from streamlit_extras.stylable_container import stylable_container
 
+from streamlit_extras.switch_page_button import switch_page 
+
 st.set_page_config(page_title='Search', page_icon=None, layout= "wide" , initial_sidebar_state="collapsed")
 
 data = pd.read_csv('data/preprocessed_data.csv')
@@ -76,7 +78,7 @@ for index, row in filtered_df.iterrows():
     # col1, col2 = st.columns([1, 3], gap = 'tiny')
     if st.button(f"View Details for {row['name']}"):
         st.session_state.selected_restaurant = row['name']
-        nav_page("Restaurant")
+        switch_page("restaurant")
 
         
 #         # If the user selects a restaurant from the list, set a flag in session state

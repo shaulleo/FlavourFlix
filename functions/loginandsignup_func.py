@@ -4,6 +4,7 @@ import datetime
 import re
 from deta import Deta
 from functions.streamlitfunc import *
+from streamlit_extras.switch_page_button import switch_page 
 
 DETA_KEY = 'a0pzxxqa8ye_JnxbPqmjR8rfF5hUGWXZrFy99VJqEkkP'
 
@@ -107,7 +108,7 @@ def sign_up():
                                         insert_user(email, username, hashed_password[0])
 
                                         st.balloons()
-                                        nav_page('Login')
+                                        switch_page('login')
 
 
                                     else:
@@ -130,3 +131,11 @@ def sign_up():
 
         with btn1:
             st.form_submit_button('Create your Account!')
+
+    st.markdown(
+                    """
+                    ---
+                    Login Page and Sign Up Page created with ❤️ by SnakeByte.
+                    
+                    """
+                )
