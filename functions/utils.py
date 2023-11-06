@@ -102,3 +102,5 @@ def check_if_open(restaurant_schedule, date=None, time=None):
                  return 'Open'
     return 'Closed'
 
+
+

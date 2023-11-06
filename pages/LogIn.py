@@ -7,15 +7,17 @@ import streamlit_authenticator as stauth
 from functions.loginandsignup_func import sign_up, fetch_users
 from functions.streamlitfunc  import *
 import time
+from streamlit_extras.switch_page_button import switch_page 
 
-
+client_data = pd.read_csv('data/clientDataClean.csv', sep=',')
 
 #st.set_page_config(page_title='FlavourFlix', page_icon=':movie_camera:', layout='wide', initial_sidebar_state='collapsed')
 header_image = "logo.jpeg"  
 st.image(header_image, width=400)
 
 
-sign_up_button = st.button('Sign up now!', key='signup_button', on_click=lambda: nav_page('SignUp'))
+if st.button('Sign up now!', key='signup_button'):
+    switch_page('sign up')
 
 users = fetch_users()
 emails = []
@@ -44,6 +46,7 @@ st.session_state['authentication_status'] = authentication_status
 info, info1 = st.columns(2)
 
 
+#Sinceramente não sei até que ponto faz sentido o utilizador ir logo para a página do Perfil, fazia mais sentido ir parar ao Home sempre!
 if username:
     if username in usernames:
         if authentication_status:
@@ -52,7 +55,19 @@ if username:
                 # let User see app
             st.sidebar.subheader(f'Welcome {username}!')
             Authenticator.logout('Log Out', 'sidebar')
-            nav_page('Profile2')
+
+            #Se o utilizador já tiver dados preenchidos, ir para a home
+            if (username in client_data['username'].values) and (email in client_data['email'].values):
+                user_data_row = client_data.loc[client_data['username'] == username]
+                #if user_data_row.isnull().values.any() == False:
+                switch_page('home')
+            #Caso contrário, ir para a página de preenchimento de dados
+                # else:
+                #     switch_page('profile2')
+            else:
+                switch_page('profile2')
+            
+            
 
         elif not authentication_status:
             with info:
@@ -64,7 +79,7 @@ if username:
         with info:
             st.warning('Username does not exist, please sign up')
             if not authentication_status:
-                 nav_page('SignUp')
+                 switch_page('sign up')
 
 
 
