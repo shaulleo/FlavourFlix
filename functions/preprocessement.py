@@ -328,10 +328,14 @@ def generate_current_occupation(observation):
         max_party_size = 50
 
     is_open = check_if_open(observation['schedule'])
+
     if is_open == 'Closed':
+        current_capacity = 0
+    elif is_open == 'Not Available':
         current_capacity = 0
     else:
         party_size_distribution = np.random.normal(int(max_party_size/2), 
                                                    int(max_party_size/4), 100000)
         current_capacity = int(np.random.choice(party_size_distribution, 1))
+    
     return current_capacity
