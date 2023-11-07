@@ -22,19 +22,13 @@ detail_placeholder = st.empty()
 
 
 if 'authentication_status' not in st.session_state or st.session_state['authentication_status'] ==False:
-    if 'username' in st.session_state and 'email' in st.session_state:
+    if 'username' not in st.session_state and 'email' not in st.session_state:
 
         show_pages(
         [
             Page("Home.py", "Home", "🏠"),
             Page("pages/LogIn.py", "Log In", ":books:"),
             Page("pages/SignUp.py", "Sign Up", ":books:"),
-            # Page("pages/Filomena.py", "Chat with Filomena", ":books:"),
-            # Page("pages/Profile.py", "Profile", ":books:"),
-            # Page("pages/Profile2.py", "Profile2", ":books:"),
-            # Page("pages/Search.py", "Search", ":books:"),
-            # Page("pages/Reservations.py", "Reservations", ":books:"),
-            # Page("pages/Restaurant.py", "Restaurant", ":books:"),
         ])
 
         st.write("")
@@ -49,17 +43,17 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
             st.write("Not a member yet?")
             if st.button('Sign Up Now!', key='signup_button'):
                 switch_page('sign up')
-            # st.button("Sign Up Now!", key='signup_button', on_click= lambda: nav_page_from_home('sign up'))
         with col2:
             st.write("Already have an account?")
             if st.button('Log In', key='login_button'):
-                switch_page('login')
+                switch_page('log in')
+    
     else:
         st.error('Ups! Something went wrong. Please try login again.', icon='🚨')
         st.session_state['authentication_status'] = False
         with st.spinner('Redirecting you to the Login page...'):
             time.sleep(3)
-        switch_page('login')
+        switch_page('log in')
 
 
 else:
@@ -83,6 +77,8 @@ else:
     st.header(f"Welcome to FlavourFlix, {st.session_state['username']}!")
     st.write("FlavourFlix is a platform that recommends restaurants based on your preferences.")
     st.write("Feel free to search some restaurants or ask Filomena for suggestions!")
+    st.write("")
+
 
     col1, col2, col3 = st.columns(3)
     with col1:

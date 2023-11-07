@@ -74,6 +74,7 @@ restaurant_details = {}
 #     } 
 
 # # Handle click events on the table rows
+
 for index, row in filtered_df.iterrows():
     # col1, col2 = st.columns([1, 3], gap = 'tiny')
     if st.button(f"View Details for {row['name']}"):
