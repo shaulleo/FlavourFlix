@@ -1000,5 +1000,5 @@ Unnamed: 0,first_name,last_name,email,gender,username,date_of_birth,nationality,
 998.0,Françoise,Laudham,blaudhamrq@squarespace.com,Female,hlaudhamrq,1962-01-18 00:03:00,Portuguese,Porto,False,True,vegetarian,castanhas,bacalhau à zé do pipo,filetes de pescada,comfort,MBWay,view,international,13:00 - 14:00,19:00 - 20:00,26.0,False
 999.0,Andréa,Sinyard,csinyardrr@disqus.com,Male,fsinyardrr,1986-01-09 00:01:00,Portuguese,Lisbon,True,True,none,none,bacalhau a bras,lasanha,foodie,Cash,fine dining,pizzeria,12 :00 - 13:00,19:00 - 20:00,13.0,False
 1000.0,Carolina,Shaul,carols@gmail.com,Female,shaulleo,03/02/2003,Portuguese,Lisbon,False,True,none,none,salmão,favas,adventurous,Credit Card,familiar,italian,13:00 - 14:00,21:00 - 22:00,15.0,True
-,Maria,João,carolshaul@gmail.com,Female,caramelo,1976-09-24,englsih,Faro,False,True,vegetarian,dairy,costeletas de borrego,favas,,Mastercard,romantic,meat cuisine,12:00 - 13:00,19:00 - 20:00,15.0,True
 ,Bruno,Moreira,brunao@gmail.com,Male,brunao,2003-11-14,portuguese,Lisboa,False,False,none,none,tosta mista,cogumelos,,Cash,after work,italian,12:00 - 13:00,19:00 - 21:00,20.0,False
+,Carol,Shaul,carolshaul@gmail.com,Male,caramelo,2023-11-07,abc,Lisboa,False,True,none,none,none,none,,MBWay,familiar,seafood,11:00 - 15:00,18:00 - 22:00,15.0,False

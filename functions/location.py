@@ -198,7 +198,7 @@ class Location:
 
         
 
-def nearYou(location, df, top):
+def nearYou(location, df, top=None):
     """Finds the top nearest restaurants to the user.
         Parameters:
         - location (Location): Location object of the user.
@@ -213,6 +213,9 @@ def nearYou(location, df, top):
     distances_df['haversine_distances'] = distances_df['haversine_distances'].apply(lambda x: x[1][0])
     distances_df.sort_values(by='haversine_distances', inplace=True)
     
-    return distances_df.head(top)
+    if top is None:
+        return distances_df
+    else:
+        return distances_df.head(top)
 
 

@@ -6,18 +6,15 @@ import streamlit as st
 import streamlit_authenticator as stauth
 from functions.loginandsignup_func import *
 from functions.streamlitfunc import *
-import time
 
 
-show_pages(
-        [
-            Page("Home.py", "Home", "🏠"),
-            Page("pages/LogIn.py", "Log In", ":books:"),
-            Page("pages/SignUp.py", "Sign Up", ":books:"),
-        ])
 
 def sign_up():
-    
+    """ 
+    Shows the Sign Up page of FlavourFlix.
+    """
+
+    pages_logged_off()
 
     with st.form(key='signup', clear_on_submit=True):
         st.subheader(':black[Sign up to FlavourFlix now!]')
@@ -26,12 +23,10 @@ def sign_up():
         password1 = st.text_input(':blue[Password]', placeholder='Enter Your Password', type='password')
         password2 = st.text_input(':blue[Confirm Password]', placeholder='Confirm Your Password', type='password')
 
-
         btn1, btn2 = st.columns(2)
 
         with btn1:
             st.form_submit_button('Create your Account!')
-
 
         if email:
             if validate_email(email):
@@ -48,7 +43,6 @@ def sign_up():
 
                                         st.balloons()
                                         switch_page('log in')
-
 
                                     else:
                                         st.warning('Passwords do not match')
@@ -76,6 +70,12 @@ def sign_up():
                 )
 
 
-sign_up()
+
+if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
+    pages_logged_in()
+    switch_page('home')
+else:
+    pages_logged_off()
+    sign_up()
 
 

@@ -301,6 +301,7 @@ def standardize_location(location):
         Returns:
         - location (str): Standardized location of the restaurant."""
 
+    
     #Tinha que ser...
     if location == 'Alamansil':
         location = 'Almancil'
