@@ -4,7 +4,8 @@
 
 import streamlit as st
 import streamlit_authenticator as stauth
-from functions.loginandsignup_func import sign_up, fetch_users
+from functions.loginandsignup_func import *
+from pages.SignUp import *
 from functions.streamlitfunc  import *
 import time
 from streamlit_extras.switch_page_button import switch_page 
@@ -15,6 +16,13 @@ client_data = pd.read_csv('data/clientDataClean.csv', sep=',')
 header_image = "logo.jpeg"  
 st.image(header_image, width=400)
 
+
+show_pages(
+        [
+            Page("Home.py", "Home", "🏠"),
+            Page("pages/LogIn.py", "Log In", ":books:"),
+            Page("pages/SignUp.py", "Sign Up", ":books:"),
+        ])
 
 if st.button('Sign up now!', key='signup_button'):
     switch_page('sign up')
@@ -55,17 +63,17 @@ if username:
                 # let User see app
             st.sidebar.subheader(f'Welcome {username}!')
             Authenticator.logout('Log Out', 'sidebar')
-
-            #Se o utilizador já tiver dados preenchidos, ir para a home
-            if (username in client_data['username'].values) and (email in client_data['email'].values):
-                user_data_row = client_data.loc[client_data['username'] == username]
-                #if user_data_row.isnull().values.any() == False:
-                switch_page('home')
-            #Caso contrário, ir para a página de preenchimento de dados
-                # else:
-                #     switch_page('profile2')
-            else:
-                switch_page('profile2')
+            switch_page('home')
+            # #Se o utilizador já tiver dados preenchidos, ir para a home
+            # if (username in client_data['username'].values) and (email in client_data['email'].values):
+            #     user_data_row = client_data.loc[client_data['username'] == username]
+            #     #if user_data_row.isnull().values.any() == False:
+            #     switch_page('home')
+            # #Caso contrário, ir para a página de preenchimento de dados
+            #     # else:
+            #     #     switch_page('profile2')
+            # else:
+            #     switch_page('home')
             
             
 
@@ -79,7 +87,7 @@ if username:
         with info:
             st.warning('Username does not exist, please sign up')
             if not authentication_status:
-                 switch_page('sign up')
+                 switch_page('signup')
 
 
 
