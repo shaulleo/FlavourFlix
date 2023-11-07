@@ -8,6 +8,7 @@ import requests
 from functions.utils import *
 from functions.env_colors import *
 from functions.location import *
+#from functions.utils import standardize_text
 
 # ------------------------------- Restaurant Data Preprocessing ------------------------------
 
@@ -120,7 +121,6 @@ def find_random_time(time_string, start=True):
         Returns: 
         - random_time_str (str): Random time within the provided time range."""
 
-    #Split in case of having multiple time slots
     start_time_str, end_time_str = time_string.split(" - ")
 
     #Define format for parsing time
@@ -130,8 +130,7 @@ def find_random_time(time_string, start=True):
     start_time = datetime.datetime.strptime(start_time_str.strip(), time_format)
     end_time = datetime.datetime.strptime(end_time_str.strip(), time_format)
 
-    # #Calculate the time difference in minutes
-    # time_diff_minutes = (end_time - start_time).total_seconds() / 60
+
 
     if start == True:
         #Ensure the random time is at least 1 hour earlier than closing hour
@@ -270,6 +269,31 @@ def preprocess_chefs(index, chef_list):
             return 'Not Applicable'
         
 
+# def standardize_text(user_input_text):
+#     """Standardizes a user input string for better matches.
+#         Parameters:
+#         - user_input_text (str): User input.
+#         Returns:
+#         - user_input_text (str): Standardized user input."""
+
+#     #Convert to lower the string location
+#     user_input_text = user_input_text.lower()
+
+#     #Remove accents from the string
+#     user_input_text = unicodedata.normalize('NFKD', user_input_text).encode('ASCII', 'ignore').decode('utf-8')
+
+#     #Remove ponctuation except numbers
+#     user_input_text = re.sub(r'[^\w\s]', ' ', user_input_text)
+
+#     #Remove single characters
+#     user_input_text = re.sub(r'\b\w\b', '', user_input_text)
+
+#     #remove multiple spaces
+#     user_input_text = re.sub(r'\s+', ' ', user_input_text)
+
+#     return user_input_text.strip()
+        
+
 def standardize_location(location):
     """Standardizes a location string.
         Parameters:
@@ -277,6 +301,7 @@ def standardize_location(location):
         Returns:
         - location (str): Standardized location of the restaurant."""
 
+    
     #Tinha que ser...
     if location == 'Alamansil':
         location = 'Almancil'
@@ -287,3 +312,31 @@ def standardize_location(location):
     location = re.sub(r'q\.ta', 'Quinta', location, flags=re.IGNORECASE)
 
     return standardize_text(location)
+
+
+def generate_current_occupation(observation):
+    """Generates a random number of people currently at the restaurant 
+    from a Normal Distribution.
+        Parameters:
+        - observation (dict): Restaurant information.
+        Returns:
+        - current_capacity (int): Number of people currently at the restaurant. """
+    
+
+    if np.isnan(observation['maxPartySize']) == False:
+        max_party_size = observation['maxPartySize']
+    else:
+        max_party_size = 50
+
+    is_open = check_if_open(observation['schedule'])
+
+    if is_open == 'Closed':
+        current_capacity = 0
+    elif is_open == 'Not Available':
+        current_capacity = 0
+    else:
+        party_size_distribution = np.random.normal(int(max_party_size/2), 
+                                                   int(max_party_size/4), 100000)
+        current_capacity = int(np.random.choice(party_size_distribution, 1))
+    
+    return current_capacity

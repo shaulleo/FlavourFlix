@@ -4,7 +4,6 @@ import datetime
 import re
 import unicodedata
 import ast
-from functions.preprocessement import *
 from functions.env_colors import *
 from functions.location import *
 
@@ -78,7 +77,10 @@ def check_if_open(restaurant_schedule, date=None, time=None):
 
 
     if type(restaurant_schedule) == str:
-        restaurant_schedule = ast.literal_eval(restaurant_schedule)
+        if restaurant_schedule == 'Not Available':
+            return 'Not Available'
+        else:
+            restaurant_schedule = ast.literal_eval(restaurant_schedule)
     elif type(restaurant_schedule) == dict:
         pass
     else: 
