@@ -8,6 +8,7 @@ import requests
 from functions.utils import *
 from functions.env_colors import *
 from functions.location import *
+#from functions.utils import standardize_text
 
 # ------------------------------- Restaurant Data Preprocessing ------------------------------
 
@@ -268,6 +269,31 @@ def preprocess_chefs(index, chef_list):
             return chef_list
         else:
             return 'Not Applicable'
+        
+
+# def standardize_text(user_input_text):
+#     """Standardizes a user input string for better matches.
+#         Parameters:
+#         - user_input_text (str): User input.
+#         Returns:
+#         - user_input_text (str): Standardized user input."""
+
+#     #Convert to lower the string location
+#     user_input_text = user_input_text.lower()
+
+#     #Remove accents from the string
+#     user_input_text = unicodedata.normalize('NFKD', user_input_text).encode('ASCII', 'ignore').decode('utf-8')
+
+#     #Remove ponctuation except numbers
+#     user_input_text = re.sub(r'[^\w\s]', ' ', user_input_text)
+
+#     #Remove single characters
+#     user_input_text = re.sub(r'\b\w\b', '', user_input_text)
+
+#     #remove multiple spaces
+#     user_input_text = re.sub(r'\s+', ' ', user_input_text)
+
+#     return user_input_text.strip()
         
 
 def standardize_location(location):
