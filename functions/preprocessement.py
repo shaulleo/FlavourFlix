@@ -121,7 +121,6 @@ def find_random_time(time_string, start=True):
         Returns: 
         - random_time_str (str): Random time within the provided time range."""
 
-    #Split in case of having multiple time slots
     start_time_str, end_time_str = time_string.split(" - ")
 
     #Define format for parsing time
@@ -131,8 +130,7 @@ def find_random_time(time_string, start=True):
     start_time = datetime.datetime.strptime(start_time_str.strip(), time_format)
     end_time = datetime.datetime.strptime(end_time_str.strip(), time_format)
 
-    # #Calculate the time difference in minutes
-    # time_diff_minutes = (end_time - start_time).total_seconds() / 60
+
 
     if start == True:
         #Ensure the random time is at least 1 hour earlier than closing hour
@@ -313,3 +311,27 @@ def standardize_location(location):
     location = re.sub(r'q\.ta', 'Quinta', location, flags=re.IGNORECASE)
 
     return standardize_text(location)
+
+
+def generate_current_occupation(observation):
+    """Generates a random number of people currently at the restaurant 
+    from a Normal Distribution.
+        Parameters:
+        - observation (dict): Restaurant information.
+        Returns:
+        - current_capacity (int): Number of people currently at the restaurant. """
+    
+
+    if np.isnan(observation['maxPartySize']) == False:
+        max_party_size = observation['maxPartySize']
+    else:
+        max_party_size = 50
+
+    is_open = check_if_open(observation['schedule'])
+    if is_open == 'Closed':
+        current_capacity = 0
+    else:
+        party_size_distribution = np.random.normal(int(max_party_size/2), 
+                                                   int(max_party_size/4), 100000)
+        current_capacity = int(np.random.choice(party_size_distribution, 1))
+    return current_capacity
