@@ -12,6 +12,7 @@ Chat Version 3
 
 """
 
+pages_logged_in()
 
 
 # [i]                                                                                            #
@@ -26,7 +27,7 @@ def initialize() -> None:
 
     if "chatbot" not in st.session_state:
         #st.session_state.chatbot = ChatBotStatic()
-        #model = GPTWrapper(local_settings.OPENAI_API_KEY
+        #model = GPTWrapper(local_settings.OPENAI_API_KEY)
         model = GPTWrapper('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')
         st.session_state.chatbot = ChatBot(model_manager = model)
 

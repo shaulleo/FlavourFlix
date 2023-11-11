@@ -110,12 +110,12 @@ def check_if_open(restaurant_schedule, date=None, time=None):
 
 
 
-class Settings(BaseSettings):
-    """ Loard Environment Variables """
-    OPENAI_API_KEY: str = Field(validation_alias = "OPENAI_API_KEY")
-    DATA_PATH: str = Field(validation_alias = "DATA_PATH")
+# class Settings(BaseSettings):
+#     """ Loard Environment Variables """
+#     OPENAI_API_KEY: str = Field(validation_alias = "OPENAI_API_KEY")
+#     DATA_PATH: str = Field(validation_alias = "DATA_PATH")
 
-local_settings = Settings() 
+# local_settings = Settings() 
 
 
 class GPTWrapper:
