@@ -6,6 +6,9 @@ import unicodedata
 import ast
 from functions.env_colors import *
 from functions.location import *
+import openai
+from pydantic_settings import BaseSettings
+from pydantic import Field
 
 
 
@@ -105,4 +108,29 @@ def check_if_open(restaurant_schedule, date=None, time=None):
     return 'Closed'
 
 
+
+
+# class Settings(BaseSettings):
+#     """ Loard Environment Variables """
+#     OPENAI_API_KEY: str = Field(validation_alias = "OPENAI_API_KEY")
+#     DATA_PATH: str = Field(validation_alias = "DATA_PATH")
+
+# local_settings = Settings() 
+
+
+class GPTWrapper:
+    def __init__(self, openai_api_key):
+        self.openai_api_key = openai_api_key
+
+        self.client = openai.OpenAI(api_key = self.openai_api_key)
+
+    def get_completion(self, prompt, model="gpt-3.5-turbo"):
+        messages = [{"role": "user", "content": prompt}]
+
+        completion = self.client.chat.completions.create(
+            model = model, 
+            messages= messages,
+            temperature=0)
+        
+        return completion.choices[0].message.content
 
