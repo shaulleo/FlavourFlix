@@ -17,8 +17,7 @@ st.image(header_image, width=400)
 
 def log_in():
 
-    client_data = pd.read_csv('data/clientDataClean.csv', sep=',')
-    
+    #client_data = pd.read_csv('data/clientDataClean.csv', sep=',')
 
     pages_logged_off()
 
@@ -90,5 +89,5 @@ if ('authentication_status' in st.session_state) and (st.session_state['authenti
     pages_logged_in()
     switch_page('home')
 else:
-    pages_logged_off()
+    #pages_logged_off()
     log_in()
