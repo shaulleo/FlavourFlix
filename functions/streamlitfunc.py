@@ -48,12 +48,13 @@ def pages_logged_in():
             Page("Home.py", "Home", "🏠"),
             Page("pages/Filomena.py", "Chat with Filomena", ":books:"),
             # Page("pages/Profile.py", "Profile", ":books:"),
-            Page("pages/Profile2.py", "Profile2", ":books:"),
+            Page("pages/Profile.py", "Profile", ":books:"),
             Page("pages/Search.py", "Search", ":books:"),
             Page("pages/Reservations.py", "Reservations", ":books:"),
             Page("pages/Personality.py", "Personality", ":books:"),
             Page("pages/Restaurant.py", "Restaurant", ":books:"),])
     
+
 
 #Show Pages available when logged out
 def pages_logged_off():

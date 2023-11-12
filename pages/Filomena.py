@@ -4,26 +4,18 @@ import time
 import streamlit as st
 from functions.chat_bot import  ChatBot
 
-"""
-Chat Version 3
-    ✅ Chat User and Assistant
-    ✅ History (all messages)
-    ✅ Animation when displaying the assistant message
-
-"""
 
 pages_logged_in()
 
 
-# [i]                                                                                            #
-# [i] Initialize FrontEnd App                                                                    #
-# [i]                                                                                            #
-
+                                                                                   #
 def initialize() -> None:
     """
     Initialize the app
     """
-    st.title("Simple chat (v3)")
+    st.title("Ask Filomena 🍲")
+    st.write("Ask me anything about Portuguese food and I'll do my best to answer you! 🇵🇹")
+    st.write("Note that the answers are not always 100% accurate, but I'm learning!")
 
     if "chatbot" not in st.session_state:
         #st.session_state.chatbot = ChatBotStatic()
@@ -32,25 +24,19 @@ def initialize() -> None:
         st.session_state.chatbot = ChatBot(model_manager = model)
 
 
-
-# [i]                                                                                            #
-# [i] Display History Message                                                                    #
-# [i]                                                                                            #
-
 def display_history_messages():
+    """
+    Display chat messages from history on app rerun.
+    """
     # Display chat messages from history on app rerun
     for message in st.session_state.chatbot.memory:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
 
-# [i]                                                                                            #
-# [i] Display User Message                                                                       #
-# [i]                                                                                            #
-
 def display_user_msg(message: str):
     """
-    Display user message in chat message container
+    Display user message in chat message container.
     """
     st.session_state.chatbot.memory.append(
         {"role": "user", "content": message}
@@ -60,15 +46,13 @@ def display_user_msg(message: str):
         st.markdown(message)
 
 
-# [i]                                                                                            #
-# [i] Display User Message                                                                       #
-# [i]                                                                                            #
+                                                                          #
 
 def display_assistant_msg(message: str):
     """
     Display assistant message
     """
-    with st.chat_message("assistant", avatar="🤖"):
+    with st.chat_message("assistant", avatar="👩🏽‍🍳"):
         message_placeholder = st.empty()
 
         # Simulate stream of response with milliseconds delay
@@ -87,10 +71,6 @@ def display_assistant_msg(message: str):
         )
 
 
-# [*]                                                                                            #
-# [*] MAIN                                                                                       #
-# [*]                                                                                            #
-
 if __name__ == "__main__":
     initialize()
 
@@ -107,5 +87,5 @@ if __name__ == "__main__":
         display_assistant_msg(message=assistant_response)
 
     # [i] Sidebar #
-    with st.sidebar:
-        st.write(st.session_state.chatbot.memory)
+    # with st.sidebar:
+    #     st.write(st.session_state.chatbot.memory)

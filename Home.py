@@ -1,23 +1,14 @@
 import streamlit as st
 import extra_streamlit_components as stx
-# from st_pages import Page, show_pages, hide_pages
 from functions.streamlitfunc import *
 import time
 from streamlit_extras.switch_page_button import switch_page 
-
-
-# import pandas as pd
-
-
-#data = pd.read_csv('data/preprocessed_data.csv')
 
 
 st.set_page_config(page_title="FlavourFlix", page_icon=":movie_camera:",  layout='wide', initial_sidebar_state="collapsed")
 
 header_image = "logo.jpeg"  
 st.image(header_image, width=400)
-
-detail_placeholder = st.empty()
 
 
 if 'authentication_status' not in st.session_state or st.session_state['authentication_status'] ==False:
@@ -77,7 +68,7 @@ else:
         with col3:
             st.write("")
             if st.button('View your Profile!', key='profile_button'):
-                switch_page('profile2')
+                switch_page('profile')
 
     #Se tiver autenticado com true mas não há credenciais, então indica que há algum tipo de erro e manda de volta para o login          
     else:
