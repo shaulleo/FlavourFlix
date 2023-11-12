@@ -28,7 +28,7 @@ def standardize_text(user_input_text):
     #Remove accents from the string
     user_input_text = unicodedata.normalize('NFKD', user_input_text).encode('ASCII', 'ignore').decode('utf-8')
 
-    #Remove ponctuation except numbers
+    #Remove punctuation except numbers
     user_input_text = re.sub(r'[^\w\s]', ' ', user_input_text)
 
     #Remove single characters
