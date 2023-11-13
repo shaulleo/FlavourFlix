@@ -2,7 +2,7 @@ import streamlit as st
 import extra_streamlit_components as stx
 from functions.streamlitfunc import *
 import time
-from streamlit_extras.switch_page_button import switch_page 
+from streamlit_extras.switch_page_button import switch_page
 
 
 st.set_page_config(page_title="FlavourFlix", page_icon=":movie_camera:",  layout='wide', initial_sidebar_state="collapsed")
