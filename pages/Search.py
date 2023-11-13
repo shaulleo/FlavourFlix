@@ -19,6 +19,23 @@ st.header("Let us help you find the perfect restaurant for you!")
 
 st.markdown('<br>', unsafe_allow_html=True)
 
+def select_to_view_details(data):
+        df_with_selections = data.copy()
+        df_with_selections.insert(0, "Details", False)
+
+        # Get dataframe row-selections from user with st.data_editor
+        edited_df = st.data_editor(
+            df_with_selections[[ 'Details', 'name', 'location','cuisine', 'averagePrice']],
+            hide_index=True,
+            column_config={"Details": st.column_config.CheckboxColumn(required=True)},
+            disabled=data.columns,
+            width=1000,
+            height=390
+        )
+
+        # Filter the dataframe using the temporary column, then drop the column
+        selected_rows = edited_df[edited_df.Details == True]
+        return selected_rows.drop('Details', axis=1)
 
 col1, col2 = st.columns([2, 5], gap = 'medium') 
 
@@ -62,9 +79,26 @@ with col1:
 
         filtered_df = filtered_df[filtered_df['averagePrice'].between(price_filter[0], price_filter[1])]
 
+        st.divider()
+
+        # Display the matching restaurants
+        
+        
+
 with col2:    
-    # Display the matching restaurants 
-    st.dataframe(filtered_df[['name', 'location', 'cuisine', 'averagePrice']], height=350, use_container_width=True, hide_index=True)
+    selection = select_to_view_details(filtered_df)
+    for index, row in selection.iterrows():
+    # Use the index as a unique key for each button
+            button_key = f"view_details_button_{index}"
+            
+            if st.button(f"View Details for {row['name']}", key=button_key):
+                st.session_state.selected_restaurant = row['name']
+                switch_page("restaurant")
+
+
+    
+
+    # st.dataframe(filtered_df[['name', 'location', 'cuisine', 'averagePrice']], height=350, use_container_width=True, hide_index=True)
     #st.map(filtered_df[['latitude', 'longitude']])
     center_lat = filtered_df['latitude'].median()
     center_long = filtered_df['longitude'].median()
@@ -76,8 +110,9 @@ with col2:
             popup=row['name'],  # Display the name in a popup
         ).add_to(m)
 
+
     # call to render Folium map in Streamlit
-    st_data = st_folium(m, width=725)
+    st_data = st_folium(m, width=725, height=400)
 
 
 restaurant_details = {}
@@ -96,11 +131,7 @@ restaurant_details = {}
 
 # # Handle click events on the table rows
 
-for index, row in filtered_df.iterrows():
-    # col1, col2 = st.columns([1, 3], gap = 'tiny')
-    if st.button(f"View Details for {row['name']}"):
-        st.session_state.selected_restaurant = row['name']
-        switch_page("restaurant")
+
 
         
 #         # If the user selects a restaurant from the list, set a flag in session state
@@ -108,3 +139,10 @@ for index, row in filtered_df.iterrows():
 #         st.session_state.selected_restaurant = row['name']
 #         st.write(f"You selected the restaurant: {row['name']}")
 #         nav_page("reservations")
+
+
+
+
+
+
+
