@@ -60,7 +60,7 @@ else:
         with col1:
             st.write("")
             if st.button('Chat with Filomena!', key='chat_button'):
-                switch_page('filomena')
+                switch_page('chat with filomena')
         with col2:
             st.write("")
             if st.button('Search for restaurants!', key='search_button'):

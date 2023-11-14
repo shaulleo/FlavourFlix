@@ -189,6 +189,7 @@ else:
     pages_logged_off()
     st.error('Ups! Something went wrong. Please try login again.', icon='🚨')
     st.session_state['authentication_status'] = False
+    st.write('You need to be logged in to access this feature.')
     with st.spinner('Redirecting you to the Login page...'):
         time.sleep(3)
     switch_page('log in')

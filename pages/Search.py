@@ -40,6 +40,8 @@ def select_to_view_details(data):
 col1, col2 = st.columns([2, 5], gap = 'medium') 
 
 # Filter options for location, cuisine type, and average price 
+
+#acho q nao pode ser location mas sim "city", se não fica muito esparso; inclusive tem q ser a localização standardizada para evitar questões tipo "Lisbon- Lisboa"
 locations = ["All Locations"] + data['location'].unique().tolist() + ['Current Location']
 cuisine_types = ["All Cuisine Types"] + data['cuisine'].unique().tolist()
 min_price = int(data['averagePrice'].min())
@@ -66,10 +68,10 @@ with col1:
 
         if location_filter != "All Locations":
             filtered_df = filtered_df[filtered_df['location'] == location_filter]
-        elif location_filter == 'Current Location':
-            user_location = Location()
-            user_location.getLocation()
-            filtered_df = nearYou(user_location, filtered_df)
+            if location_filter == 'Current Location':
+                user_location = Location()
+                user_location.getLocation()
+                filtered_df = nearYou(user_location, filtered_df)
         if cuisine_filter != "All Cuisine Types":
             filtered_df = filtered_df[filtered_df['cuisine'] == cuisine_filter]
         if chef_filter != "All Chefs":

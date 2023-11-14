@@ -21,8 +21,6 @@ def log_in():
 
     pages_logged_off()
 
-    if st.button('Sign up now!', key='signup_button'):
-        switch_page('sign up')
 
     users = fetch_users()
     emails = []
@@ -72,7 +70,7 @@ def log_in():
             with info:
                 st.warning('Username does not exist, please sign up')
                 if not authentication_status:
-                    switch_page('signup')
+                    switch_page('sign up')
 
 
 
@@ -85,9 +83,29 @@ def log_in():
                     )
     
 
+
+
 if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
     pages_logged_in()
     switch_page('home')
 else:
-    #pages_logged_off()
-    log_in()
+    col1, col2,  = st.columns(2)
+    pages_logged_off()
+    with col2:
+        log_in()
+    with col1:
+        st.write('\n\n')
+        st.title('Welcome to FlavourFlix! :wave:')
+        col11, col12 = st.columns(2)
+        with col11:
+            st.subheader("Don't have an account yet?")
+            st.write('Sign up now to access the full features!')
+            if st.button('Sign up now!', key='signup_button'):
+                switch_page('sign up')
+        with col12:
+            st.subheader("Hungry?")
+            st.write('Start searching now!')
+            if st.button('Search', key='search'):
+                switch_page('search')
+
+
