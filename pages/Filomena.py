@@ -3,6 +3,7 @@ from functions.utils import *
 import time
 import streamlit as st
 from functions.chat_bot import  ChatBot
+from streamlit_extras.switch_page_button import switch_page 
 
 
 pages_logged_in()
@@ -14,7 +15,7 @@ def initialize() -> None:
     Initialize the app
     """
     st.title("Ask Filomena 🍲")
-    st.write("Ask me anything about Portuguese food and I'll do my best to answer you! 🇵🇹")
+    st.write("Ask me anything about portuguese food and restaurants and I'll do my best to answer you! 🇵🇹")
     st.write("Note that the answers are not always 100% accurate, but I'm learning!")
 
     if "chatbot" not in st.session_state:
@@ -72,20 +73,33 @@ def display_assistant_msg(message: str):
 
 
 if __name__ == "__main__":
-    initialize()
 
-    # [i] Display History #
-    display_history_messages()
+    if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
+        pages_logged_in()
+        header_image = "logo.jpeg"  
+        st.image(header_image, width=400)
+        initialize()
 
-    if prompt := st.chat_input("Type your request..."):
+        # [i] Display History #
+        display_history_messages()
 
-        # [*] Request & Response #
-        display_user_msg(message=prompt)
-        assistant_response = st.session_state.chatbot.generate_response(
-            message=prompt
-        )
-        display_assistant_msg(message=assistant_response)
+        if prompt := st.chat_input("Type your request..."):
 
+            # [*] Request & Response #
+            display_user_msg(message=prompt)
+            assistant_response = st.session_state.chatbot.generate_response(
+                message=prompt
+            )
+            display_assistant_msg(message=assistant_response)
+
+    else:
+        pages_logged_off()
+        st.error('Ups! Something went wrong. Please try login again.', icon='🚨')
+        st.session_state['authentication_status'] = False
+        st.write('You need to be logged in to access this feature.')
+        with st.spinner('Redirecting you to the Login page...'):
+            time.sleep(3)
+        switch_page('log in')
     # [i] Sidebar #
     # with st.sidebar:
     #     st.write(st.session_state.chatbot.memory)
