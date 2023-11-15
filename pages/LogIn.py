@@ -94,7 +94,9 @@ else:
     with col2:
         log_in()
     with col1:
-        st.write('\n\n')
+        st.write('')
+        st.write('')
+        st.write('')
         st.title('Welcome to FlavourFlix! :wave:')
         col11, col12 = st.columns(2)
         with col11:

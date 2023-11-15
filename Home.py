@@ -3,37 +3,121 @@ import extra_streamlit_components as stx
 from functions.streamlitfunc import *
 import time
 from streamlit_extras.switch_page_button import switch_page
+from streamlit_extras.stylable_container import stylable_container
 
+
+data = pd.read_csv('data/preprocessed_data.csv')
 
 st.set_page_config(page_title="FlavourFlix", page_icon=":movie_camera:",  layout='wide', initial_sidebar_state="collapsed")
 
 header_image = "logo.jpeg"  
-st.image(header_image, width=400)
+st.image(header_image, width=200)
+
+
+
+def show_kpis():
+    cola, colb, colc, cold = st.columns(4)
+    with cola:
+        with stylable_container(
+                key="container_with_border",
+                css_styles="""
+                    {
+                        border: 1px solid rgba(49, 51, 63, 0.2);
+                        border-radius: 0.5rem;
+                        padding: calc(1em - 1px);
+                        text-align: justify;
+                    }
+                    """,
+            ):
+                    st.metric(label = 'Distinct Restaurants', value = f'🍽️ {len(data.index)}')
+    with colb:
+        with stylable_container(
+                key="container_with_border",
+                css_styles="""
+                    {
+                        border: 1px solid rgba(49, 51, 63, 0.2);
+                        border-radius: 0.5rem;
+                        padding: calc(1em - 1px);
+                        text-align: justify;
+                    }
+                    """,
+            ):
+                    #Depois colocar aqui o número de users
+                    st.metric(label = 'Active Users', value = f'👥 1500+')
+    with colc:
+        with stylable_container(
+                key="container_with_border",
+                css_styles="""
+                    {
+                        border: 1px solid rgba(49, 51, 63, 0.2);
+                        border-radius: 0.5rem;
+                        padding: calc(1em - 1px);
+                        text-align: justify;
+                    }
+                    """,
+            ):
+                    st.metric(label = 'Satisfaction Rate', value = f'⭐ 9.7/10')
+    with cold:
+        with stylable_container(
+                key="container_with_border",
+                css_styles="""
+                    {
+                        border: 1px solid rgba(49, 51, 63, 0.2);
+                        border-radius: 0.5rem;
+                        padding: calc(1em - 1px);
+                        text-align: justify;
+                    }
+                    """,
+            ):
+                    st.metric(label = 'Cuisine Types', value = f'🍲 {len(data["cuisine"].unique())}')
+
 
 
 if 'authentication_status' not in st.session_state or st.session_state['authentication_status'] ==False:
+
+
     #Se o estado de autenticação não existir ou for falso e não haver memória de userlogin,
     # mostra a Home page com as opções de login e signup
     if 'username' not in st.session_state and 'email' not in st.session_state:
 
         pages_logged_off()
 
-        st.write("")
-        st.header("Welcome to FlavourFlix!")
-        st.write("FlavourFlix is a platform that recommends restaurants based on your preferences.")
-        st.write("To get started, please log in or sign up.")
-        st.write("")
 
         col1, col2, = st.columns(2)
 
-        with col1:
-            st.write("Not a member yet?")
-            if st.button('Sign Up Now!', key='signup_button'):
-                switch_page('sign up')
         with col2:
-            st.write("Already have an account?")
-            if st.button('Log In', key='login_button'):
-                switch_page('log in')
+            header_image = "pnas.1913308116fig01.jpeg"  
+            st.image(header_image)
+            show_kpis()
+
+        with col1:
+
+            st.write("")
+            st.write("")
+
+            st.header("Welcome to FlavourFlix!")
+            st.write("FlavourFlix is a platform that recommends restaurants based on your preferences.")
+            st.write("To get started, please log in or sign up.")
+            st.write("")
+
+            col3, col4 = st.columns(2)
+            with col3:
+                st.write("")
+                st.write("Not a member yet?")
+                if st.button('Sign Up Now!', key='signup_button'):
+                    switch_page('sign up')
+            with col4:
+                st.write("")
+                st.write('Already have an account?')
+                if st.button('Log In', key='login_button'):
+                    switch_page('log in')
+            
+            st.write('')
+            st.write("Super hungry? Start searching now!")
+            if st.button('Search now!', key='search_button'):
+                switch_page('search')
+
+
     #Se o estado de autenticação não existir ou for falso mas há memória de user login, então
     #indica que há algum tipo de erro e manda de volta para a página do login para o refazer.
     else:
