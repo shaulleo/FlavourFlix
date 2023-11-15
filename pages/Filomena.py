@@ -6,10 +6,7 @@ from functions.chat_bot import  ChatBot
 from streamlit_extras.switch_page_button import switch_page 
 
 
-pages_logged_in()
-
-
-                                                                                   #
+                                                                                
 def initialize() -> None:
     """
     Initialize the app
@@ -25,6 +22,7 @@ def initialize() -> None:
         st.session_state.chatbot = ChatBot(model_manager = model)
 
 
+
 def display_history_messages():
     """
     Display chat messages from history on app rerun.
@@ -33,6 +31,7 @@ def display_history_messages():
     for message in st.session_state.chatbot.memory:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
+
 
 
 def display_user_msg(message: str):
@@ -47,7 +46,7 @@ def display_user_msg(message: str):
         st.markdown(message)
 
 
-                                                                          #
+                                                                         
 
 def display_assistant_msg(message: str):
     """
