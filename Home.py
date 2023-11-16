@@ -79,82 +79,116 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
     #Se o estado de autenticação não existir ou for falso e não haver memória de userlogin,
     # mostra a Home page com as opções de login e signup
     if 'username' not in st.session_state and 'email' not in st.session_state:
-
         pages_logged_off()
-
-
         col1, col2, = st.columns(2)
-
         with col2:
             st.markdown('<br>', unsafe_allow_html=True)
             st.markdown('<br>', unsafe_allow_html=True)
             header_image = "pnas.1913308116fig01.jpeg"  
             st.image(header_image)
             show_kpis()
-
+            col5, col6 = st.columns([0.8, 0.2], gap='small')
+            with col5:
+                 st.write('')
+                 st.write('Still unsure? Check out the\ntestimonials of our happy customers!')
+            with col6:
+                st.write('')
+                if st.button('Testimonials', key='testimonials_button'):
+                    switch_page('testimonials')
         with col1:
-
             st.write("")
             st.write("")
-
             st.header("Welcome to FlavourFlix!")
             st.write("FlavourFlix is a platform that recommends restaurants based on your preferences.")
             st.write("To get started, please log in or sign up.")
             st.write("")
-
             col3, col4 = st.columns(2)
             with col3:
                 st.write("")
                 st.write("Not a member yet?")
                 if st.button('Sign Up Now!', key='signup_button'):
                     switch_page('sign up')
+                st.write('')
+                st.write("Super hungry? Start searching now!")
+                if st.button('Search now!', key='search_button'):
+                    switch_page('search')
             with col4:
                 st.write("")
                 st.write('Already have an account?')
                 if st.button('Log In', key='login_button'):
                     switch_page('log in')
-            
-            st.write('')
-            st.write("Super hungry? Start searching now!")
-            if st.button('Search now!', key='search_button'):
-                switch_page('search')
-
-
+                st.write('')
+                st.write("Wanna learn more? Check out our blog!")
+                if st.button('Blog', key='blog_button'):
+                    switch_page('blog page')
     #Se o estado de autenticação não existir ou for falso mas há memória de user login, então
     #indica que há algum tipo de erro e manda de volta para a página do login para o refazer.
+    
     else:
         st.error('Ups! Something went wrong. Please try login again.', icon='🚨')
         st.session_state['authentication_status'] = False
         with st.spinner('Redirecting you to the Login page...'):
             time.sleep(3)
         switch_page('log in')
-else:
 
+
+else:
     #Se a autenticação for válida, mostra a Home page com as várias funcionalidades
     if 'username' in st.session_state and 'email' in st.session_state:
 
         pages_logged_in()
 
-        st.write("")
-        st.header(f"Welcome to FlavourFlix, {st.session_state['username']}!")
-        st.write("FlavourFlix is a platform that recommends restaurants based on your preferences.")
-        st.write("Feel free to search some restaurants or ask Filomena for suggestions!")
-        st.write("")
-
-
-        col1, col2, col3 = st.columns(3)
+        col1, col2, = st.columns(2)
         with col1:
-            st.write("")
-            if st.button('Chat with Filomena!', key='chat_button'):
-                switch_page('chat with filomena')
+            show_kpis()
+            st.image("LucilleFrankfurt-4e47171b0b684277aaea4368ecb4cc15.png")
         with col2:
             st.write("")
-            if st.button('Search for restaurants!', key='search_button'):
-                switch_page('search')
-        with col3:
+            #st.header(f"Welcome to FlavourFlix, {st.session_state['username']}!")
+            st.markdown(f"<h1 style='text-align: center; color: black;'>Welcome to FlavourFlix, {st.session_state['username']}!</h1>", unsafe_allow_html=True)
+            st.write("FlavourFlix is a platform that recommends restaurants based on your preferences.")
+            st.write("Feel free to search some restaurants or ask Filomena for suggestions!")
             st.write("")
-            if st.button('View your Profile!', key='profile_button'):
-                switch_page('profile')
+            with stylable_container(
+                key="container_with_border",
+                css_styles="""
+                    {
+                        border: 1px solid rgba(49, 51, 63, 0.2);
+                        border-radius: 0.5rem;
+                        padding: calc(1em - 1px);
+                        text-align: justify;
+                        width: 100%;
+                    }
+                    """,
+            ):
+                if st.button('Chat with Filomena!', key='chat_button', use_container_width=True):
+                    switch_page('chat with filomena')
+                if st.button('Search for restaurants!', key='search_button', use_container_width=True):
+                    switch_page('search')
+                if st.button('View your Profile!', key='profile_button', use_container_width=True):
+                    switch_page('profile')
+                if st.button('See testimonials', key='testimonials_button', use_container_width=True):
+                    switch_page('testimonials')
+                if st.button('Visit blog', key='blog_button', use_container_width=True):
+                    switch_page('blog page')
+                  
+                       
+             
+
+
+        # col1, col2, col3 = st.columns(3)
+        # with col1:
+        #     st.write("")
+        #     if st.button('Chat with Filomena!', key='chat_button'):
+        #         switch_page('chat with filomena')
+        # with col2:
+        #     st.write("")
+        #     if st.button('Search for restaurants!', key='search_button'):
+        #         switch_page('search')
+        # with col3:
+        #     st.write("")
+        #     if st.button('View your Profile!', key='profile_button'):
+        #         switch_page('profile')
 
     #Se tiver autenticado com true mas não há credenciais, então indica que há algum tipo de erro e manda de volta para o login          
     else:
