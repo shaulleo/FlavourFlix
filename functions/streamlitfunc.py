@@ -52,7 +52,8 @@ def pages_logged_in():
             Page("pages/Search.py", "Search", "🔎"),
             Page("pages/Reservations.py", "Reservations", "🗓️"),
             Page("pages/Personality.py", "Personality", "🤔"),
-            Page("pages/Restaurant.py", "Restaurant", "🍽️"),])
+            Page("pages/Restaurant.py", "Restaurant", "🍽️"),
+            Page("pages/Testimonials.py", "Testimonials", "📝"),])
     
 
 
@@ -67,4 +68,5 @@ def pages_logged_off():
          Page("pages/Search.py", "Search", "🔎"),
          Page("pages/Restaurant.py", "Restaurant", "🍽️"),
          Page("pages/LogIn.py", "Log In", "🔑"),
-         Page("pages/SignUp.py", "Sign Up", "📝")])
+         Page("pages/SignUp.py", "Sign Up", "📝"),
+         Page("pages/Testimonials.py", "Testimonials", "📝"),])

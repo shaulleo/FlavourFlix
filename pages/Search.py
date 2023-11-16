@@ -9,8 +9,6 @@ from functions.location import *
 from streamlit_folium import st_folium
 import folium
 
-from streamlit_extras.switch_page_button import switch_page 
-
 st.set_page_config(page_title='Search', page_icon=None, layout= "wide" , initial_sidebar_state="collapsed")
 
 data = pd.read_csv('data/preprocessed_data.csv')
