@@ -8,10 +8,10 @@ from streamlit_extras.stylable_container import stylable_container
 
 data = pd.read_csv('data/preprocessed_data.csv')
 
-st.set_page_config(page_title="FlavourFlix", page_icon=":movie_camera:",  layout='wide', initial_sidebar_state="collapsed")
+st.set_page_config(page_title="FlavourFlix", page_icon="cozinheiro.png",  layout='wide', initial_sidebar_state="collapsed")
 
 header_image = "logo.jpeg"  
-st.image(header_image, width=200)
+st.image(header_image, width=350)
 
 
 
@@ -86,6 +86,8 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
         col1, col2, = st.columns(2)
 
         with col2:
+            st.markdown('<br>', unsafe_allow_html=True)
+            st.markdown('<br>', unsafe_allow_html=True)
             header_image = "pnas.1913308116fig01.jpeg"  
             st.image(header_image)
             show_kpis()
