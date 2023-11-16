@@ -47,13 +47,13 @@ def pages_logged_in():
         [
             Page("Home.py", "Home", "🏠"),
             Page("pages/Filomena.py", "Chat with Filomena", ":books:"),
-            # Page("pages/Profile.py", "Profile", ":books:"),
             Page("pages/Profile.py", "Profile", "👤"),
             Page("pages/Search.py", "Search", "🔎"),
             Page("pages/Reservations.py", "Reservations", "🗓️"),
             Page("pages/Personality.py", "Personality", "🤔"),
             Page("pages/Restaurant.py", "Restaurant", "🍽️"),
-            Page("pages/Testimonials.py", "Testimonials", "📝"),])
+            Page("pages/Testimonials.py", "Testimonials", "📝"),
+            Page("pages/Blog.py", "Blog Page", "📚"),])
     
 
 
@@ -69,4 +69,5 @@ def pages_logged_off():
          Page("pages/Restaurant.py", "Restaurant", "🍽️"),
          Page("pages/LogIn.py", "Log In", "🔑"),
          Page("pages/SignUp.py", "Sign Up", "📝"),
-         Page("pages/Testimonials.py", "Testimonials", "📝"),])
+         Page("pages/Testimonials.py", "Testimonials", "📝"),
+         Page("pages/Blog.py", "Blog Page", "📚"),])
