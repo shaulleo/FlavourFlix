@@ -4,6 +4,7 @@ import datetime
 import random
 import re
 from functions.env_colors import *
+import ast
 
 #Não sei se nao fará sentido fazermos classes
 
@@ -97,6 +98,9 @@ def clean_menu_items(items):
 
     for item in items:
         item = item.replace('\\"', '')
+        item = item.replace('""', '"')
+        item = item.replace('"{', '{')
+        item = item.replace('}"', '}')
         pattern = r'([^,]+):([^,]+)'
         matches = re.findall(pattern, item)
 
@@ -164,3 +168,5 @@ def retrieve_menu(json_body):
         results[section_name] = section_meals
 
     return results
+
+

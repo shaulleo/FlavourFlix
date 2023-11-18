@@ -6,14 +6,14 @@ from streamlit_extras.stylable_container import stylable_container
 import os
 import time
 
-st.set_page_config(page_title='Testimonials', page_icon='cozinheiro.png', layout= "wide" , initial_sidebar_state="collapsed")
+st.set_page_config(page_title='Testimonials', page_icon='page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
 
 with open('data/testimonials.json', 'r') as file:
     # Load the JSON data into a Python dictionary
     data = json.load(file)
 
 
-def add_newlines(text, line_length=100):
+def add_newlines(text, line_length=60):
     words = text.split()
     lines = []
     current_line_length = 0
@@ -40,30 +40,40 @@ def show_testimonial(num=0):
         key="container_with_border",
                 css_styles="""
             {
-                border: 1px solid rgba(49, 51, 63, 0.2);
-                border-radius: 0.5rem;
+                border: 1px solid rgb(15, 92, 156);
+                background-color: #FFFFFF;
                 padding: calc(1em - 1px);
                 text-align: justify;
                 width: 100%;
+                height: 100%;
             }
         """,
     ):
-        col1, col2 = st.columns([1, 3], gap = 'small')
+        col1, col2 = st.columns([1, 4], gap = 'medium')
         with col1:
-            st.image(f'user_icons/{icons[num]}', width=150)
+            st.image(f'user_icons/{icons[num]}', width=100)
         with col2:
             st.subheader(testimonial['name'])
             st.write(testimonial['date'])
-            st.text(add_newlines(testimonial['testimonial']))
+        st.text(add_newlines(testimonial['testimonial']))
 
 
 def show_complete_testimonials():
     header_image = "logo.jpeg"  
-    st.image(header_image, width=400)
+    c1, c2, c3 = st.columns([1, 1, 1], gap = 'large')
+    with c2:
+        st.image(header_image, width=300)
+    
+    st.markdown('<br>', unsafe_allow_html=True)
     st.title("Hear what our users have to say about us!")
     st.write('Have any feedback? Feel free to give your own opinion! We are always looking to improve our services. ')
+    st.markdown('<br>', unsafe_allow_html=True)
     for i in range(len(data)-1):
-        show_testimonial(i)
+        col1, col2 = st.columns([1,1], gap = 'small')
+        with col1:
+            show_testimonial(i)
+        with col2:
+            show_testimonial(i+1)
         st.markdown('<br>', unsafe_allow_html=True)
 
 
