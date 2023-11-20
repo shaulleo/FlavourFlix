@@ -8,15 +8,18 @@ from streamlit_extras.stylable_container import stylable_container
 
 data = pd.read_csv('data/preprocessed_data.csv')
 
-st.set_page_config(page_title="FlavourFlix", page_icon="cozinheiro.png",  layout='wide', initial_sidebar_state="collapsed")
+st.set_page_config(page_title="FlavourFlix", page_icon="page_icon.png",  layout='wide', initial_sidebar_state="collapsed")
 
-header_image = "logo.jpeg"  
-st.image(header_image, width=350)
+header_image = "logo1.jpeg"  
+c1, c2, c3 = st.columns([1, 1, 1], gap = 'small')
+with c2:
+    st.image(header_image, width=400)
+st.divider()    
 
 
 
 def show_kpis():
-    cola, colb, colc, cold = st.columns(4)
+    cola, colb = st.columns(2)
     with cola:
         with stylable_container(
                 key="container_with_border",
@@ -30,7 +33,7 @@ def show_kpis():
                     """,
             ):
                     st.metric(label = 'Distinct Restaurants', value = f'🍽️ {len(data.index)}')
-    with colb:
+    
         with stylable_container(
                 key="container_with_border",
                 css_styles="""
@@ -44,7 +47,7 @@ def show_kpis():
             ):
                     #Depois colocar aqui o número de users
                     st.metric(label = 'Active Users', value = f'👥 1500+')
-    with colc:
+    with colb:
         with stylable_container(
                 key="container_with_border",
                 css_styles="""
@@ -57,7 +60,7 @@ def show_kpis():
                     """,
             ):
                     st.metric(label = 'Satisfaction Rate', value = f'⭐ 9.7/10')
-    with cold:
+    
         with stylable_container(
                 key="container_with_border",
                 css_styles="""
@@ -80,47 +83,64 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
     # mostra a Home page com as opções de login e signup
     if 'username' not in st.session_state and 'email' not in st.session_state:
         pages_logged_off()
-        col1, col2, = st.columns(2)
+        st.markdown('<br>', unsafe_allow_html=True)
+        col1, col2, = st.columns(2, gap='large')
         with col2:
+            st.markdown('<br>', unsafe_allow_html=True)
+            st.markdown('<br>', unsafe_allow_html=True)
+            st.markdown('<br>', unsafe_allow_html=True)
             st.markdown('<br>', unsafe_allow_html=True)
             st.markdown('<br>', unsafe_allow_html=True)
             header_image = "pnas.1913308116fig01.jpeg"  
             st.image(header_image)
-            show_kpis()
-            col5, col6 = st.columns([0.8, 0.2], gap='small')
-            with col5:
-                 st.write('')
-                 st.write('Still unsure? Check out the\ntestimonials of our happy customers!')
-            with col6:
-                st.write('')
-                if st.button('Testimonials', key='testimonials_button'):
-                    switch_page('testimonials')
+            st.markdown('<br>', unsafe_allow_html=True)
+            
+
+            
+    
         with col1:
+    
+            st.markdown(f"<h1 style='text-align: left; color: black;'>Welcome to FlavourFlix!</h1>", unsafe_allow_html=True)
+            # st.header("Welcome to FlavourFlix!")
+            st.markdown('<br>', unsafe_allow_html=True)
+            st.markdown("###### FlavourFlix is a platform that recommends restaurants based on your preferences.")
+            st.markdown('<br>', unsafe_allow_html=True)
+            show_kpis()
+            st.caption("To get started, please log in or sign up.")
+        st.write("")
+        st.divider()
+        col3, col4 = st.columns([1,1], gap='large')
+        with col3:
             st.write("")
+            st.markdown("###### Not a member yet?")
+            if st.button('Sign Up Now!', key='signup_button'):
+                switch_page('sign up')
+            st.write('')
+            st.markdown("###### Super hungry? Start searching now!")
+            if st.button('Search now!', key='search_button'):
+                switch_page('search')
+        with col4:
             st.write("")
-            st.header("Welcome to FlavourFlix!")
-            st.write("FlavourFlix is a platform that recommends restaurants based on your preferences.")
-            st.write("To get started, please log in or sign up.")
-            st.write("")
-            col3, col4 = st.columns(2)
-            with col3:
-                st.write("")
-                st.write("Not a member yet?")
-                if st.button('Sign Up Now!', key='signup_button'):
-                    switch_page('sign up')
-                st.write('')
-                st.write("Super hungry? Start searching now!")
-                if st.button('Search now!', key='search_button'):
-                    switch_page('search')
-            with col4:
-                st.write("")
-                st.write('Already have an account?')
-                if st.button('Log In', key='login_button'):
-                    switch_page('log in')
-                st.write('')
-                st.write("Wanna learn more? Check out our blog!")
-                if st.button('Blog', key='blog_button'):
-                    switch_page('blog page')
+            st.markdown('###### Already have an account?')
+            if st.button('Log In', key='login_button'):
+                switch_page('log in')
+            st.write('')
+            st.markdown("###### Wanna learn more? Check out our blog!")
+            if st.button('Blog', key='blog_button'):
+                switch_page('blog page')
+
+        col5, col6 = st.columns([0.8, 0.2], gap='small')
+        with col5:
+            st.write('')
+            st.write('Still unsure? Check out the\ntestimonials of our happy customers!')
+        with col6:
+            st.write('')
+            if st.button('Testimonials', key='testimonials_button'):
+                switch_page('testimonials') 
+            
+            
+            
+            
     #Se o estado de autenticação não existir ou for falso mas há memória de user login, então
     #indica que há algum tipo de erro e manda de volta para a página do login para o refazer.
     
@@ -143,9 +163,9 @@ else:
             show_kpis()
             st.image("LucilleFrankfurt-4e47171b0b684277aaea4368ecb4cc15.png")
         with col2:
-            st.write("")
-            #st.header(f"Welcome to FlavourFlix, {st.session_state['username']}!")
-            st.markdown(f"<h1 style='text-align: center; color: black;'>Welcome to FlavourFlix, {st.session_state['username']}!</h1>", unsafe_allow_html=True)
+            # st.write("")
+            # st.header(f"Welcome to FlavourFlix, {st.session_state['username']}!")
+            st.markdown(f"<h1 style='text-align: left; color: black;'>Welcome to FlavourFlix, {st.session_state['username']}!</h1>", unsafe_allow_html=True)
             st.write("FlavourFlix is a platform that recommends restaurants based on your preferences.")
             st.write("Feel free to search some restaurants or ask Filomena for suggestions!")
             st.write("")

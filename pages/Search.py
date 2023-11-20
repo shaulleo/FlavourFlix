@@ -9,7 +9,7 @@ from functions.location import *
 from streamlit_folium import st_folium
 import folium
 
-st.set_page_config(page_title='Search', page_icon=None, layout= "wide" , initial_sidebar_state="collapsed")
+st.set_page_config(page_title='Search', page_icon='page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
 
 data = pd.read_csv('data/preprocessed_data.csv')
 
@@ -40,60 +40,85 @@ col1, col2 = st.columns([2, 5], gap = 'medium')
 # Filter options for location, cuisine type, and average price 
 
 #acho q nao pode ser location mas sim "city", se não fica muito esparso; inclusive tem q ser a localização standardizada para evitar questões tipo "Lisbon- Lisboa"
-locations = ["All Locations"] + data['location'].unique().tolist() + ['Current Location']
-cuisine_types = ["All Cuisine Types"] + data['cuisine'].unique().tolist()
-min_price = int(data['averagePrice'].min())
-max_price = int(data['averagePrice'].max())
-chefs = data['chefName1'].unique().tolist()
-chefs.extend(data['chefName2'].unique().tolist())
-chefs.extend(data['chefName3'].unique().tolist())
+# locations = ["All Locations"] + data['location'].unique().tolist() + ['Current Location']
+# cuisine_types = ["All Cuisine Types"] + data['cuisine'].unique().tolist()
+# min_price = int(data['averagePrice'].min())
+# max_price = int(data['averagePrice'].max())
+# chefs = data['chefName1'].unique().tolist()
+# chefs.extend(data['chefName2'].unique().tolist())
+# chefs.extend(data['chefName3'].unique().tolist())
 
-chefs = ["All Chefs"] + list(set(chefs))
-#delete the nan value from chefs
-chefs.remove(np.nan)
+# chefs = ["All Chefs"] + list(set(chefs))
+# #delete the nan value from chefs
+# chefs.remove(np.nan)
 
 with col1:
     
         # Create selectbox widgets for location and cuisine type
-        location_filter = st.selectbox("Select Location", locations)
-        cuisine_filter = st.selectbox("Select Cuisine Type", cuisine_types)
-        chef_filter = st.selectbox("Select Chef's Name", chefs)
+        
+        
+        
         # Create a slider widget for the average price range
-        price_filter = st.slider("Select the Average Price Range", min_value=min_price, max_value=max_price, value=(min_price, max_price))
+        
         # Filter the restaurants based on user selections
         
-        filtered_df = data.copy()
-
-        if location_filter != "All Locations":
-            filtered_df = filtered_df[filtered_df['location'] == location_filter]
-            if location_filter == 'Current Location':
-                user_location = Location()
-                user_location.getLocation()
-                filtered_df = nearYou(user_location, filtered_df)
-        if cuisine_filter != "All Cuisine Types":
-            filtered_df = filtered_df[filtered_df['cuisine'] == cuisine_filter]
-        if chef_filter != "All Chefs":
-            filtered_df = filtered_df[(filtered_df['chefName1'] == chef_filter) | (filtered_df['chefName2'] == chef_filter) | (filtered_df['chefName3'] == chef_filter)]
-            
+    if 'session_state' not in st.session_state:
+        st.session_state.session_state = {
+            'location': None,
+            'cuisine': None
+        }
 
 
-        filtered_df = filtered_df[filtered_df['averagePrice'].between(price_filter[0], price_filter[1])]
+    locations = ["All Locations"] + data['location'].unique().tolist()
+    selected_location = st.selectbox("Select Location", locations)
 
-        st.divider()
+    # Update session_state based on location selection
+    if selected_location != "All Locations":
+        st.session_state.session_state['location'] = selected_location
+        filtered_by_location = data[data['location'] == selected_location]
+    else:
+        st.session_state.session_state['location'] = None
+        filtered_by_location = data  # No location filter applied
+
+    # Update cuisine_types based on location
+    if st.session_state.session_state['location']:
+        cuisine_types = ["All Cuisine Types"] + filtered_by_location['cuisine'].unique().tolist()
+        
+        selected_cuisine = st.selectbox("Select Cuisine Type", cuisine_types)
+        
+        if selected_cuisine != "All Cuisine Types":
+            st.session_state.session_state['cuisine'] = selected_cuisine
+            filtered_by_cuisine = filtered_by_location[filtered_by_location['cuisine'] == selected_cuisine].copy()
+        else:
+            st.session_state.session_state['cuisine'] = None
+            filtered_by_cuisine = filtered_by_location.copy()  # No cuisine filter applied
+    else:
+        selected_cuisine = st.selectbox("Select Cuisine Type", ["All Cuisine Types"])
+        st.session_state.session_state['cuisine'] = None
+        filtered_by_cuisine = filtered_by_location.copy()  # No location filter applied
+
+
+
+
+
+    # Display the resulting dataframe
+    
+    st.divider()
 
         # Display the matching restaurants
         
         
+filtered_df = filtered_by_cuisine.copy()
 
 with col2:    
     selection = select_to_view_details(filtered_df)
     for index, row in selection.iterrows():
-    # Use the index as a unique key for each button
-            button_key = f"view_details_button_{index}"
-            
-            if st.button(f"View Details for {row['name']}", key=button_key):
-                st.session_state.selected_restaurant = row['name']
-                switch_page("restaurant")
+        # Use the index as a unique key for each button
+        button_key = f"view_details_button_{index}"
+        
+        if st.button(f"View Details for {row['name']}", key=button_key):
+            st.session_state.selected_restaurant = row['name']
+            switch_page("restaurant")
 
 
     

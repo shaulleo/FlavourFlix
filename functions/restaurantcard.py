@@ -32,3 +32,5 @@ def display_restaurants(restaurants):
             title, description, image, url = restaurant_info
             restaurant_card(title, description, image, url)
 
+
+

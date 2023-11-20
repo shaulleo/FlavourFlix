@@ -3,6 +3,7 @@ import pandas as pd
 import os
 from streamlit.components.v1 import html
 from st_pages import Page, show_pages
+import ast
 
 
 def nav_page(page_name, timeout_secs=3):
@@ -71,3 +72,37 @@ def pages_logged_off():
          Page("pages/SignUp.py", "Sign Up", "📝"),
          Page("pages/Testimonials.py", "Testimonials", "📝"),
          Page("pages/Blog.py", "Blog Page", "📚"),])
+
+def show_menu(selected_restaurant):               
+    menu = data.loc[data['name'] == selected_restaurant, 'menu_pre_proc'].iloc[0]
+    # menu = menu.strip('"')  # Remove quotes from the beginning and end
+    menu = menu.replace('"{', '{')
+    menu = menu.replace('}"', '}')
+    menu = menu.replace("::", ":")
+    menu = menu.replace('""', '"')
+    menu = ast.literal_eval(menu)  # Convert the string to a dictionary
+
+    menu_items = {}
+
+    for section, dishes in menu.items():
+        for dish, details in dishes.items():
+            if section not in menu_items:
+                menu_items[section] = {}
+            menu_items[section][dish] = details
+    
+    with st.expander("Menu:"):
+        
+        for section, dishes in menu_items.items():
+            st.markdown(f"###### {section}:")
+            for dish, details in dishes.items():
+                price = details['price'] if details['price'] else "Price Unavailable"
+                description = details['description'] if details['description'] != 'null' else ""
+                
+                if description:
+                    # st.markdown(f"- {dish}: {price} € ({description})") + st.caption(description)
+                    st.markdown(f" - <p> {dish}: {price} € <small> ({description}) </small> </p> ", unsafe_allow_html=True)
+                    
+                else:
+                    st.markdown(f"- {dish}: {price} €")
+
+
