@@ -2,10 +2,11 @@ import numpy as np
 import pandas as pd
 import datetime
 import re
+import os
 import unicodedata
 import ast
 from functions.env_colors import *
-#from functions.location import *
+from dotenv import find_dotenv, load_dotenv
 import openai
 from pydantic_settings import BaseSettings
 from pydantic import Field, ValidationError, validate_call
@@ -19,6 +20,10 @@ class Settings(BaseSettings):
     COORDINATES_API: str = Field(validation_alias = "COORDINATES_API")
     COORDINATES_BASE_URL: str = Field(validation_alias = "COORDINATES_BASE_URL")
     GET_CURRENT_LOCATION_KEY: str = Field(validation_alias = "GET_CURRENT_LOCATION_KEY")
+
+_ = load_dotenv(find_dotenv())
+if not _:
+    _ = load_dotenv(".env")
 
 local_settings = Settings()
 
