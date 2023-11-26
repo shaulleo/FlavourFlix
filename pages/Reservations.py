@@ -2,8 +2,10 @@ import streamlit as st
 import pandas as pd
 from functions.streamlitfunc import *
 
+
+#Aqui estamos a usar os dados errados!!!
 data = pd.read_csv('data/all_thefork_scrapes.csv')
-st.set_page_config(page_title='Restaurant', page_icon="page_icon.png", layout="wide", initial_sidebar_state="collapsed")
+#st.set_page_config(page_title='Restaurant', page_icon="ext_images\page_icon.png", layout="wide", initial_sidebar_state="collapsed")
 
 def reservations_page():
     st.title("Reservations Page")

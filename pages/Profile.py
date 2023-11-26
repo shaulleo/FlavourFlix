@@ -172,7 +172,7 @@ def show_client_data():
 
 if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
     pages_logged_in()
-    header_image = "logo.jpeg"  
+    header_image = "ext_images\logo.jpeg"  
     st.image(header_image, width=400)
     st.title(f'Welcome to your Profile, {st.session_state["username"]}!')
     ph = st.empty()

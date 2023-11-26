@@ -9,7 +9,7 @@ from streamlit_extras.stylable_container import stylable_container
 
 
 
-st.set_page_config(page_title='Restaurant', page_icon="page_icon.png", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title='Restaurant', page_icon="ext_images\page_icon.png", layout="wide", initial_sidebar_state="collapsed")
 data = pd.read_csv('data/preprocessed_data.csv')
 st.title("Restaurant's Details")
 

@@ -5,12 +5,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import requests
-from geopy.geocoders import Nominatim
+#from geopy.geocoders import Nominatim
 import requests
 import numpy as np
 from sklearn.metrics.pairwise import haversine_distances
 from math import radians
 from functions.env_colors import *
+from functions.utils import *
 
 
 
@@ -81,7 +82,8 @@ class Location:
         self.longitude = longitude
         self.region = region
         self.city = city
-        self.__api_key = "AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP"
+        #self.__api_key = "AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP"
+        self.__api_key = local_settings.GET_CURRENT_LOCATION_KEY
 
     def getLocation(self):
         """ Gets the current location of the user. 

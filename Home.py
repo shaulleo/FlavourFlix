@@ -8,9 +8,9 @@ from streamlit_extras.stylable_container import stylable_container
 
 data = pd.read_csv('data/preprocessed_data.csv')
 
-st.set_page_config(page_title="FlavourFlix", page_icon="page_icon.png",  layout='wide', initial_sidebar_state="collapsed")
+st.set_page_config(page_title="FlavourFlix", page_icon="ext_images/page_icon.png",  layout='wide', initial_sidebar_state="collapsed")
 
-header_image = "logo1.jpeg"  
+header_image = "ext_images/logo1.jpeg"  
 c1, c2, c3 = st.columns([1, 1, 1], gap = 'small')
 with c2:
     st.image(header_image, width=400)
@@ -91,7 +91,7 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
             st.markdown('<br>', unsafe_allow_html=True)
             st.markdown('<br>', unsafe_allow_html=True)
             st.markdown('<br>', unsafe_allow_html=True)
-            header_image = "pnas.1913308116fig01.jpeg"  
+            header_image = "ext_images/pnas.1913308116fig01.jpeg"  
             st.image(header_image)
             st.markdown('<br>', unsafe_allow_html=True)
             
@@ -161,7 +161,7 @@ else:
         col1, col2, = st.columns(2)
         with col1:
             show_kpis()
-            st.image("LucilleFrankfurt-4e47171b0b684277aaea4368ecb4cc15.png")
+            st.image("ext_images/LucilleFrankfurt-4e47171b0b684277aaea4368ecb4cc15.png")
         with col2:
             # st.write("")
             # st.header(f"Welcome to FlavourFlix, {st.session_state['username']}!")

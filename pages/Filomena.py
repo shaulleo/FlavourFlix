@@ -5,7 +5,7 @@ import streamlit as st
 from functions.chat_bot import  ChatBot
 from streamlit_extras.switch_page_button import switch_page 
 
-st.set_page_config(page_title='Restaurant', page_icon="page_icon.png", layout="wide", initial_sidebar_state="collapsed")
+#st.set_page_config(page_title='Restaurant', page_icon="ext_images\page_icon.png", layout="wide", initial_sidebar_state="collapsed")
                                                                                 
 def initialize() -> None:
     """
@@ -17,8 +17,8 @@ def initialize() -> None:
 
     if "chatbot" not in st.session_state:
         #st.session_state.chatbot = ChatBotStatic()
-        #model = GPTWrapper(local_settings.OPENAI_API_KEY)
-        model = GPTWrapper('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')
+        model = GPTWrapper(local_settings.OPENAI_API_KEY)
+        #model = GPTWrapper('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')
         st.session_state.chatbot = ChatBot(model_manager = model)
 
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
         pages_logged_in()
-        header_image = "logo.jpeg"  
+        header_image = "ext_images/logo.jpeg"  
         st.image(header_image, width=400)
         initialize()
 

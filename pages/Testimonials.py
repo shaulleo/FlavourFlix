@@ -6,7 +6,7 @@ from streamlit_extras.stylable_container import stylable_container
 import os
 import time
 
-st.set_page_config(page_title='Testimonials', page_icon='page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
+st.set_page_config(page_title='Testimonials', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
 
 with open('data/testimonials.json', 'r') as file:
     # Load the JSON data into a Python dictionary
@@ -59,7 +59,7 @@ def show_testimonial(num=0):
 
 
 def show_complete_testimonials():
-    header_image = "logo.jpeg"  
+    header_image = "ext_images/logo.jpeg"  
     c1, c2, c3 = st.columns([1, 1, 1], gap = 'large')
     with c2:
         st.image(header_image, width=300)
