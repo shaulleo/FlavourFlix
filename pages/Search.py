@@ -6,10 +6,11 @@ from streamlit_extras.switch_page_button import switch_page
 from functions.streamlitfunc import nav_page
 from streamlit_extras.stylable_container import stylable_container
 from functions.location import *
+from functions.utils import *
 from streamlit_folium import st_folium
 import folium
 
-st.set_page_config(page_title='Search', page_icon='page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
+st.set_page_config(page_title='Search', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
 
 data = pd.read_csv('data/preprocessed_data.csv')
 
@@ -69,13 +70,18 @@ with col1:
         }
 
 
-    locations = ["All Locations"] + data['location'].unique().tolist()
+    locations = ["All Locations"] + data['location'].unique().tolist() + ['Current Location']
     selected_location = st.selectbox("Select Location", locations)
 
     # Update session_state based on location selection
     if selected_location != "All Locations":
         st.session_state.session_state['location'] = selected_location
         filtered_by_location = data[data['location'] == selected_location]
+    elif selected_location == "Current Location":
+        st.session_state.session_state['location'] = selected_location
+        user_location = Location()
+        user_location.getLocation()
+        filtered_by_location = nearYou(user_location, data)
     else:
         st.session_state.session_state['location'] = None
         filtered_by_location = data  # No location filter applied

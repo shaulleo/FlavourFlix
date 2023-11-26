@@ -5,12 +5,22 @@ import re
 import unicodedata
 import ast
 from functions.env_colors import *
-from functions.location import *
+#from functions.location import *
 import openai
 from pydantic_settings import BaseSettings
-from pydantic import Field
+from pydantic import Field, ValidationError, validate_call
 
+# --------------------------------- 1. Load Environment Variables  --------------------------------
 
+class Settings(BaseSettings):
+    """ Loard Environment Variables """
+    OPENAI_API_KEY: str = Field(validation_alias = "OPENAI_API_KEY")
+    DATA_PATH: str = Field(validation_alias = "DATA_PATH")
+    COORDINATES_API: str = Field(validation_alias = "COORDINATES_API")
+    COORDINATES_BASE_URL: str = Field(validation_alias = "COORDINATES_BASE_URL")
+    GET_CURRENT_LOCATION_KEY: str = Field(validation_alias = "GET_CURRENT_LOCATION_KEY")
+
+local_settings = Settings()
 
 # --------------------------------- 2. Utility Functions --------------------------------
 
@@ -109,15 +119,6 @@ def check_if_open(restaurant_schedule, date=None, time=None):
                  return 'Open'
     return 'Closed'
 
-
-
-
-# class Settings(BaseSettings):
-#     """ Loard Environment Variables """
-#     OPENAI_API_KEY: str = Field(validation_alias = "OPENAI_API_KEY")
-#     DATA_PATH: str = Field(validation_alias = "DATA_PATH")
-
-# local_settings = Settings() 
 
 
 class GPTWrapper:

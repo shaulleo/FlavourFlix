@@ -10,8 +10,8 @@ from functions.streamlitfunc  import *
 import time
 from streamlit_extras.switch_page_button import switch_page 
 
-st.set_page_config(page_title='Restaurant', page_icon="page_icon.png", layout="wide", initial_sidebar_state="collapsed")
-header_image = "logo.jpeg"  
+#st.set_page_config(page_title='Restaurant', page_icon="ext_images/page_icon.png", layout="wide", initial_sidebar_state="collapsed")
+header_image = "ext_images\logo1.jpeg"  
 st.image(header_image, width=400)
 
 

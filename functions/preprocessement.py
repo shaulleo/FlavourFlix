@@ -77,17 +77,19 @@ def find_coordinates(address):
         - longitude (float): Longitude of the restaurant. """
     
 
-    api_key = 'AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP'
+    #api_key = 'AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP'
 
     #Define the API endpoint and parameters
-    base_url = 'http://dev.virtualearth.net/REST/v1/Locations'
+    #base_url = 'http://dev.virtualearth.net/REST/v1/Locations'
     params = {
         'q': address,
-        'key': api_key,
+        #'key': api_key,
+        'key': local_settings.COORDINATES_API,
     }
 
     #Make the API request
-    response = requests.get(base_url, params=params)
+    #response = requests.get(base_url, params=params)
+    response = requests.get(local_settings.COORDINATES_BASE_URL, params=params)
 
     #Check if the request was successful
     if response.status_code == 200:
