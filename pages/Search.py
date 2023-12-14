@@ -18,132 +18,149 @@ st.header("Let us help you find the perfect restaurant for you!")
 
 st.markdown('<br>', unsafe_allow_html=True)
 
+if 'filters' not in st.session_state:
+    st.session_state.filters = False
+
+
+
 def select_to_view_details(data):
-        df_with_selections = data.copy()
-        df_with_selections.insert(0, "Details", False)
+    filtered_df = data.copy()
+    filtered_df.insert(0, "Details", False)
 
-        # Get dataframe row-selections from user with st.data_editor
-        edited_df = st.data_editor(
-            df_with_selections[[ 'Details', 'name', 'location','cuisine', 'averagePrice']],
-            hide_index=True,
-            column_config={"Details": st.column_config.CheckboxColumn(required=True)},
-            disabled=data.columns,
-            width=1000,
-            height=390
-        )
+    # Rename columns
+    renamed_columns = {
+        'name': 'Restaurant Name',
+        'location': 'Location',
+        'cuisine': 'Cuisine',
+        'averagePrice': 'Average Price'
+    }
+    filtered_df.rename(columns=renamed_columns, inplace=True)
 
-        # Filter the dataframe using the temporary column, then drop the column
-        selected_rows = edited_df[edited_df.Details == True]
-        return selected_rows.drop('Details', axis=1)
+    # Get dataframe row-selections from user with st.data_editor
+    filtered_df = st.data_editor(
+        filtered_df[['Details', 'Restaurant Name', 'Location', 'Cuisine', 'Average Price']],
+        hide_index=True,
+        column_config={"Details": st.column_config.CheckboxColumn(required=True)},
+        disabled=data.columns,
+        width=1000,
+        height=390,
+    )
 
-col1, col2 = st.columns([2, 5], gap = 'medium') 
-
-# Filter options for location, cuisine type, and average price 
-
-#acho q nao pode ser location mas sim "city", se não fica muito esparso; inclusive tem q ser a localização standardizada para evitar questões tipo "Lisbon- Lisboa"
-# locations = ["All Locations"] + data['location'].unique().tolist() + ['Current Location']
-# cuisine_types = ["All Cuisine Types"] + data['cuisine'].unique().tolist()
-# min_price = int(data['averagePrice'].min())
-# max_price = int(data['averagePrice'].max())
-# chefs = data['chefName1'].unique().tolist()
-# chefs.extend(data['chefName2'].unique().tolist())
-# chefs.extend(data['chefName3'].unique().tolist())
-
-# chefs = ["All Chefs"] + list(set(chefs))
-# #delete the nan value from chefs
-# chefs.remove(np.nan)
-
-with col1:
-    
-        # Create selectbox widgets for location and cuisine type
-        
-        
-        
-        # Create a slider widget for the average price range
-        
-        # Filter the restaurants based on user selections
-        
-    if 'session_state' not in st.session_state:
-        st.session_state.session_state = {
-            'location': None,
-            'cuisine': None
-        }
-
-
-    locations = ["All Locations"] + data['location'].unique().tolist() + ['Current Location']
-    selected_location = st.selectbox("Select Location", locations)
-
-    # Update session_state based on location selection
-    if selected_location != "All Locations":
-        st.session_state.session_state['location'] = selected_location
-        filtered_by_location = data[data['location'] == selected_location]
-    elif selected_location == "Current Location":
-        st.session_state.session_state['location'] = selected_location
-        user_location = Location()
-        user_location.getLocation()
-        filtered_by_location = nearYou(user_location, data)
-    else:
-        st.session_state.session_state['location'] = None
-        filtered_by_location = data  # No location filter applied
-
-    # Update cuisine_types based on location
-    if st.session_state.session_state['location']:
-        cuisine_types = ["All Cuisine Types"] + filtered_by_location['cuisine'].unique().tolist()
-        
-        selected_cuisine = st.selectbox("Select Cuisine Type", cuisine_types)
-        
-        if selected_cuisine != "All Cuisine Types":
-            st.session_state.session_state['cuisine'] = selected_cuisine
-            filtered_by_cuisine = filtered_by_location[filtered_by_location['cuisine'] == selected_cuisine].copy()
-        else:
-            st.session_state.session_state['cuisine'] = None
-            filtered_by_cuisine = filtered_by_location.copy()  # No cuisine filter applied
-    else:
-        selected_cuisine = st.selectbox("Select Cuisine Type", ["All Cuisine Types"])
-        st.session_state.session_state['cuisine'] = None
-        filtered_by_cuisine = filtered_by_location.copy()  # No location filter applied
+    # Filter the dataframe using the temporary column, then drop the column
+    selected_rows = filtered_df[filtered_df.Details == True]
+    return selected_rows.drop('Details', axis=1)
 
 
 
+def apply_filters(filtered_df):
+    if 'filters' not in st.session_state:
+        st.session_state.filters = True
+    if st.session_state.filters == False:
+        st.session_state.filters = True
 
+    # Apply filters    
+    if st.session_state.location and st.session_state.location != "All Locations":
+        filtered_df = filtered_df[filtered_df['location'] == st.session_state.location]
 
-    # Display the resulting dataframe
-    
-    st.divider()
+    if st.session_state.cuisine and st.session_state.cuisine != 'All Cuisine Types':
+        filtered_df = filtered_df[filtered_df['cuisine'] == st.session_state.cuisine]
 
-        # Display the matching restaurants
-        
-        
-filtered_df = filtered_by_cuisine.copy()
+    if st.session_state.min_price is not None:
+        filtered_df = filtered_df[filtered_df['averagePrice'] >= st.session_state.min_price]
 
-with col2:    
-    selection = select_to_view_details(filtered_df)
+    if st.session_state.max_price is not None:
+        filtered_df = filtered_df[filtered_df['averagePrice'] <= st.session_state.max_price]
+
+    return filtered_df
+
+def clear_filters():
+    st.session_state.location = None
+    st.session_state.cuisine = None
+    st.session_state.min_price = None
+    st.session_state.max_price = None
+    st.session_state.filters = None
+
+def show_results(data):
+    selection = select_to_view_details(data)
     for index, row in selection.iterrows():
-        # Use the index as a unique key for each button
         button_key = f"view_details_button_{index}"
         
-        if st.button(f"View Details for {row['name']}", key=button_key):
-            st.session_state.selected_restaurant = row['name']
+        if st.button(f"View Details for {row['Restaurant Name']}", key=button_key):
+            st.session_state.selected_restaurant = row['Restaurant Name']
             switch_page("restaurant")
 
+def show_filters_columns(data):
 
+    st.subheader("Filters:")
+    locations = ["All Locations"] + ['Current Location'] + data['location'].unique().tolist()
+    selected_location = st.selectbox("Select Location", locations, key='selected_location', index=0)
+    if selected_location != "All Locations":
+        st.session_state.location = selected_location
+    else:
+        st.session_state.location = None
+
+    cuisine_types = ["All Cuisine Types"] + data['cuisine'].unique().tolist()
+    selected_cuisine = st.selectbox("Select Cuisine Type", cuisine_types, key='selected_cuisine' )
+    if selected_cuisine != "All Cuisine Types":
+        st.session_state.cuisine = selected_cuisine
+    else:
+        st.session_state.cuisine = None
+
+    # Price Filters
+    min_price = int(data['averagePrice'].min())
+    max_price = int(data['averagePrice'].max())
+    price_range = st.slider("Select Price Range", min_price, max_price, (min_price, max_price), key='selected_price_range')
+
+    # Set session state for min_price and max_price
+    st.session_state.min_price = price_range[0] if price_range[0] != min_price else None
+    st.session_state.max_price = price_range[1] if price_range[1] != max_price else None
+
+    return  st.session_state.location, st.session_state.cuisine, st.session_state.min_price, st.session_state.max_price
     
 
-    # st.dataframe(filtered_df[['name', 'location', 'cuisine', 'averagePrice']], height=350, use_container_width=True, hide_index=True)
-    #st.map(filtered_df[['latitude', 'longitude']])
-    center_lat = filtered_df['latitude'].median()
-    center_long = filtered_df['longitude'].median()
-    m = folium.Map(location=(center_lat, center_long), zoom_start=12, tiles="cartodb positron")
-    for index, row in filtered_df.iterrows():
-        # Create a marker for each observation
-        folium.Marker(
-            location=[row['latitude'], row['longitude']],
-            popup=row['name'],  # Display the name in a popup
-        ).add_to(m)
+def filters_page():
+    filtered_df = data.copy()
+    if 'applied' not in st.session_state:
+        st.session_state.applied = False
+    col1, col2 = st.columns([2, 5], gap='medium')
+
+    if st.session_state.applied == False:
+        with col1:
+            location, cuisine, min_price, max_price = show_filters_columns(filtered_df)
+            st.session_state.location = location
+            st.session_state.cuisine = cuisine
+            st.session_state.min_price = min_price
+            st.session_state.max_price = max_price
+
+        with col2:
+            filtered_df = apply_filters(filtered_df)
+
+            # Check if there are matching results
+            if not filtered_df.empty:
+                show_results(filtered_df)
+
+                # Check if any location is selected before showing the map
+                if st.session_state.location:
+                    center_lat = filtered_df['latitude'].median()
+                    center_long = filtered_df['longitude'].median()
+                    m = folium.Map(location=(center_lat, center_long), zoom_start=12, tiles="cartodb positron")
+                    for index, row in filtered_df.iterrows():
+                        # Create a marker for each observation
+                        folium.Marker(
+                            location=[row['latitude'], row['longitude']],
+                            popup=row['name'],  # Display the name in a popup
+                        ).add_to(m)
+
+                    # Render Folium map in Streamlit if a location is selected
+                    st_data = st_folium(m, width=10000, height=400)
+            else:
+                st.markdown("#### OOoops! Mister Exigente! We couldn't find any restaurants matching your criteria. Please try again.")
+
+filters_page()
 
 
-    # call to render Folium map in Streamlit
-    st_data = st_folium(m, width=725, height=400)
+    # HÁ UM PROBLEMINHA QUANDO METEMOS O MAPA, FAZ INTERFERENCIA COM OS RESULTADOS 
+
 
 
 restaurant_details = {}
