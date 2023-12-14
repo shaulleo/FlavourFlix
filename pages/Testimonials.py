@@ -13,7 +13,7 @@ with open('data/testimonials.json', 'r') as file:
     data = json.load(file)
 
 
-def add_newlines(text, line_length=60):
+def add_newlines(text, line_length=50):
     words = text.split()
     lines = []
     current_line_length = 0
@@ -40,12 +40,11 @@ def show_testimonial(num=0):
         key="container_with_border",
                 css_styles="""
             {
-                border: 1px solid rgb(15, 92, 156);
+                border: 0px solid rgb(15, 92, 156);
                 background-color: #FFFFFF;
                 padding: calc(1em - 1px);
                 text-align: justify;
                 width: 100%;
-                height: 100%;
             }
         """,
     ):
@@ -67,14 +66,22 @@ def show_complete_testimonials():
     st.markdown('<br>', unsafe_allow_html=True)
     st.title("Hear what our users have to say about us!")
     st.write('Have any feedback? Feel free to give your own opinion! We are always looking to improve our services. ')
+    if st.button('Add a testimonial'):
+        pass
+    
     st.markdown('<br>', unsafe_allow_html=True)
-    for i in range(len(data)-1):
-        col1, col2 = st.columns([1,1], gap = 'small')
+    st.markdown('<br>', unsafe_allow_html=True)
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    for i in range(0, len(data), 2):
+        col1, col2 = st.columns([1, 1], gap='small')
         with col1:
             show_testimonial(i)
-        with col2:
-            show_testimonial(i+1)
+        if i + 1 < len(data):  # Ensure there's a testimonial available at i+1
+            with col2:
+                show_testimonial(i + 1)
         st.markdown('<br>', unsafe_allow_html=True)
+        st.divider()
 
 
 if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
