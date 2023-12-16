@@ -22,6 +22,7 @@ if 'filters' not in st.session_state:
     st.session_state.filters = False
 
 
+st.session_state.current_location = False
 
 def select_to_view_details(data):
     filtered_df = data.copy()
@@ -61,6 +62,19 @@ def apply_filters(filtered_df):
     # Apply filters    
     if st.session_state.location and st.session_state.location != "All Locations":
         filtered_df = filtered_df[filtered_df['location'] == st.session_state.location]
+        #PARA LIDAR COM A LOCALIZAÇÃO ATUAL - MADALENA PRECISO DA TUA AJUDA !!!!
+        
+        # if st.session_state.location == 'Current Location':
+        #     if st.session_state.current_location == False:
+        #         user_location = Location()
+        #         user_location.getLocation()
+        #         filtered_df = nearYou(user_location, filtered_df)
+        #         st.session_state.current_location = True
+        #         st.session_state.user_personal_location = user_location
+        #     else:
+        #         filtered_df = nearYou(st.session_state.user_personal_location, filtered_df)
+        # else:
+        #     filtered_df = filtered_df[filtered_df['location'] == st.session_state.location]
 
     if st.session_state.cuisine and st.session_state.cuisine != 'All Cuisine Types':
         filtered_df = filtered_df[filtered_df['cuisine'] == st.session_state.cuisine]

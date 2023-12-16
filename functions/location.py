@@ -82,7 +82,6 @@ class Location:
         self.longitude = longitude
         self.region = region
         self.city = city
-        #self.__api_key = "AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP"
         self.__api_key = local_settings.GET_CURRENT_LOCATION_KEY
 
     def getLocation(self):
@@ -91,6 +90,7 @@ class Location:
         - None
         Returns:
         - None """
+
         #if self.latitude is None and self.longitude is None and self.region is None:
         options = Options()
         options.add_argument("--use--fake-ui-for-media-stream")
@@ -202,11 +202,11 @@ class Location:
 
 def nearYou(location, df, top=None):
     """Finds the top nearest restaurants to the user.
-        Parameters:
+    Parameters:
         - location (Location): Location object of the user.
         - df (pandas.DataFrame): DataFrame containing the restaurants.
         - top (int): Number of restaurants to be returned.
-        Returns:
+    Returns:
         - distances_df (pandas.DataFrame): DataFrame containing the top nearest restaurants to the user. """
     distances_df = df.copy()
     current_radians = [radians(float(location.latitude)), radians(float(location.longitude))]
