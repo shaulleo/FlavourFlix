@@ -12,30 +12,17 @@ st.set_page_config(page_title='Give Feedback', page_icon='ext_images/page_icon.p
 
 
 def feedback_page():
-    st.set_page_config(page_title='Give Feedback', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
-    st.title('Give Feedback')
-    st.markdown('Give us your feedback about FlavourFlix')
-    st.markdown('Please fill in the following details and click on submit')
-    
+    st.title(f'Give us your Feedback, {st.session_state["username"]}!')
+    st.markdown('We would love to hear what you have to say about FlavourFlix, Filomena and our services!\nIf you have any suggestion, including restaurant recommendations or new features, feel free to disclose them here!')
+    st.markdown('Please fill in the following details.')
 
-    csv_file = 'feedbacks.csv'
-
-    # Check if the CSV file exists and has data, if not create it with headers
-    if not os.path.exists(csv_file) or os.path.getsize(csv_file) == 0:
-        initial_data = {
-            'Email': [],
-            'Name': [],
-            'Date': [],
-            'Feedback': []
-        }
-        df = pd.DataFrame(initial_data)
-        df.to_csv(csv_file, index=False)
-
+    csv_file = 'feedback.csv'
 
     # AQUI TEMOS QUE IR BUSCAR OS DADOS À BASE DE DADOS QUE TEM AS PALAVRAS PASSE E OS UILIZADORES 
     email = st.session_state.email
-    name = st.text_input('Name')
-    feedback = st.text_area('Feedback')
+    name = st.text_input('Name', key='client_name_f', placeholder='Enter your name')
+    subject = st.selectbox('Subject', ['General', 'Restaurant Recommendation', 'New Feature', 'Other'], key='subject_f', placeholder='Select a subject')
+    feedback = st.text_area('Your Opinion', key='feedback_f', placeholder='Feel free to write your feature suggestions, restaurant recommendations or any other feedback here!')
 
     if st.button('Submit Feedback'):
         # take the current date
@@ -48,18 +35,22 @@ def feedback_page():
             'Email': [email],
             'Name': [name],
             'Date': [date],
+            'Subject': [subject],
             'Feedback': [feedback]
         }
 
-        # Load existing data from CSV
         df = pd.read_csv(csv_file)
         new_data = pd.DataFrame(data)
         df = pd.concat([df, new_data], ignore_index=True)
-
-        # Save updated DataFrame to the CSV file
         df.to_csv(csv_file, index=False)
 
-        st.success("Feedback stored successfully!")
+        st.success("Message sent with success!")
+        st.markdown('Thank you for your feedback! We will take it into consideration as soon as possible! :smile:')
+
+        time.sleep(3)
+        #CODIGO PARA LIMPAR AS TEXT BOXES DEPOIS DE SUBMETER O FEEDBACK
+
+
 
 def feedback_page_logged_off():
     st.warning("To give feedback you need to login first!")
@@ -72,7 +63,6 @@ def feedback_page_logged_off():
         st.markdown('Don\'t have an account? ')
         if st.button('Sign Up'):
             switch_page('sign up')
-
 
 
 

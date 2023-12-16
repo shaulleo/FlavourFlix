@@ -7,11 +7,8 @@ from streamlit_extras.switch_page_button import switch_page
 from functions.utils import *
 
 
-
-# ---- Este é oq quero ajuda do prof ----
 def save_state(variable):
     st.session_state[f'{variable}'] = variable
-
 
 
 def gather_client_data():
@@ -19,9 +16,6 @@ def gather_client_data():
 
     email = st.session_state['email']
     username = st.session_state['username']
-
-    # user_pic = st.file_uploader("Please upload your profile picture!", type=['png', 'jpg', 'jpeg'])
-    # save_state(user_pic)
 
     first_name = st.text_input("First Name")
     save_state(first_name)
@@ -31,15 +25,19 @@ def gather_client_data():
     gender = st.selectbox("Gender", ["Male", "Female", "Other"])
     save_state(gender)
 
-    date_of_birth = st.date_input("When were you born?", min_value= date.fromisoformat('1899-12-31'), max_value = date.today(), format="YYYY/MM/DD")
+    date_of_birth = st.date_input("When were you born?", min_value= date.fromisoformat('1899-12-31'), max_value = date.fromisoformat('2005-12-31'), format="YYYY/MM/DD", value=date.fromisoformat('2005-01-01'))
     save_state(date_of_birth)
 
     nationality = st.text_input("What is your Nationality?")
     save_state(nationality)
 
     #Falta colocar o resto
-    city = st.selectbox("Which district are you based in?", ['Lisboa', 'Porto', 'Faro', 'Évora', 'Setúbal', 'Aveiro', 'Braga', 
-                                                             'Coimbra', 'Leiria', 'Santarém', 'Viseu', 'Viana do Castelo',])
+    city = st.selectbox("Which region are you based in?", ['Aveiro', 'Beja', 'Braga', 'Bragança', 
+                                                           'Castelo Branco', 'Coimbra', 'Évora', 
+                                                           'Faro', 'Guarda', 'Leiria', 'Lisboa', 
+                                                           'Portalegre', 'Porto', 'Santarém', 'Setúbal',
+                                                             'Viana do Castelo', 'Vila Real', 'Viseu', 
+                                                             'Açores', 'Madeira'])
     save_state(city)
 
     has_travel_car = st.checkbox("Do you commonly prefer to travel by car?")
@@ -51,7 +49,7 @@ def gather_client_data():
 
     dietary_restrictions = st.selectbox("Dietary Restrictions", ["None", "Vegetarian", "Vegan"])
     save_state(dietary_restrictions)
-    allergies = st.text_input("Do you have any allergies?")
+    allergies = st.text_input("Do you have any allergies? If so, which?")
     save_state(allergies)
 
     favourite_food = st.text_area("What is your favourite food? Feel free to write in Portuguese!")
@@ -63,6 +61,7 @@ def gather_client_data():
        'Visa', 'Mastercard', 'Paypal', 'American Express', 'Maestro Card'])
     save_state(preferred_payment)
     
+    #CONFIRMAR ISTO
     restaurant_style = st.selectbox("What Restaurant Style do you prefer?", ['Familiar', 'After Work', 'Homemade', 'Traditional',
        'Contemporary', 'Author', 'Cosy', 'Healthy', 'Central', 'Groups',
        'Bistro', 'Terrace', 'Romantic', 'Lunch', 'Organic', 'Fine Dining',
@@ -115,39 +114,33 @@ def gather_client_data():
 
 
 def save_user_data(user_data: dict):
-    client_data = pd.read_csv('data/clientDataCleantestes.csv', sep=',')
+    client_data = pd.read_csv('data/clientDataClean.csv', sep=',')
     # Concatenate the new data with the existing clientdata
     client_data = pd.concat([client_data, pd.DataFrame([user_data])], ignore_index=True)
     client_data.drop_duplicates(subset=['email', 'username'], keep = 'last', inplace=True)
 
         #Export the data
-    client_data.to_csv('data/clientDataCleantestes.csv', index=False)
+    client_data.to_csv('data/clientDataClean.csv', index=False)
     with st.spinner('Saving your data...'):
         time.sleep(3)
         st.success('Data Saved!', icon='🚀')
         st.session_state['save'] = False
-    show_client_data()
+    show_client_data(client_data, user_data['email'])
 
 
-def show_client_data():
-    email = st.session_state['email']
+def show_client_data(client_data, email):
     username = st.session_state['username']
     
     st.session_state['save'] = False
     st.session_state['edit'] = False
 
-    client_data = pd.read_csv('data/clientDataCleantestes.csv', sep=',')
+
     col1, col2 = st.columns(2)
     with col1:
         st.write(f'First Name: {client_data.loc[client_data["email"] == email]["first_name"].values[0]}')
         st.write(f'Last Name: {client_data.loc[client_data["email"] == email]["last_name"].values[0]}')
         st.write(f'Birthdate: {client_data.loc[client_data["email"] == email]["date_of_birth"].values[0]}')
-
-        # if 'user_pic' in st.session_state:
-        #     st.write('Your Profile Picture:')
-        #     st.image(st.session_state['user_pic'])
-
-        #st.write(f'Gender: {[client_data.loc["email"] == email]["gender"].values[0]}')
+        st.write(f'Gender: {[client_data.loc["email"] == email]["gender"].values[0]}')
         st.write(f'Nationality : {client_data.loc[client_data["email"] == email]["nationality"].values[0]}')
         st.write(f'District: {client_data.loc[client_data["email"] == email]["city"].values[0]}')
         st.write(f'Smoker: {client_data.loc[client_data["email"] == email]["smoker_n"].values[0]}')
@@ -178,7 +171,14 @@ if ('authentication_status' in st.session_state) and (st.session_state['authenti
     ph = st.empty()
 
     if 'edit' not in st.session_state or st.session_state['edit'] == False:
-        show_client_data()
+        client_data = pd.read_csv('data/clientDataClean.csv', sep=',')
+        email = st.session_state['email']
+        if email in client_data['email'].values:
+            show_client_data(client_data, email)
+        else:
+            gather_client_data()
+            if st.session_state['save'] == True:
+                save_user_data()
     else:
         gather_client_data()
         if st.session_state['save'] == True:

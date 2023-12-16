@@ -75,6 +75,9 @@ def pages_logged_off():
          Page("pages/Feedback.py", "Feedback", "✍️"),
          Page("pages/Blog.py", "Blog Page", "📚"),])
 
+
+
+#Isto nao está no sitio certo; temos de corrigir.
 def show_menu(selected_restaurant):               
     menu = data.loc[data['name'] == selected_restaurant, 'menu_pre_proc'].iloc[0]
     # menu = menu.strip('"')  # Remove quotes from the beginning and end
