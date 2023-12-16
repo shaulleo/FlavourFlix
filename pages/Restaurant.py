@@ -2,10 +2,12 @@
 import streamlit as st
 import pandas as pd
 import ast
+import numpy as np
 import json
 from functions.streamlitfunc import *
 from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_extras.stylable_container import stylable_container
+from streamlit_carousel import carousel
 
 
 
@@ -13,13 +15,43 @@ st.set_page_config(page_title='Restaurant', page_icon="ext_images\page_icon.png"
 data = pd.read_csv('data/preprocessed_data.csv')
 st.title("Restaurant's Details")
 
+
+def find_res_photos(restaurant):
+    data_with_photos = pd.read_csv('data/alltheforkscrapes2.csv')
+    photo_columns = [col for col in list(data_with_photos.columns) if 'photos' in col]
+    photo_columns.append('name')
+    data_with_photos = data_with_photos[photo_columns]
+    res_photos = data_with_photos[data_with_photos['name'] == restaurant]
+    res_photos = res_photos.dropna(axis=1, how='all')
+    images = []
+    photo_columns = [col for col in list(res_photos.columns) if 'photos' in col]
+    for col in photo_columns:
+        image_info = dict(title = '',
+                          text = f'{res_photos["name"].values[0]}',
+                          img = res_photos[col].values[0])
+        images.append(image_info)
+    
+    return images
+
 def restaurant_details():
+
+    food_rating = data.loc[data['name'] == selected_restaurant, 'foodRatingSummary'].iloc[0]
+    service_rating = data.loc[data['name'] == selected_restaurant, 'serviceRatingSummary'].iloc[0]
+    ambience_rating = data.loc[data['name'] == selected_restaurant, 'ambienceRatingSummary'].iloc[0]
+    michelin_value = data.loc[data['name'] == selected_restaurant,'michelin'].iloc[0]
+    max_party_size = data.loc[data['name'] == selected_restaurant, 'maxPartySize'].iloc[0]
+    outdoor_area = data.loc[data['name'] == selected_restaurant,'outdoor_area'].iloc[0]
+
 
     st.markdown(f"<h1 style='text-align: center; color: black;'>{selected_restaurant}</h1>", unsafe_allow_html=True)
 
     st.markdown('<br>', unsafe_allow_html=True)
     m1, m2, m3, m4, m5 = st.columns([1,1,1, 1, 1])
     with m1:
+        if np.isnan(food_rating):
+            food_rating = 'Not Available'
+        else:
+            food_rating = f'{np.round(food_rating, 2)}/10.0'
         with stylable_container(
         key="container_with_border",
         css_styles="""
@@ -28,10 +60,15 @@ def restaurant_details():
                 border-radius: 0.5rem;
                 padding: calc(1em - 1px)
             }
-            """,
-    ):
-            st.metric(label = 'Food Rating', value = data.loc[data['name'] == selected_restaurant, 'foodRatingSummary'].iloc[0])
+            """):
+            st.metric(label = '🍲 Food Rating', value = f"{food_rating}")
+
     with m2:
+        if np.isnan(service_rating):
+            service_rating = 'Not Available'
+        else:
+            service_rating = f'{np.round(service_rating,2)}/10.0'
+    
         with stylable_container(
         key="container_with_border",
         css_styles="""
@@ -40,22 +77,14 @@ def restaurant_details():
                 border-radius: 0.5rem;
                 padding: calc(1em - 1px)
             }
-            """,
-    ):
-            st.metric(label = 'Service Rating', value = data.loc[data['name'] == selected_restaurant, 'serviceRatingSummary'].iloc[0])
-    with m3:
-        with stylable_container(
-        key="container_with_border",
-        css_styles="""
-            {
-                border: 1px solid rgba(49, 51, 63, 0.2);
-                border-radius: 0.5rem;
-                padding: calc(1em - 1px)
-            }
-            """,
-    ):
-            st.metric(label = 'Max Party Size', value = data.loc[data['name'] == selected_restaurant, 'maxPartySize'].iloc[0])
+            """    ):
+            st.metric(label = '👨‍🍳 Service Rating', value = f"{service_rating}")
+
     with m4:
+        if np.isnan(max_party_size):
+            max_party_size = 'Not Available'
+        else:
+            max_party_size = int(max_party_size)
         with stylable_container(
         key="container_with_border",
         css_styles="""
@@ -63,12 +92,50 @@ def restaurant_details():
                 border: 1px solid rgba(49, 51, 63, 0.2);
                 border-radius: 0.5rem;
                 padding: calc(1em - 1px)
-                align-items: center;
             }
-            """,
-    ):
-            st.metric(label= 'Michelin?', value=data.loc[data['name'] == selected_restaurant,'michelin'].iloc[0])
+            """,    ):
+            st.metric(label = '🧑🏽‍🤝‍🧑🏿 Maximum Party Size', value = max_party_size)
+    
+    with m3:
+        if np.isnan(ambience_rating):
+            ambience_rating = 'Not Available'
+        else:
+            ambience_rating = f'{np.round(ambience_rating,2)}/10.0'
+
+        if michelin_value == 1:
+            michelin_score = 'Michelin :star:' if michelin_value == 1 else 'None'
+            with stylable_container(
+            key="container_with_border",
+            css_styles="""
+                {
+                    border: 1px solid rgba(49, 51, 63, 0.2);
+                    border-radius: 0.5rem;
+                    padding: calc(1em - 1px)
+                    align-items: center;
+                }
+                """,
+        ):
+                st.metric(label= 'Awarded with', value=michelin_score)
+        else:
+            with stylable_container(
+            key="container_with_border",
+            css_styles="""
+                {
+                    border: 1px solid rgba(49, 51, 63, 0.2);
+                    border-radius: 0.5rem;
+                    padding: calc(1em - 1px)
+                    align-items: center;
+                }
+                """,
+        ):
+                st.metric(label= '🏙️ Ambience Rating', value=f'{ambience_rating}')
+
+    
     with m5:
+        if outdoor_area == 1:
+            outdoor_area = 'Yes'
+        else:
+            outdoor_area = 'No'
         with stylable_container(
         key="container_with_border",
         css_styles="""
@@ -80,13 +147,18 @@ def restaurant_details():
             }
             """,
     ):
-            st.metric(label= 'Outdour Area?', value=data.loc[data['name'] == selected_restaurant,'outdoor_area'].iloc[0])
+            st.metric(label= '🏖️ Outdoor Area', value=outdoor_area)
+
+
+
     # style_metric_cards(border_left_color='#FFFFFF', box_shadow=False)
     st.markdown('<br>', unsafe_allow_html=True)
     st.markdown('<br>', unsafe_allow_html=True)
     col1, col2 = st.columns([3,3], gap = 'medium')
     with col1:
-        st.image(data.loc[data['name'] == selected_restaurant, 'photo'].iloc[0])
+        images = find_res_photos(selected_restaurant)
+        #st.image(data.loc[data['name'] == selected_restaurant, 'photo'].iloc[0])
+        carousel(items=images, width=1.05)
     with col2:
         with stylable_container(
         key="container_with_border",
@@ -123,7 +195,7 @@ def restaurant_details():
                     menu_items[section] = {}
                 menu_items[section][dish] = details
         
-        with st.expander("Menu:"):
+        with st.expander("Check out the Menu!"):
             
             for section, dishes in menu_items.items():
                 st.markdown(f"###### {section}:")

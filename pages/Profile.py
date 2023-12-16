@@ -10,9 +10,11 @@ from functions.utils import *
 def save_state(variable):
     st.session_state[f'{variable}'] = variable
 
+st.session_state['save'] = None
+st.session_state['edit'] = None
+
 
 def gather_client_data():
-    st.session_state['edit'] = False
 
     email = st.session_state['email']
     username = st.session_state['username']
@@ -111,56 +113,62 @@ def gather_client_data():
     if st.button(label="Save", key="save_data"):
         st.session_state['save'] = True
         save_user_data(user_data)
+        st.session_state['edit'] = False
 
 
 def save_user_data(user_data: dict):
-    client_data = pd.read_csv('data/clientDataClean.csv', sep=',')
-    # Concatenate the new data with the existing clientdata
-    client_data = pd.concat([client_data, pd.DataFrame([user_data])], ignore_index=True)
-    client_data.drop_duplicates(subset=['email', 'username'], keep = 'last', inplace=True)
+    if st.session_state['save'] == True:
+        client_data = pd.read_csv('data/clientDataClean.csv', sep=',')
+        client_data = pd.concat([client_data, pd.DataFrame([user_data])], ignore_index=True)
+        client_data.drop_duplicates(subset=['email', 'username'], keep = 'last', inplace=True)
 
-        #Export the data
-    client_data.to_csv('data/clientDataClean.csv', index=False)
-    with st.spinner('Saving your data...'):
-        time.sleep(3)
-        st.success('Data Saved!', icon='🚀')
-        st.session_state['save'] = False
-    show_client_data(client_data, user_data['email'])
+            #Export the data
+        client_data.to_csv('data/clientDataClean.csv', index=False)
+        with st.spinner('Saving your data...'):
+            time.sleep(3)
+            st.success('Data Saved!', icon='🚀')
+            st.session_state['save'] = False
+            st.session_state['edit'] = False
+        show_client_data(client_data, user_data['email'])
 
 
 def show_client_data(client_data, email):
-    username = st.session_state['username']
-    
-    st.session_state['save'] = False
-    st.session_state['edit'] = False
+    if st.session_state['edit'] == False:    
+        #st.session_state['edit'] = False
 
-
-    col1, col2 = st.columns(2)
-    with col1:
-        st.write(f'First Name: {client_data.loc[client_data["email"] == email]["first_name"].values[0]}')
-        st.write(f'Last Name: {client_data.loc[client_data["email"] == email]["last_name"].values[0]}')
-        st.write(f'Birthdate: {client_data.loc[client_data["email"] == email]["date_of_birth"].values[0]}')
-        st.write(f'Gender: {[client_data.loc["email"] == email]["gender"].values[0]}')
-        st.write(f'Nationality : {client_data.loc[client_data["email"] == email]["nationality"].values[0]}')
-        st.write(f'District: {client_data.loc[client_data["email"] == email]["city"].values[0]}')
-        st.write(f'Smoker: {client_data.loc[client_data["email"] == email]["smoker_n"].values[0]}')
-        st.write(f'Drinks Alcohol: {client_data.loc[client_data["email"] == email]["drinks_alcohol"].values[0]}')
-        st.write(f'Travels by Car: {client_data.loc[client_data["email"] == email]["travel_car"].values[0]}')
-    with col2:
-        st.write(f'Favourite Food: {client_data.loc[client_data["email"] == email]["favourite_food"].values[0]}')
-        st.write(f'Dislike Food: {client_data.loc[client_data["email"] == email]["dislike_food"].values[0]}')
-        st.write(f'Dietary Restrictions: {client_data.loc[client_data["email"] == email]["dietary_restrictions"].values[0]}')
-        st.write(f'Allergies: {client_data.loc[client_data["email"] == email]["allergies"].values[0]}')
-        st.write(f'Preferred Payment Method: {client_data.loc[client_data["email"] == email]["preferred_payment"].values[0]}')
-        st.write(f'Average Price Per Meal Per Person: {client_data.loc[client_data["email"] == email]["normal_price_range"].values[0]}')
-        st.write(f'Preferred Restaurant Style: {client_data.loc[client_data["email"] == email]["restaurant_style"].values[0]}')
-        st.write(f'Preferred Cuisine Type: {client_data.loc[client_data["email"] == email]["cuisine_type"].values[0]}')
-        st.write(f'Typical Lunch Hour: {client_data.loc[client_data["email"] == email]["lunch_hour"].values[0]}')
-        st.write(f'Typical Dinner Hour: {client_data.loc[client_data["email"] == email]["dinner_hour"].values[0]}')
-    
-    st.write('If you would like to change any of the information above, please feel free to edit.')
-    if st.button('Edit', key='edit_button'):
+        col1, col2 = st.columns(2)
+        with col1:
+            st.write(f'First Name: {client_data.loc[client_data["email"] == email]["first_name"].values[0]}')
+            st.write(f'Last Name: {client_data.loc[client_data["email"] == email]["last_name"].values[0]}')
+            st.write(f'Birthdate: {client_data.loc[client_data["email"] == email]["date_of_birth"].values[0]}')
+            st.write(f'Gender: {client_data.loc[client_data["email"] == email]["gender"].values[0]}')
+            st.write(f'Nationality : {client_data.loc[client_data["email"] == email]["nationality"].values[0]}')
+            st.write(f'District: {client_data.loc[client_data["email"] == email]["city"].values[0]}')
+            st.write(f'Smoker: {client_data.loc[client_data["email"] == email]["smoker_n"].values[0]}')
+            st.write(f'Drinks Alcohol: {client_data.loc[client_data["email"] == email]["drinks_alcohol"].values[0]}')
+            st.write(f'Travels by Car: {client_data.loc[client_data["email"] == email]["travel_car"].values[0]}')
+        with col2:
+            st.write(f'Favourite Food: {client_data.loc[client_data["email"] == email]["favourite_food"].values[0]}')
+            st.write(f'Dislike Food: {client_data.loc[client_data["email"] == email]["dislike_food"].values[0]}')
+            st.write(f'Dietary Restrictions: {client_data.loc[client_data["email"] == email]["dietary_restrictions"].values[0]}')
+            st.write(f'Allergies: {client_data.loc[client_data["email"] == email]["allergies"].values[0]}')
+            st.write(f'Preferred Payment Method: {client_data.loc[client_data["email"] == email]["preferred_payment"].values[0]}')
+            st.write(f'Average Price Per Meal Per Person: {client_data.loc[client_data["email"] == email]["normal_price_range"].values[0]}')
+            st.write(f'Preferred Restaurant Style: {client_data.loc[client_data["email"] == email]["restaurant_style"].values[0]}')
+            st.write(f'Preferred Cuisine Type: {client_data.loc[client_data["email"] == email]["cuisine_type"].values[0]}')
+            st.write(f'Typical Lunch Hour: {client_data.loc[client_data["email"] == email]["lunch_hour"].values[0]}')
+            st.write(f'Typical Dinner Hour: {client_data.loc[client_data["email"] == email]["dinner_hour"].values[0]}')
+        
+        st.write('If you would like to change any of the information above, please feel free to edit.')
+        if st.button('Edit', key='edit_button'):
+            st.session_state['edit'] = True
+            gather_client_data()
+    else:
         st.session_state['edit'] = True
+        gather_client_data()
+
+
+
 
 
 if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
@@ -177,8 +185,6 @@ if ('authentication_status' in st.session_state) and (st.session_state['authenti
             show_client_data(client_data, email)
         else:
             gather_client_data()
-            if st.session_state['save'] == True:
-                save_user_data()
     else:
         gather_client_data()
         if st.session_state['save'] == True:

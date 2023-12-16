@@ -72,14 +72,20 @@ def check_if_open(restaurant_schedule, date=None, time=None):
     if date is None:
         current_date = datetime.date.today()
     else:
-        current_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+        if type(date) == str:
+            current_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+        else:
+            current_date = date
 
     if time is None:
         # Get the current time and format it accordingly.
         current_time = datetime.datetime.now().strftime("%H:%M")
         current_time = datetime.datetime.strptime(current_time, "%H:%M").time()
     else:
-        current_time = datetime.datetime.strptime(time, '%H:%M').time()
+        if type(time) == str:
+            current_time = datetime.datetime.strptime(time, '%H:%M').time()
+        else:
+            current_time = time
 
     day_of_week = current_date.strftime("%A")
 

@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
         pages_logged_in()
-        header_image = "ext_images/logo.jpeg"  
+        header_image =  "ext_images/logo1.jpeg"  
         st.image(header_image, width=400)
         initialize()
 
