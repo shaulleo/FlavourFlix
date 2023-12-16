@@ -58,7 +58,7 @@ def show_testimonial(num=0):
 
 
 def show_complete_testimonials():
-    header_image = "ext_images/logo.jpeg"  
+    header_image =  "ext_images/logo1.jpeg"   
     c1, c2, c3 = st.columns([1, 1, 1], gap = 'large')
     with c2:
         st.image(header_image, width=300)
