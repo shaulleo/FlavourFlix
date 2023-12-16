@@ -54,6 +54,7 @@ def pages_logged_in():
             Page("pages/Personality.py", "Personality", "🤔"),
             Page("pages/Restaurant.py", "Restaurant", "🍽️"),
             Page("pages/Testimonials.py", "Testimonials", "📝"),
+            Page("pages/Feedback.py", "Feedback", "✍️"),
             Page("pages/Blog.py", "Blog Page", "📚"),])
     
 
@@ -71,6 +72,7 @@ def pages_logged_off():
          Page("pages/LogIn.py", "Log In", "🔑"),
          Page("pages/SignUp.py", "Sign Up", "📝"),
          Page("pages/Testimonials.py", "Testimonials", "📝"),
+         Page("pages/Feedback.py", "Feedback", "✍️"),
          Page("pages/Blog.py", "Blog Page", "📚"),])
 
 def show_menu(selected_restaurant):               

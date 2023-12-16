@@ -191,6 +191,8 @@ else:
                     switch_page('testimonials')
                 if st.button('Visit blog', key='blog_button', use_container_width=True):
                     switch_page('blog page')
+                if st.button('Give feedback', key='feedback_button', use_container_width=True):
+                    switch_page('feedback')
                   
                        
              

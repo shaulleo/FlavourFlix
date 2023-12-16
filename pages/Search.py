@@ -155,9 +155,19 @@ def filters_page():
                     st_data = st_folium(m, width=10000, height=400)
             else:
                 st.markdown("#### OOoops! Mister Exigente! We couldn't find any restaurants matching your criteria. Please try again.")
+                st.markdown('<br>', unsafe_allow_html=True)
+                st.markdown('Do you have anu suggestions for new restaurants? Please share them with us by clicking on the "Suggest a Restaurant" button below.')
+                if st.button("Suggest a Restaurant"):
+                    switch_page("feedback")
 
-filters_page()
 
+if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
+    pages_logged_in()
+    filters_page()
+
+else:
+    pages_logged_off()
+    filters_page()
 
     # HÁ UM PROBLEMINHA QUANDO METEMOS O MAPA, FAZ INTERFERENCIA COM OS RESULTADOS 
 
