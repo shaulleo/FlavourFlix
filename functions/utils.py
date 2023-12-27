@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     COORDINATES_API: str = Field(validation_alias = "COORDINATES_API")
     COORDINATES_BASE_URL: str = Field(validation_alias = "COORDINATES_BASE_URL")
     GET_CURRENT_LOCATION_KEY: str = Field(validation_alias = "GET_CURRENT_LOCATION_KEY")
+    DEEPL_API_KEY: str = Field(validation_alias = "DEEPL_API_KEY")
 
 _ = load_dotenv(find_dotenv())
 if not _:

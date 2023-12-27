@@ -85,32 +85,29 @@ class Location:
         self.__api_key = local_settings.GET_CURRENT_LOCATION_KEY
 
     def getLocation(self):
-        """ Gets the current location of the user. 
+        """ 
+        Gets the current location of the user. 
         Parameters:
         - None
         Returns:
-        - None """
-
-        #if self.latitude is None and self.longitude is None and self.region is None:
+        - None 
+        """
         options = Options()
         options.add_argument("--use--fake-ui-for-media-stream")
         driver = webdriver.Chrome()
         timeout = 20
+        driver.set_window_size(1120, 1000)
         driver.get("https://mycurrentlocation.net/")
         wait = WebDriverWait(driver, timeout)
-        time.sleep(20)
-
+        time.sleep(15)
         self.latitude = driver.find_element(By.XPATH, '//*[@id="detail-latitude"]').text
         self.longitude = driver.find_element(By.XPATH, '//*[@id="detail-longitude"]').text
         self.region = driver.find_element(By.XPATH, '//*[@id="detail-location-name"]').text
-
         if self.region is None or self.region == '' or self.region == '':
             pass
         else:
             self.city = self.region.split(',')[1].strip()
-
         driver.quit()
-
 
     def getDirections(self, end_latitude, end_longitude, travel_modes='driving'):
 
@@ -192,9 +189,6 @@ class Location:
 
         print(f"\n{shift}🏷️ Attributes: ")
         print(attributes)
-
-
-
         title = '- END -'
         print(f'\n{title}{"-" * (n_repeat-len(title))}')
 

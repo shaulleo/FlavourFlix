@@ -210,7 +210,7 @@ def filters_page():
                 st.markdown('<br>', unsafe_allow_html=True)
                 st.markdown('Do you have anu suggestions for new restaurants? Please share them with us by clicking on the "Suggest a Restaurant" button below.')
                 if st.button("Suggest a Restaurant"):
-                    switch_page("feedback")
+                    switch_page("contact us")
 
 
 if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):

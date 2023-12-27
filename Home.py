@@ -5,9 +5,12 @@ import time
 from streamlit_extras.switch_page_button import switch_page
 from streamlit_extras.stylable_container import stylable_container
 from functions.utils import *
-
+import folium
+from streamlit_folium import st_folium
+from functions.location import *
 
 data = pd.read_csv('data/preprocessed_data.csv')
+filtered_df = data.copy()
 
 st.set_page_config(page_title="FlavourFlix", page_icon="ext_images/page_icon.png",  layout='wide', initial_sidebar_state="collapsed")
 
@@ -75,32 +78,89 @@ def show_kpis():
             ):
                     st.metric(label = 'Cuisine Types', value = f'🍲 {len(data["cuisine"].unique())}')
 
-def show_analytics():
-    c1, c2, c3, c4 = st.columns(4)
+def show_analytics(data):
+    c1, c2, c3 = st.columns([0.25, 0.25, 0.5])
     with c1:
-        open_restaurants = 0  # Declare outside the loop to keep count
-
-    for item in enumerate(data):  # Loop through each item in data
-        if check_if_open(item) == 'Open':
-            open_restaurants += 1  # Increment count for each open restaurant
-
-    with stylable_container(
-        key="container_with_border",
-        css_styles="""
-            {
-                border: 1px solid rgba(49, 51, 63, 0.2);
-                border-radius: 0.5rem;
-                padding: calc(1em - 1px);
-                text-align: justify;
-            }
-            """,
-    ):
-        st.metric(label='Open Restaurants', value=f'🍽️ {open_restaurants}')
+        data['currently_open'] = data['schedule'].apply(lambda x: check_if_open(x))
+        open_restaurants = len(data[data['currently_open'] == 'Open'])
+        with stylable_container(
+            key="container_with_border",
+            css_styles="""
+                {
+                    border: 1px solid rgba(49, 51, 63, 0.2);
+                    border-radius: 0.5rem;
+                    padding: calc(1em - 1px);
+                    text-align: justify;
+                }
+                """,
+        ):
+            st.metric(label='Currently Open', value=f'🍽️ {open_restaurants}')
+    with c2:
+        avg_price = data['averagePrice'].mean()
+        with stylable_container(
+            key="container_with_border",
+            css_styles="""
+                {
+                    border: 1px solid rgba(49, 51, 63, 0.2);
+                    border-radius: 0.5rem;
+                    padding: calc(1em - 1px);
+                    text-align: justify;
+                }
+                """,
+        ):
+            st.metric(label='Average Price', value=f'💶 {avg_price:.0f}€')
+    with c3:
+        common_cuisines = data['cuisine'].value_counts().head(1).index[0]
+        with stylable_container(
+                key="container_with_border",
+                css_styles="""
+                    {
+                        border: 1px solid rgba(49, 51, 63, 0.2);
+                        border-radius: 0.5rem;
+                        padding: calc(1em - 1px);
+                        text-align: justify;
+                    }
+                    """,
+            ):
+            st.metric(label='Most Common Cuisine', value=f'🍲 {common_cuisines}')
             
 
+def restaurant_card(restaurant, title, ratingcol='ratingValue'):
+    with stylable_container(
+         key="container_with_border",
+            css_styles="""
+                {
+                    border: 1px solid rgba(49, 51, 63, 0.2);
+                    border-radius: 0.5rem;
+                    padding: calc(1em - 1px);
+                    text-align: justify;
+                }
+                """,):
+        st.markdown(f"<h5 style='text-align: left; color: black;'>{title}</h5>", unsafe_allow_html=True)
+        col1, col2 = st.columns([1, 2], gap='large')
+        with col1:
+            st.image(restaurant['photo'], width=250)
+        with col2:
+            st.markdown(f"**{restaurant['name'].strip()}**")
+            st.markdown(f"*{restaurant['address'].strip()}*")
+            st.markdown(f"**Rating**: {restaurant[ratingcol]}/10.0")
+            if st.button(f"View Details for {restaurant['name']}", key=f'highest_rated_{ratingcol}'):
+                st.session_state.selected_restaurant = restaurant['name']
+                switch_page("restaurant")
+
+def show_top_rated(data):
+    highest_rating = data[data['ratingValue'] == data['ratingValue'].max()].iloc[0]
+    highest_food = data[data['foodRatingSummary'] == data['foodRatingSummary'].max()].iloc[0]
+    highest_service = data[data['serviceRatingSummary'] == data['serviceRatingSummary'].max()].iloc[0]
+    highest_ambience = data[data['ambienceRatingSummary'] == data['ambienceRatingSummary'].max()].iloc[0]
+    st.markdown(f"<h3 style='text-align: center; color: black;'>Top Rated Restaurants</h3>", unsafe_allow_html=True)
+    restaurant_card(highest_rating, 'Best Ratings', 'ratingValue')
+    restaurant_card(highest_food, 'Highest Food Rating', 'foodRatingSummary')
+    restaurant_card(highest_service, 'Best Service', 'serviceRatingSummary')
+    restaurant_card(highest_ambience, 'Best Ambience', 'ambienceRatingSummary')
+          
+
 if 'authentication_status' not in st.session_state or st.session_state['authentication_status'] ==False:
-
-
     #Se o estado de autenticação não existir ou for falso e não haver memória de userlogin,
     # mostra a Home page com as opções de login e signup
     if 'username' not in st.session_state and 'email' not in st.session_state:
@@ -116,12 +176,7 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
             header_image = "ext_images/pnas.1913308116fig01.jpeg"  
             st.image(header_image)
             st.markdown('<br>', unsafe_allow_html=True)
-            
-
-            
-    
         with col1:
-    
             st.markdown(f"<h1 style='text-align: left; color: black;'>Welcome to FlavourFlix!</h1>", unsafe_allow_html=True)
             # st.header("Welcome to FlavourFlix!")
             st.markdown('<br>', unsafe_allow_html=True)
@@ -130,7 +185,6 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
             show_kpis()
             st.caption("To get started, please log in or sign up.")
         st.write("")
-        show_analytics()  
         st.divider()
         col3, col4 = st.columns([1,1], gap='large')
         with col3:
@@ -159,39 +213,63 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
             if st.button('Testimonials', key='testimonials_button'):
                 switch_page('testimonials') 
 
-
-         
-            
-            
-            
-            
     #Se o estado de autenticação não existir ou for falso mas há memória de user login, então
     #indica que há algum tipo de erro e manda de volta para a página do login para o refazer.
-    
     else:
         st.error('Ups! Something went wrong. Please try login again.', icon='🚨')
         st.session_state['authentication_status'] = False
         with st.spinner('Redirecting you to the Login page...'):
             time.sleep(3)
         switch_page('log in')
-
-
 else:
     #Se a autenticação for válida, mostra a Home page com as várias funcionalidades
     if 'username' in st.session_state and 'email' in st.session_state:
-
         pages_logged_in()
-
+        cola, colb, colc, cold, cole, colf = st.columns(6, gap='small')
+        with cola:
+            if st.button('Chat with Filomena', key='chat_button', use_container_width=True):
+                switch_page('chat with filomena')
+        with colb:
+            if st.button('Search for restaurants', key='search_button', use_container_width=True):
+                switch_page('search')
+        with colc:
+            if st.button('View your Profile', key='profile_button', use_container_width=True):
+                switch_page('profile')
+        with cold:
+            if st.button('See testimonials', key='testimonials_button', use_container_width=True):
+                switch_page('testimonials') 
+        with cole:
+            if st.button('Visit blog', key='blog_button', use_container_width=True):
+                switch_page('blog page')
+        with colf:
+            if st.button('Contact Us', key='feedback_button', use_container_width=True):
+                switch_page('contact us')
+        st.divider()
         col1, col2, = st.columns(2)
-        with col1:
-            show_kpis()
-            st.image("ext_images/LucilleFrankfurt-4e47171b0b684277aaea4368ecb4cc15.png")
         with col2:
-            # st.write("")
-            # st.header(f"Welcome to FlavourFlix, {st.session_state['username']}!")
+            location_permission = st.toggle('Use my location', key='location_permission')
+            if location_permission:
+                if "current_location" not in st.session_state or not st.session_state.current_location:
+                    # Get current location
+                    current_location = Location()
+                    current_location.getLocation()
+                    st.session_state.current_location = current_location
+                    st.session_state.use_current_location = True
+                else:
+                    current_location = st.session_state.current_location
+                filtered_df = nearYou(current_location, filtered_df, top=100)
+            else:
+                filtered_df = data.copy()
+                st.session_state.use_current_location = False
+            st.write("")
+            show_top_rated(filtered_df)
+
+
+        with col1:
             st.markdown(f"<h1 style='text-align: left; color: black;'>Welcome to FlavourFlix, {st.session_state['username']}!</h1>", unsafe_allow_html=True)
-            st.write("FlavourFlix is a platform that recommends restaurants based on your preferences.")
-            st.write("Feel free to search some restaurants or ask Filomena for suggestions!")
+            st.write("Find your new favourite portuguese restaurant!")
+            st.write("")
+            show_analytics(filtered_df)
             st.write("")
             with stylable_container(
                 key="container_with_border",
@@ -205,37 +283,24 @@ else:
                     }
                     """,
             ):
-                if st.button('Chat with Filomena!', key='chat_button', use_container_width=True):
-                    switch_page('chat with filomena')
-                if st.button('Search for restaurants!', key='search_button', use_container_width=True):
-                    switch_page('search')
-                if st.button('View your Profile!', key='profile_button', use_container_width=True):
-                    switch_page('profile')
-                if st.button('See testimonials', key='testimonials_button', use_container_width=True):
-                    switch_page('testimonials')
-                if st.button('Visit blog', key='blog_button', use_container_width=True):
-                    switch_page('blog page')
-                if st.button('Give feedback', key='feedback_button', use_container_width=True):
-                    switch_page('feedback')
+                # Check if any location is selected before showing the map
+                if "current_location" not in st.session_state or not st.session_state.use_current_location or not st.session_state.current_location:
+                    center_lat = filtered_df['latitude'].median()
+                    center_long = filtered_df['longitude'].median()
+                    m = folium.Map(location=(center_lat, center_long), zoom_start=6, tiles="OpenStreetMap")
+                else:
+                    center_lat = current_location.latitude
+                    center_long = current_location.longitude
+                    m = folium.Map(location=(center_lat, center_long), zoom_start=12, tiles="OpenStreetMap")
+                for index, row in filtered_df.iterrows():
+                    #Create a marker for each observation
+                    folium.Marker(
+                        location=[row['latitude'], row['longitude']],
+                        popup=row['name'],).add_to(m)
+                #Render Folium map in Streamlit if a location is selected
+                st_data = st_folium(m, height=500, use_container_width=True)
                   
                        
-             
-
-
-        # col1, col2, col3 = st.columns(3)
-        # with col1:
-        #     st.write("")
-        #     if st.button('Chat with Filomena!', key='chat_button'):
-        #         switch_page('chat with filomena')
-        # with col2:
-        #     st.write("")
-        #     if st.button('Search for restaurants!', key='search_button'):
-        #         switch_page('search')
-        # with col3:
-        #     st.write("")
-        #     if st.button('View your Profile!', key='profile_button'):
-        #         switch_page('profile')
-
     #Se tiver autenticado com true mas não há credenciais, então indica que há algum tipo de erro e manda de volta para o login          
     else:
         st.error('Ups! Something went wrong. Please try login again.', icon='🚨')
