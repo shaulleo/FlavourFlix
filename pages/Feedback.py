@@ -16,9 +16,8 @@ def feedback_page():
     st.markdown('We would love to hear what you have to say about FlavourFlix, Filomena and our services!\nIf you have any suggestion, including restaurant recommendations or new features, feel free to disclose them here!')
     st.markdown('Please fill in the following details.')
 
-    csv_file = 'feedback.csv'
+    csv_file = 'data/feedback.csv'
 
-    # AQUI TEMOS QUE IR BUSCAR OS DADOS À BASE DE DADOS QUE TEM AS PALAVRAS PASSE E OS UILIZADORES 
     email = st.session_state.email
     name = st.text_input('Name', key='client_name_f', placeholder='Enter your name')
     subject = st.selectbox('Subject', ['General', 'Restaurant Recommendation', 'New Feature', 'Other'], key='subject_f', placeholder='Select a subject')

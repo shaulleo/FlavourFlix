@@ -45,7 +45,6 @@ def clean_openinghours(observation):
         return opening_hours_dict
 
 
-
 def preprocess_address(address):
     """Preprocesses the address of a restaurant.
         Parameters:
@@ -112,7 +111,6 @@ def find_coordinates(address):
         longitude = None
     
     return latitude, longitude
-
 
 
 def find_random_time(time_string, start=True):
@@ -269,32 +267,7 @@ def preprocess_chefs(index, chef_list):
             return chef_list
         else:
             return 'Not Applicable'
-        
-
-# def standardize_text(user_input_text):
-#     """Standardizes a user input string for better matches.
-#         Parameters:
-#         - user_input_text (str): User input.
-#         Returns:
-#         - user_input_text (str): Standardized user input."""
-
-#     #Convert to lower the string location
-#     user_input_text = user_input_text.lower()
-
-#     #Remove accents from the string
-#     user_input_text = unicodedata.normalize('NFKD', user_input_text).encode('ASCII', 'ignore').decode('utf-8')
-
-#     #Remove ponctuation except numbers
-#     user_input_text = re.sub(r'[^\w\s]', ' ', user_input_text)
-
-#     #Remove single characters
-#     user_input_text = re.sub(r'\b\w\b', '', user_input_text)
-
-#     #remove multiple spaces
-#     user_input_text = re.sub(r'\s+', ' ', user_input_text)
-
-#     return user_input_text.strip()
-        
+             
 
 def standardize_location(location):
     """Standardizes a location string.
@@ -304,16 +277,22 @@ def standardize_location(location):
         - location (str): Standardized location of the restaurant."""
 
     
-    #Tinha que ser...
-    if location == 'Alamansil':
-        location = 'Almancil'
+    #Handle different spellings of the same location
+    location_mapping = {'alamansil': 'Almancil',
+                        'lisbon': 'Lisboa', 'oporto':'Porto'}
+    if location.lower() in location_mapping.keys():
+        location = location_mapping[location.lower()]
 
     #remove abbreviations
     location = re.sub(r's\.', 'São', location, flags=re.IGNORECASE)
     location = re.sub(r'sta\.', 'Santa', location, flags=re.IGNORECASE)
     location = re.sub(r'q\.ta', 'Quinta', location, flags=re.IGNORECASE)
+    location = re.sub(r'M.nha', 'Marinha', location, flags=re.IGNORECASE)
 
-    return standardize_text(location)
+    #Remove anything within brackets (inclusive):
+    location = re.sub(r'\([^)]*\)', '', location)
+
+    return standardize_text(location, keep_accents=True)
 
 
 def generate_current_occupation(observation):
