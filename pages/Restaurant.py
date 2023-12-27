@@ -13,7 +13,7 @@ from streamlit_carousel import carousel
 
 st.set_page_config(page_title='Restaurant', page_icon="ext_images\page_icon.png", layout="wide", initial_sidebar_state="collapsed")
 data = pd.read_csv('data/preprocessed_data.csv')
-st.title("Restaurant's Details")
+# st.title("Restaurant's Details")
 
 
 def find_res_photos(restaurant):
@@ -32,6 +32,55 @@ def find_res_photos(restaurant):
         images.append(image_info)
     
     return images
+
+
+def show_menu(restaurant):
+    if type(restaurant['menu_pre_proc'].iloc[0]) == str:
+        menu = restaurant['menu_pre_proc'].iloc[0]
+        menu = menu.replace('"{', '{')
+        menu = menu.replace('}"', '}')
+        menu = menu.replace("::", ":")
+        menu = menu.replace('""', '"')
+        menu = ast.literal_eval(menu)  
+
+        menu_items = {}
+
+        for section, dishes in menu.items():
+            for dish, details in dishes.items():
+                if section not in menu_items:
+                    menu_items[section] = {}
+                menu_items[section][dish] = details
+    else: 
+        menu_items = None
+        menu = 'Not Available'
+        
+    with st.expander("Check out the Menu!"):
+        if menu_items is not None:
+            for section, dishes in menu_items.items():
+                st.markdown(f"###### {section}:")
+                for dish, details in dishes.items():
+                    price = details['price'] if details['price'] else "Price Unavailable"
+                    description = details['description'] if details['description'] != 'null' else ""
+                        
+                    if description:
+                        st.markdown(f" - <p> {dish}: {price} € <small> ({description}) </small> </p> ", unsafe_allow_html=True)
+                    else:
+                        st.markdown(f"- {dish}: {price} €")
+        else:
+            st.markdown('Sorry! It seems that the restaurant did\nnot make their menu available yet... :disappointed:')
+
+
+def show_schedule(restaurant):
+    with st.expander("View Restaurant Schedule"):
+        if restaurant['schedule'].iloc[0] == 'Not Available':
+            st.markdown('Sorry! It seems that the restaurant did\nnot make their schedule available yet... :disappointed:')
+        else:
+            schedule = ast.literal_eval(restaurant['schedule'].iloc[0])
+            for day, hours in schedule.items():
+                st.markdown(f"###### {day}:")
+                st.markdown(f" - {hours}")
+
+
 
 def restaurant_details():
 
@@ -130,7 +179,6 @@ def restaurant_details():
         ):
                 st.metric(label= '🏙️ Ambience Rating', value=f'{ambience_rating}')
 
-    
     with m5:
         if outdoor_area == 1:
             outdoor_area = 'Yes'
@@ -149,16 +197,14 @@ def restaurant_details():
     ):
             st.metric(label= '🏖️ Outdoor Area', value=outdoor_area)
 
-
-
     # style_metric_cards(border_left_color='#FFFFFF', box_shadow=False)
     st.markdown('<br>', unsafe_allow_html=True)
     st.markdown('<br>', unsafe_allow_html=True)
-    col1, col2 = st.columns([3,3], gap = 'medium')
+    col1, col2 = st.columns([3,3], gap = 'large')
     with col1:
         images = find_res_photos(selected_restaurant)
-        #st.image(data.loc[data['name'] == selected_restaurant, 'photo'].iloc[0])
-        carousel(items=images, width=1.05)
+        carousel(items=images, width=1.15)
+
     with col2:
         with stylable_container(
         key="container_with_border",
@@ -179,40 +225,8 @@ def restaurant_details():
             if st.button(f"Reserve Now!"):
                 st.session_state.selected_restaurant = selected_restaurant
                 nav_page("Reservations")
-        menu = data.loc[data['name'] == selected_restaurant, 'menu_pre_proc'].iloc[0]
-        # menu = menu.strip('"')  # Remove quotes from the beginning and end
-        menu = menu.replace('"{', '{')
-        menu = menu.replace('}"', '}')
-        menu = menu.replace("::", ":")
-        menu = menu.replace('""', '"')
-        menu = ast.literal_eval(menu)  # Convert the string to a dictionary
-
-        menu_items = {}
-
-        for section, dishes in menu.items():
-            for dish, details in dishes.items():
-                if section not in menu_items:
-                    menu_items[section] = {}
-                menu_items[section][dish] = details
-        
-        with st.expander("Check out the Menu!"):
-            
-            for section, dishes in menu_items.items():
-                st.markdown(f"###### {section}:")
-                for dish, details in dishes.items():
-                    price = details['price'] if details['price'] else "Price Unavailable"
-                    description = details['description'] if details['description'] != 'null' else ""
-                    
-                    if description:
-                        # st.markdown(f"- {dish}: {price} € ({description})") + st.caption(description)
-                        st.markdown(f" - <p> {dish}: {price} € <small> ({description}) </small> </p> ", unsafe_allow_html=True)
-                        
-                    else:
-                        st.markdown(f"- {dish}: {price} €")
-
-
-    
-    # select the menu_pre_proc columns for the respective selected restaurant
+    show_menu(data.loc[data['name'] == selected_restaurant])
+    show_schedule(data.loc[data['name'] == selected_restaurant])
     
 
 if 'selected_restaurant' not in st.session_state:

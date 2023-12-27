@@ -30,18 +30,21 @@ local_settings = Settings()
 # --------------------------------- 2. Utility Functions --------------------------------
 
 #Standardizes user input when searching freely for a restaurant
-def standardize_text(user_input_text):
+def standardize_text(user_input_text, keep_accents=False):
     """Standardizes a user input string for better matches.
         Parameters:
         - user_input_text (str): User input.
+        - keep_accents (bool): If True, accents are not removed from the string.
         Returns:
-        - user_input_text (str): Standardized user input."""
+        - user_input_text (str): Standardized user input.
+    """
     if isinstance(user_input_text, str):
         #Convert to lower the string location
         user_input_text = user_input_text.lower()
 
-        #Remove accents from the string
-        user_input_text = unicodedata.normalize('NFKD', user_input_text).encode('ASCII', 'ignore').decode('utf-8')
+        if not keep_accents:
+            #Remove accents from the string
+            user_input_text = unicodedata.normalize('NFKD', user_input_text).encode('ASCII', 'ignore').decode('utf-8')
 
         #Remove punctuation except numbers
         user_input_text = re.sub(r'[^\w\s]', ' ', user_input_text)
