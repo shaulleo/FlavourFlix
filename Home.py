@@ -4,6 +4,7 @@ from functions.streamlitfunc import *
 import time
 from streamlit_extras.switch_page_button import switch_page
 from streamlit_extras.stylable_container import stylable_container
+from functions.utils import *
 
 
 data = pd.read_csv('data/preprocessed_data.csv')
@@ -74,7 +75,28 @@ def show_kpis():
             ):
                     st.metric(label = 'Cuisine Types', value = f'🍲 {len(data["cuisine"].unique())}')
 
+def show_analytics():
+    c1, c2, c3, c4 = st.columns(4)
+    with c1:
+        open_restaurants = 0  # Declare outside the loop to keep count
 
+    for item in enumerate(data):  # Loop through each item in data
+        if check_if_open(item) == 'Open':
+            open_restaurants += 1  # Increment count for each open restaurant
+
+    with stylable_container(
+        key="container_with_border",
+        css_styles="""
+            {
+                border: 1px solid rgba(49, 51, 63, 0.2);
+                border-radius: 0.5rem;
+                padding: calc(1em - 1px);
+                text-align: justify;
+            }
+            """,
+    ):
+        st.metric(label='Open Restaurants', value=f'🍽️ {open_restaurants}')
+            
 
 if 'authentication_status' not in st.session_state or st.session_state['authentication_status'] ==False:
 
@@ -108,6 +130,7 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
             show_kpis()
             st.caption("To get started, please log in or sign up.")
         st.write("")
+        show_analytics()  
         st.divider()
         col3, col4 = st.columns([1,1], gap='large')
         with col3:
@@ -132,11 +155,12 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
         col5, col6 = st.columns([0.8, 0.2], gap='small')
         with col5:
             st.write('')
-            st.write('Still unsure? Check out the\ntestimonials of our happy customers!')
-        with col6:
-            st.write('')
+            st.write('###### Still unsure? Check out the\ntestimonials of our happy customers!')
             if st.button('Testimonials', key='testimonials_button'):
                 switch_page('testimonials') 
+
+
+         
             
             
             
