@@ -99,6 +99,3 @@ if __name__ == "__main__":
         with st.spinner('Redirecting you to the Login page...'):
             time.sleep(3)
         switch_page('log in')
-    # [i] Sidebar #
-    # with st.sidebar:
-    #     st.write(st.session_state.chatbot.memory)

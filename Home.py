@@ -242,8 +242,8 @@ else:
             if st.button('Visit blog', key='blog_button', use_container_width=True):
                 switch_page('blog page')
         with colf:
-            if st.button('Give feedback', key='feedback_button', use_container_width=True):
-                switch_page('feedback')
+            if st.button('Contact Us', key='feedback_button', use_container_width=True):
+                switch_page('contact us')
         st.divider()
         col1, col2, = st.columns(2)
         with col2:

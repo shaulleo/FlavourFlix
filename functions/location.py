@@ -189,9 +189,6 @@ class Location:
 
         print(f"\n{shift}🏷️ Attributes: ")
         print(attributes)
-
-
-
         title = '- END -'
         print(f'\n{title}{"-" * (n_repeat-len(title))}')
 

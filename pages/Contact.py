@@ -8,22 +8,22 @@ import csv
 from streamlit_extras.switch_page_button import switch_page
 
 
-st.set_page_config(page_title='Give Feedback', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
+st.set_page_config(page_title='Customer Service', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
 
 
 def feedback_page():
     st.title(f'Give us your Feedback, {st.session_state["username"]}!')
-    st.markdown('We would love to hear what you have to say about FlavourFlix, Filomena and our services!\nIf you have any suggestion, including restaurant recommendations or new features, feel free to disclose them here!')
+    st.markdown('We would love to hear what you have to say about FlavourFlix, Filomena and our services!\nIf you have any suggestion, including restaurant recommendations, new features or any complaint, feel free to disclose them here!')
     st.markdown('Please fill in the following details.')
 
     csv_file = 'data/feedback.csv'
 
     email = st.session_state.email
     name = st.text_input('Name', key='client_name_f', placeholder='Enter your name')
-    subject = st.selectbox('Subject', ['General', 'Restaurant Recommendation', 'New Feature', 'Other'], key='subject_f', placeholder='Select a subject')
-    feedback = st.text_area('Your Opinion', key='feedback_f', placeholder='Feel free to write your feature suggestions, restaurant recommendations or any other feedback here!')
+    subject = st.selectbox('Subject', ['General', 'Restaurant Recommendation', 'New Feature', 'Complaint', 'Other'], key='subject_f', placeholder='Select a subject')
+    feedback = st.text_area('Your Message', key='feedback_f', placeholder='Feel free to write your feature suggestions, restaurant recommendations or any other feedback or complaint here!')
 
-    if st.button('Submit Feedback'):
+    if st.button('Submit Contact'):
         # take the current date
         today = datetime.datetime.today()  # Use datetime.datetime.today() for current date and time
         # convert the date to a string
@@ -44,7 +44,7 @@ def feedback_page():
         df.to_csv(csv_file, index=False)
 
         st.success("Message sent with success!")
-        st.markdown('Thank you for your feedback! We will take it into consideration as soon as possible! :smile:')
+        st.markdown('Thank you for your message! We will take it into consideration as soon as possible! :smile:')
 
         time.sleep(3)
         #CODIGO PARA LIMPAR AS TEXT BOXES DEPOIS DE SUBMETER O FEEDBACK
