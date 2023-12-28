@@ -10,46 +10,30 @@ from functions.streamlitfunc  import *
 import time
 from streamlit_extras.switch_page_button import switch_page 
 
-#st.set_page_config(page_title='Restaurant', page_icon="ext_images/page_icon.png", layout="wide", initial_sidebar_state="collapsed")
 header_image = "ext_images/logo1.jpeg"  
 st.image(header_image, width=400)
 
 
 def log_in():
-
-    #client_data = pd.read_csv('data/clientDataClean.csv', sep=',')
-
     pages_logged_off()
-
-
     users = fetch_users()
     emails = []
     usernames = []
     passwords = []
-
         #These are the credentials in the database
     for user in users:
         emails.append(user['key'])
         usernames.append(user['username'])
         passwords.append(user['password'])
-
     credentials = {'usernames': {}}
     for index in range(len(emails)):
         credentials['usernames'][usernames[index]] = {'name': emails[index], 'password': passwords[index]}
-
-
     Authenticator = stauth.Authenticate(credentials, cookie_name='flavourflix_auth', key='abcdef', cookie_expiry_days=0)
-
     email, authentication_status, username = Authenticator.login(':black[Login]', 'main')
-
     st.session_state['username'] = username
     st.session_state['email'] = email
     st.session_state['authentication_status'] = authentication_status
-
     info, info1 = st.columns(2)
-
-
-
     if username:
         if username in usernames:
             if authentication_status:
@@ -59,7 +43,6 @@ def log_in():
                 st.sidebar.subheader(f'Welcome {username}!')
                 Authenticator.logout('Log Out', 'sidebar')
                 switch_page('home')
-
             elif not authentication_status:
                 with info:
                     st.error('Incorrect password or username.')
@@ -71,9 +54,6 @@ def log_in():
                 st.warning('Username does not exist, please sign up')
                 if not authentication_status:
                     switch_page('sign up')
-
-
-
     st.markdown(
                         """
                         ---
@@ -90,7 +70,7 @@ if ('authentication_status' in st.session_state) and (st.session_state['authenti
     switch_page('home')
 else:
     col1, col2,  = st.columns(2)
-    pages_logged_off()
+    #pages_logged_off()
     with col2:
         log_in()
     with col1:
