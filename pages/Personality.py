@@ -3,49 +3,65 @@ from functions.streamlitfunc import *
 # a pagina personality só aparece se utilizador estiver logged in
 st.set_page_config( page_icon="ext_images\page_icon.png", layout="wide")
 
+question_to_num = {"Strongly Disagree": 1, "Disagree": 2, "Neutral": 3, "Agree": 4, "Strongly Agree": 5}
+questions = {"Willingness to Try Exotic Foods":"I am open to trying unfamiliar and exotic dishes.", 
+             "Importance of Food Presentation":"The presentation and plating of my meal is very important.",
+             "Value for Money in Meals":"I prioritize getting good value for price when choosing a meal.",
+             "Preference for Gourmet Restaurants":"I prefer dining at high-end gourmet restaurants.",
+             "Interest in Nutritional Content": "I pay a lot of attention to the nutritional content and health benefits of my meals.",
+             "Frequency of Home-Cooked Meals": "I often opt for home-cooked meals over dining out.",
+             "Desire for New Culinary Experiences": "It is important to me tro consistently explore new culinary experiences.",
+             "Preference for Organic or Diet-Specific Foods": "I often incorporate organic or diet-specific foods (e.g., vegan, keto) in my meals.",
+             "Enjoyment of Traditional or Familiar Foods": "I mostly enjoy eating traditional and/or familiar dishes.",
+             "Willingness to Spend on High-Quality Ingredients": "I am willing to spend extra if it means getting high-quality ingredients.",
+             }
+
+def question_presentation(question, question_identifier, num):
+    st.markdown(f"- ##### {question}")
+    Q = st.select_slider(
+        f'Select the degree of agreement with the previous statement.',
+        options=["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"], value='Neutral', key=f"question_{num}")
+    if Q is not "Choose an option": 
+        st.write('**You selected:**', Q)
+    else:
+        st.write('**Please select an option**')
+    st.session_state[question_identifier] = Q
+    return Q
+
+
 def personality_inputs():
-    st.subheader('You need to fill in the personality questionnaire')
+    for i in questions.keys():
+        st.session_state[i] = None
+
+    st.subheader('To discover your food personality, please answer the degree to which you agree with the following statements:')
     st.markdown('<br>', unsafe_allow_html=True)
-    st.markdown("- ##### I enjoy trying new and exotic cuisines when dining out.")
-    Q1 = st.select_slider(
-    'Select a range of color wavelength',
-    options=["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree", "I love exploring diverse cuisines."], value='Neutral')
-    # Q1 = st.selectbox( '######  ',
-        
-    #      ["Choose an option", "Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree", "I love exploring diverse cuisines."])
-    
-    if Q1 is not "Choose an option": 
-        st.write('**You selected:**', Q1)
-    else:
-        st.write('**Please select an option**')
 
-    # aqui adicionar algo do genero
-    # if Q1 == "Choose an option": data[Q1] = Nan 
-    # if Q1 == "Strongly Disagree": data[Q1] = 0 (...)
-    # if Q1 == "Disagree": data[Q1] = 1 (...) etc
-    
-    st.divider()
+    for num, (question_identifier, question) in enumerate(questions.items()):
+        question_presentation(question, question_identifier,  num)
+        st.divider()
+    submit_button = st.button("Submit")
+    if submit_button:
+        for i in questions.keys():
+            if st.session_state[i] is None:
+                st.error("Please answer all questions before submitting.")
+                break
+        st.session_state["submit"] = True
+        generate_personality()
+
+# def save_results():
+#     answers = {}
+#     answers['username'] = st.session_state['username']
+#     for i in questions.keys():
+#         answers[i] = question_to_num[st.session_state[i]]
+        # answers['personality'] = st.session_state['personality']
+#     answers = pd.DataFrame(answers, index=[0])
+#     og_answers = pd.read_csv("data/training_answers/perturbed_total_answers.csv")
+#     og_answers = pd.concat([og_answers, answers], axis=0)
+#     og_answers.to_csv("data/training_answers/perturbed_total_answers.csv", index=False)
 
 
-    st.markdown("- ##### I prefer restaurants that offer a variety of menu options.")
-    Q2 = st.selectbox(
-        "######  ",
-        ["Choose an option", "Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree", "I appreciate a diverse menu."])
-    
-    if Q2 is not "Choose an option": 
-        st.write('**You selected:**', Q2)
-    else:
-        st.write('**Please select an option**')
-
-    
-    # se houver algum nan não dá para descobrir a personalidade
-
-    # se não houver null values guardar na dataframe dos clients
-
- 
-    
-# se nan na dataframe dos clients
-# mostrar a página dos inputs
+def generate_personality():
+    pass
 
 personality_inputs()
 

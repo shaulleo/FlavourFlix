@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     COORDINATES_API: str = Field(validation_alias = "COORDINATES_API")
     COORDINATES_BASE_URL: str = Field(validation_alias = "COORDINATES_BASE_URL")
     GET_CURRENT_LOCATION_KEY: str = Field(validation_alias = "GET_CURRENT_LOCATION_KEY")
-    DEEPL_API_KEY: str = Field(validation_alias = "DEEPL_API_KEY")
+    DETA_KEY: str = Field(validation_alias = "DETA_KEY")
 
 _ = load_dotenv(find_dotenv())
 if not _:
@@ -135,7 +135,7 @@ def check_if_open(restaurant_schedule, date=None, time=None):
     return 'Closed'
 
 
-
+#Wrapper to Call the OpenAI API and get answers from the GPT-3 Model
 class GPTWrapper:
     def __init__(self, openai_api_key):
         self.openai_api_key = openai_api_key
@@ -151,4 +151,20 @@ class GPTWrapper:
             temperature=0)
         
         return completion.choices[0].message.content
+    
+#Wrapper to call our Personality Classifier to incorporate within the app
+class ClassifierWrapper:
+    def __init__(self, model, features, class_labels):
+        self.model = model
+        self.features = features
+        self.class_labels = class_labels
+
+    def predict(self, x_observation: list) -> str:
+        result = self.model.predict([x_observation])
+        return self.class_labels[int(result[0])]
+
+    def prediction_needs(self, verbosity=True):
+        if verbosity : return f"You need to provide the values of {self.features} to get a prediction."
+        else : return self.features
+
 

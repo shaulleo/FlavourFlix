@@ -4,16 +4,15 @@ import datetime
 import re
 from deta import Deta
 from functions.streamlitfunc import *
-from streamlit_extras.switch_page_button import switch_page 
+from functions.utils import *
 
-DETA_KEY = 'a0pzxxqa8ye_JnxbPqmjR8rfF5hUGWXZrFy99VJqEkkP'
 
-deta = Deta(DETA_KEY)
+deta = Deta(local_settings.DETA_KEY)
 
 db = deta.Base('FlavourFlixAuth')
 
 
-#Inserts users into our database. Has a data field to keep track when users created an account. Email is the primary key.
+#Inserts users into a database.
 def insert_user(email, username, password):
     """
     Inserts Users into the DB
