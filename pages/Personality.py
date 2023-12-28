@@ -1,4 +1,12 @@
 from functions.streamlitfunc import *
+import pickle
+
+if 'submit' not in st.session_state:
+    st.session_state['submit'] = False
+if 'personality' not in st.session_state:
+    st.session_state['personality'] = False
+if 'personality_generated' not in st.session_state:
+    st.session_state['personality_generated'] = False
 
 # a pagina personality só aparece se utilizador estiver logged in
 st.set_page_config( page_icon="ext_images\page_icon.png", layout="wide")
@@ -47,35 +55,56 @@ def personality_inputs():
                 break
         st.session_state["submit"] = True
         generate_personality()
+        
 
-# def save_results():
-#     answers = {}
-#     answers['username'] = st.session_state['username']
-#     for i in questions.keys():
-#         answers[i] = question_to_num[st.session_state[i]]
-        # answers['personality'] = st.session_state['personality']
-#     answers = pd.DataFrame(answers, index=[0])
-#     og_answers = pd.read_csv("data/training_answers/perturbed_total_answers.csv")
-#     og_answers = pd.concat([og_answers, answers], axis=0)
-#     og_answers.to_csv("data/training_answers/perturbed_total_answers.csv", index=False)
+    
+with open('personality_classification_model.pkl', 'rb') as f:
+    model = pickle.load(f)
+
+
+def personality_presentation(personality):
+    # MOSTRAR PERSONALITY C IMAGEM E COISAS BONITAS
+    pass
+    # st.subheader("Discover your personality")
+    # if "personality" in st.session_state:
+    #     st.write(f"You are a {st.session_state['personality']}")
+    # else:
+    #     st.error("Personality type not found. Please complete the questionnaire.")
+    #     if st.button("Try Again"):
+    #         st.session_state['submit'] = False
+    #         st.session_state['personality'] = None
+    #         personality_inputs()
 
 
 def generate_personality():
-    pass
-
-personality_inputs()
-
-# else
-# mostrar a pagina da personalidade
-def personality_presentation():
-    
-    st.subheader("Discover your personality")
-    st.write(f"You are a blabla")
+    model_input = [question_to_num[st.session_state[question]] for question in questions]
+    personality_type = model.predict([model_input])[0] 
+    st.session_state["personality"] = personality_type
+    # st.write(f"Your predicted personality type is: {personality_type}")
+    st.session_state['personality_generated'] = True
+    return personality_type
 
 
-# if user logged in and não houver nans nas perguntas:
-# personality_presentation()
+def save_results():
+    answers = {}
+    answers['username'] = st.session_state['username']
+    for i in questions.keys():
+        answers[i] = question_to_num[st.session_state[i]]
+        answers['personality'] = st.session_state['personality']
+    answers = pd.DataFrame(answers, index=[0])
+    og_answers = pd.read_csv("data/training_answers/perturbed_total_answers.csv")
+    og_answers = pd.concat([og_answers, answers], axis=0)
+    og_answers.to_csv("data/training_answers/perturbed_total_answers.csv", index=False)
 
-# if user logged in and houver nans nas perguntas
-# redirecionar para perfil para responder ao questionário
 
+if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
+    pages_logged_in()
+    header_image = "ext_images/logo.jpeg"
+    data = pd.read_csv("data/training_answers/perturbed_total_answers.csv")
+    if st.session_state['username'] in data['username'].values:
+        personality_presentation()
+
+if st.session_state['personality_generated'] is True: 
+    personality_presentation()
+else:  
+    personality_inputs()
