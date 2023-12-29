@@ -62,6 +62,11 @@ def show_all_reservations():
             st.markdown(f'**Your Reservations**')
             for reservation in user_res.iterrows():
                 display_reservation_card(reservation)
+    else:
+        st.markdown("You don't have any reservations yet. Search for a restaurant and make a reservation now!")
+        with st.spinner('Redirecting you to the Search page...'):
+            time.sleep(3)
+        switch_page('Search')
 
 
 def save_reservation():

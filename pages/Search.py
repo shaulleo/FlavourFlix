@@ -65,7 +65,11 @@ def apply_filters(filtered_df):
     if st.session_state.menu_search is not None:
         menu_search = standardize_text(st.session_state.menu_search)
         if menu_search != "":
-            filtered_df = filtered_df[filtered_df['menu_standard'].str.contains(menu_search, case=False, na=False)]
+            m1 = filtered_df['menu_en'].str.contains(menu_search, case=False, na=False)
+            m2 = filtered_df['menu_pt'].str.contains(menu_search, case=False, na=False)
+            m3 = filtered_df['menu_pre_proc'].str.contains(menu_search, case=False, na=False)
+            filtered_df = filtered_df[m1 | m2 | m3]
+            #filtered_df = filtered_df[filtered_df['menu_standard'].str.contains(menu_search, case=False, na=False)]
 
     return filtered_df
 

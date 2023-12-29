@@ -75,6 +75,7 @@ def show_menu(restaurant, menu_col1, menu_col2):
 
 
     with st.expander("Check out the menu!"):
+        not_available = False
         col1, col2 = st.columns([1, 1])
         with col1:
             st.markdown(f"**Portuguese menu**")
@@ -91,7 +92,8 @@ def show_menu(restaurant, menu_col1, menu_col2):
                         else:
                             st.markdown(f"- {dish}: {price} €")
             else:
-                st.markdown('Sorry! It seems that the restaurant did not make their menu1 available yet... :disappointed:')
+                not_available = True
+                #st.markdown('Sorry! It seems that the restaurant did not make their menu1 available yet... :disappointed:')
         with col2:
             st.markdown(f"**English Menu**")
             if menu_items2 is not None:
@@ -107,7 +109,9 @@ def show_menu(restaurant, menu_col1, menu_col2):
                         else:
                             st.markdown(f"- {dish}: {price} €")
             else:
-                st.markdown('Sorry! It seems that the restaurant did not make their menu1 available yet... :disappointed:')
+                not_available = True
+        if not_available:
+            st.markdown('Sorry! It seems that the restaurant did not make their menu available yet... :disappointed:')
 
 
 def show_schedule(restaurant):
