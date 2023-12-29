@@ -8,6 +8,7 @@ from functions.streamlitfunc import *
 from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_extras.stylable_container import stylable_container
 from streamlit_carousel import carousel
+from streamlit_extras.switch_page_button import switch_page
 
 
 st.set_page_config(page_title='Restaurant', page_icon="ext_images\page_icon.png", layout="wide", initial_sidebar_state="collapsed")
@@ -84,19 +85,22 @@ def show_time_away(restaurant):
     if 'authentication_status' in st.session_state and st.session_state['authentication_status'] == True:
         if 'username'  in st.session_state and 'email' in st.session_state:
             clients = pd.read_csv('data/clientDataClean.csv')
-            current_client = clients[clients['email'] == st.session_state['email']].iloc[0]
-            prefers_driving = current_client['travel_car']
-            if "current_location" in st.session_state and st.session_state.current_location != False:
-                if prefers_driving:
-                    by_car = st.session_state.current_location.getDirections(restaurant['latitude'].iloc[0], restaurant['longitude'].iloc[0], ['driving'])
-                    distance = f'{by_car["driving"].meters} meters' if by_car['driving'].meters < 1000 else f"{by_car['driving'].km} km"
-                    time_away = f"{by_car['driving'].minutes}min away" if by_car['driving'].minutes < 60 else f"{by_car['driving'].hours} away"
-                    st.markdown(f"🚗 **{distance}** ({time_away})")
+            if 'email' in clients['email'].values:
+                current_client = clients[clients['email'] == st.session_state['email']].iloc[0]
+                prefers_driving = current_client['travel_car']
+                if "current_location" in st.session_state and st.session_state.current_location != False:
+                    if prefers_driving:
+                        by_car = st.session_state.current_location.getDirections(restaurant['latitude'].iloc[0], restaurant['longitude'].iloc[0], ['driving'])
+                        distance = f'{by_car["driving"].meters} meters' if by_car['driving'].meters < 1000 else f"{by_car['driving'].km} km"
+                        time_away = f"{by_car['driving'].minutes}min away" if by_car['driving'].minutes < 60 else f"{by_car['driving'].hours} away"
+                        st.markdown(f"🚗 **{distance}** ({time_away})")
+                    else:
+                        by_foot = st.session_state.current_location.getDirections(restaurant['latitude'].iloc[0], restaurant['longitude'].iloc[0], ['walking'])
+                        distance = f'{by_foot["walking"].meters} meters' if by_foot['walking'].meters < 1000 else f"{by_foot['walking'].km} km"
+                        time_away = f"{by_foot['walking'].minutes}min away" if by_foot['walking'].minutes < 60 else f"{by_foot['walking'].hours} away"
+                        st.markdown(f"🚶 **{distance}** ({time_away})")
                 else:
-                    by_foot = st.session_state.current_location.getDirections(restaurant['latitude'].iloc[0], restaurant['longitude'].iloc[0], ['walking'])
-                    distance = f'{by_foot["walking"].meters} meters' if by_foot['walking'].meters < 1000 else f"{by_foot['walking'].km} km"
-                    time_away = f"{by_foot['walking'].minutes}min away" if by_foot['walking'].minutes < 60 else f"{by_foot['walking'].hours} away"
-                    st.markdown(f"🚶 **{distance}** ({time_away})")
+                    st.markdown('')
             else:
                 st.markdown('')
         else:
@@ -248,7 +252,8 @@ def restaurant_details():
             show_time_away(data.loc[data['name'] == selected_restaurant])
             if st.button(f"Reserve Now!"):
                 st.session_state.selected_restaurant = selected_restaurant
-                nav_page("Reservations")
+                st.session_state.reserve = True
+                switch_page("reservations")
     show_menu(data.loc[data['name'] == selected_restaurant])
     show_schedule(data.loc[data['name'] == selected_restaurant])
     
@@ -257,6 +262,8 @@ if 'selected_restaurant' not in st.session_state:
     selected_restaurant = st.session_state.selected_restaurant = None
 else:
     selected_restaurant = st.session_state.selected_restaurant
+if 'reserve' not in st.session_state:
+    st.session_state.reserve = False
 
     
 
@@ -271,15 +278,10 @@ if selected_restaurant is None:
     # Store the selected restaurant in session state
         st.session_state.selected_restaurant = selected_restaurant
         restaurant_details()
-    
-
+   
     else:
-        st.write("Please select a restaurant from the list above :)")
-
-
-    
+        st.write("Please select a restaurant from the list above :)")   
 else:
-    # select in the select box the restaurant that was selected before
-    #selected_restaurant = st.selectbox("Select Restaurant", [selected_restaurant])
+
     restaurant_details()
 
