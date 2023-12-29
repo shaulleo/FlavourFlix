@@ -12,6 +12,8 @@ if 'reserve' not in st.session_state:
     st.session_state.reserve = False
 if 'run' not in st.session_state:
     st.session_state.run = 0
+if 'verify_reservation1' not in st.session_state:
+    st.session_state.verify_reservation1 = False
 
 
 def display_reservation_card(reservation):
@@ -65,6 +67,14 @@ def save_reservation():
     reservations.to_csv('data/reservations.csv', index=False)
     
 
+def click_reserve():
+    st.session_state.verify_reservation1 = True
+    st.session_state.run += 1
+    verify_reservation(st.session_state['selected_restaurant'],
+                        st.session_state['reservation_date'], st.session_state['reservation_time'])
+    #st.session_state.verify_reservation1 = False
+
+
 def verify_reservation(restaurant, reservation_date, reservation_time):
     restaurants = pd.read_csv('data/preprocessed_data.csv')
     restaurant_schedule = restaurants[restaurants['name'] == restaurant]['schedule'].values[0]
@@ -72,11 +82,16 @@ def verify_reservation(restaurant, reservation_date, reservation_time):
     if availability == 'Open':
         st.markdown(f':white_check_mark: Your reservation has been confirmed! \nYou will receive a confirmation email shortly.')
         save_reservation()
+        st.session_state['verify_reservation1'] = False  
         st.session_state['reserve'] = False
     elif availability == 'Closed':
         st.markdown(f'Ups! Unfortunately {restaurant} is closed on {reservation_date} at {reservation_time}.\n Please try another date. Thankyou.')
+        st.session_state['verify_reservation1'] = False  
+        st.session_state['reserve'] = True
     else:
         st.markdown(f'Ups! Unfortunately we do not have information about the schedule of {restaurant} on {reservation_date}.\nPlease try contacting them directly. Thankyou.')
+        st.session_state['verify_reservation1'] = False  
+        st.session_state['reserve'] = True
 
 
 def fill_reservation():
@@ -113,26 +128,28 @@ def fill_reservation():
 
 
 
-
 if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
     pages_logged_in()
     header_image = "ext_images/logo1.jpeg"
-    if st.session_state['reserve'] == True:
+    st.image(header_image, width=500)
+    st.divider()
+    if st.session_state['reserve'] and not st.session_state['verify_reservation1']:
         fill_reservation()
         col1, col2 = st.columns(2)
         with col1:
-            st.button("Reserve", key=f'confirm_reservation', on_click = verify_reservation(st.session_state['selected_restaurant'], st.session_state['reservation_date'], st.session_state['reservation_time']))
-        with col2:
-            continue_searching = st.button("Continue Searching", key=f'continue_searching_1')
-            if continue_searching:
-                switch_page("Search")
-    elif st.session_state['reserve'] == False:
+            st.button("Reserve", key=f'confirm_reservation_{st.session_state["run"]}', on_click = click_reserve)
+    elif not st.session_state['reserve'] and not st.session_state['verify_reservation1']:
         show_all_reservations()
-        continue_searching = st.button("Continue Searching", key=f'continue_searching_2')
-        if continue_searching:
-            switch_page("Search")
     else:
         st.write("Something went wrong. Please try again.")
+        st.session_state['reserve'] = True
+        st.session_state['verify_reservation1'] = False
+    col1, col2 = st.columns(2)
+    with col2:
+        continue_searching = st.button("Continue Searching", key=f'continue_searching_1')
+        if continue_searching:
+            switch_page("Search")
+
 else:
     pages_logged_off()
     st.error('Ups! Something went wrong. Please try login again.', icon='🚨')
