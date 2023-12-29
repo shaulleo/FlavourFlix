@@ -3,10 +3,9 @@ import pickle
 import time
 from streamlit_extras.switch_page_button import switch_page 
 from functions.utils import *
+from streamlit_extras.stylable_container import stylable_container
 
 
-
-# a pagina personality só aparece se utilizador estiver logged in
 st.set_page_config( page_icon="ext_images\page_icon.png", layout="wide")
 
 with open('personality_classification_model.pkl', 'rb') as f:
@@ -14,21 +13,22 @@ with open('personality_classification_model.pkl', 'rb') as f:
 
 food_personalities = {
     "The Adventurer": {
-        "description": "Enjoys trying new, exotic, and often challenging foods. Prefers variety and unique culinary experiences over comfort foods.",
-        "image": "the_adventurer.png"},
+        "description": "enjoys trying new, exotic, and often challenging foods. Moreover, there is a preference for variety and unique culinary experiences over comfort foods.",
+        "image": "ext_images/personalities/the_adventurer.png"},
     "Fine Dining Connoisseur": {
-        "description": "Appreciates high-end, gourmet food. Values presentation, quality of ingredients, and the overall dining experience in upscale environments.",
-        "image": "fine_dining_connoisseur.png"},
+        "description": "appreciates high-end, gourmet food. Values presentation, quality of ingredients, and the overall dining experience in upscale environments.",
+        "image": "ext_images/personalities/fine_dining_connoisseur.png"},
     "Low-Cost Foodie": {
-        "description": "Enjoys finding delicious food at a bargain. Values taste and affordability over ambiance and presentation.",
-        "image": "low_cost_foodie.png"},
+        "description": "enjoys finding delicious food at a bargain. Values taste and affordability over ambiance and presentation.",
+        "image": "ext_images/personalities/low_cost_foodie.png"},
     "Conscious Eater": {
-        "description": "Prioritizes nutritional value and health benefits. Prefers organic, low-calorie, or diet-specific foods.",
-        "image": "conscious_eater.png"},
+        "description": "prioritizes nutritional value and health benefits. Prefers organic, low-calorie, or diet-specific foods.",
+        "image": "ext_images/personalities/conscious_eater.png"},
     "Comfort Food Lover": {
-        "description": "Prefers traditional, home-cooked, or familiar dishes. Values the emotional connection and nostalgia associated with food.",
-        "image": "comfort_food_lover.png"}
+        "description": "prefers traditional, home-cooked, or familiar dishes. Values the emotional connection and nostalgia associated with food.",
+        "image": "ext_images/personalities/comfort_food_lover.png"}
 }
+
 
 question_to_num = {"Strongly Disagree": 1, "Disagree": 2, "Neutral": 3, "Agree": 4, "Strongly Agree": 5}
 questions = {"Willingness to Try Exotic Foods":"I am open to trying unfamiliar and exotic dishes.", 
@@ -82,18 +82,32 @@ def personality_inputs():
             
 def personality_presentation(observation = None):
     """ observation: row com os dados do utilizador """
-    # MOSTRAR PERSONALITY C IMAGEM E COISAS BONITAS
-    st.header("Discover your personality")
     if 'personality' in st.session_state and st.session_state['personality'] is not None:
         personality = st.session_state['personality']
     else:
         personality = observation['personality'].values[0]
-    c1, c2 = st.columns(2,6)
+
+    c1, c2 = st.columns([2,6])
     with c1:
         image_path = food_personalities[personality]["image"]
+        st.image(image_path, width=500, use_column_width=True)
     with c2:
-        description = food_personalities[personality]["description"]
-    st.write(f"You are a {personality}")
+        with stylable_container(
+            key="container_with_border",
+                    css_styles="""
+                {
+                    border: 0px solid rgb(36, 36, 37);
+                    background-color: #FFFFFF;
+                    padding: calc(1em - 1px);
+                    text-align: justify;
+                    width: 90%;
+                }
+            """,
+        ):
+            st.markdown( f'You are a **{personality}**! A {personality} {food_personalities[personality]["description"]}')
+    back_to_search = st.button("Back to Search")
+    if back_to_search:
+        switch_page('search')
     
 
 def generate_personality():

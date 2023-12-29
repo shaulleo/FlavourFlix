@@ -13,7 +13,7 @@ if 'save' not in st.session_state:
 if 'edit' not in st.session_state:
     st.session_state['edit'] = None
 if 'run' not in st.session_state:
-    st.session_state['run'] = 0
+    st.session_state['run'] = 1
 if 'user_data' not in st.session_state:
     st.session_state['user_data'] = None
 

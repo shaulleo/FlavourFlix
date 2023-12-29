@@ -130,35 +130,3 @@ def retrieve_menu(json_body):
 
     return results
 
-deepl = Translator(auth_key=local_settings.DEEPL_API_KEY)
-def translate_menus(menu, language='en'):
-    if language=='en':
-        source = 'PT'
-        target='EN-US'
-    else:
-        source = 'EN-US'
-        target= 'PT'
-
-    menu = ast.literal_eval(menu)
-    translated= {}
-    for food_section in menu.keys():
-        food_section_dict = {}
-        if detect(food_section) != language:
-            food_section_t = deepl.translate_text(food_section, target_lang=target, source_lang=source).text
-        else:
-            food_section_t = food_section
-        for dish in menu[food_section].keys():
-            if detect(dish) != language:
-                dish_t = deepl.translate_text(dish, target_lang=target, source_lang=source).text
-            else:
-                dish_t = dish
-            if ('description' in menu[food_section][dish].keys()) and (len(menu[food_section][dish]['description']) > 6):
-                if detect(menu[food_section][dish]['description']) != language:
-                    description_t = deepl.translate_text(menu[food_section][dish]['description'], target_lang=target, source_lang=source).text
-                else:
-                    description_t = menu[food_section][dish]['description']
-            dish_dict_t = {'price': menu[food_section][dish]['price'], 'description': description_t}
-            food_section_dict[dish_t] = dish_dict_t
-        translated[food_section_t] = food_section_dict
-    return translated
-
