@@ -298,7 +298,9 @@ else:
                         popup=row['name'],).add_to(m)
                 #Render Folium map in Streamlit if a location is selected
                 #st_data = st_folium(m, height=500, use_container_width=True)
-                st_folium(m, height=500, use_container_width=True, returned_objects=[])
+                st_folium(m, height=500, width=700, returned_objects=[])
+                st.caption("""Note that the pins presented on the map are not the exact location of the restaurants,
+                           but rather an estimation.""", unsafe_allow_html=True)
                   
                        
     #Se tiver autenticado com true mas não há credenciais, então indica que há algum tipo de erro e manda de volta para o login          
