@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 from functions.streamlitfunc import *
 from streamlit_extras.switch_page_button import switch_page
-from functions.streamlitfunc import nav_page
 from streamlit_extras.stylable_container import stylable_container
 from functions.location import *
 from functions.preprocessement import *
@@ -27,37 +26,14 @@ st.markdown('<br>', unsafe_allow_html=True)
 
 if 'filters' not in st.session_state:
     st.session_state.filters = False
-
-
-st.session_state.current_location = False
-
-def select_to_view_details(data):
-    filtered_df = data.copy()
-    filtered_df.insert(0, "Details", False)
-
-    # Rename columns
-    renamed_columns = {
-        'name': 'Restaurant Name',
-        'location': 'Location',
-        'cuisine': 'Cuisine',
-        'averagePrice': 'Average Price per Person (€)'
-    }
-    filtered_df.rename(columns=renamed_columns, inplace=True)
-
-    # Get dataframe row-selections from user with st.data_editor
-    filtered_df = st.data_editor(
-        filtered_df[['Details', 'Restaurant Name', 'Location', 'Cuisine', 'Average Price per Person (€)']],
-        hide_index=True,
-        column_config={"Details": st.column_config.CheckboxColumn(required=True)},
-        disabled=data.columns,
-        width=1000,
-        height=390,
-    )
-
-    # Filter the dataframe using the temporary column, then drop the column
-    selected_rows = filtered_df[filtered_df.Details == True]
-    return selected_rows.drop('Details', axis=1)
-
+    #Significa que ainda não capturou a localização do user
+if 'current_location' not in st.session_state:
+    st.session_state.current_location = False
+    #Por default a nao ser q o utilizador tenha expresso que quer a localização, não vai ser usada a localização atual
+if 'use_current_location' not in st.session_state:
+    st.session_state.use_current_location = False
+if 'menu_search' not in st.session_state:
+    st.session_state.menu_search = None
 
 
 def apply_filters(filtered_df):
@@ -66,22 +42,16 @@ def apply_filters(filtered_df):
     if st.session_state.filters == False:
         st.session_state.filters = True
 
-    # Apply filters    
     if st.session_state.location and st.session_state.location != "All Locations":
-        filtered_df = filtered_df[filtered_df['location'] == st.session_state.location]
-        #PARA LIDAR COM A LOCALIZAÇÃO ATUAL - MADALENA PRECISO DA TUA AJUDA !!!!
-        
-        # if st.session_state.location == 'Current Location':
-        #     if st.session_state.current_location == False:
-        #         user_location = Location()
-        #         user_location.getLocation()
-        #         filtered_df = nearYou(user_location, filtered_df)
-        #         st.session_state.current_location = True
-        #         st.session_state.user_personal_location = user_location
-        #     else:
-        #         filtered_df = nearYou(st.session_state.user_personal_location, filtered_df)
-        # else:
-        #     filtered_df = filtered_df[filtered_df['location'] == st.session_state.location]
+        if st.session_state.location == 'Current Location':
+            if st.session_state.current_location == False:
+                current_location = Location()
+                current_location.getLocation()
+                st.session_state.current_location = current_location
+            filtered_df = nearYou(st.session_state.current_location, filtered_df)
+
+        else:
+            filtered_df = filtered_df[filtered_df['location'] == st.session_state.location]
 
     if st.session_state.cuisine and st.session_state.cuisine != 'All Cuisine Types':
         filtered_df = filtered_df[filtered_df['cuisine'] == st.session_state.cuisine]
@@ -107,14 +77,6 @@ def clear_filters():
     st.session_state.filters = None
     st.session_state.menu_search = None
 
-def show_results(data):
-    selection = select_to_view_details(data)
-    for index, row in selection.iterrows():
-        button_key = f"view_details_button_{index}"
-        
-        if st.button(f"View Details for {row['Restaurant Name']}", key=button_key):
-            st.session_state.selected_restaurant = row['Restaurant Name']
-            switch_page("restaurant")
 
 def show_filters_columns(data):
     locations = ["All Locations"] + ['Current Location'] + data['location'].unique().tolist()
@@ -141,7 +103,7 @@ def show_filters_columns(data):
     st.session_state.max_price = price_range[1] if price_range[1] != max_price else None
 
     # Search by meal
-    menu_search_input = st.text_input("Craving anything in specific?", value="")
+    menu_search_input = st.text_input("Craving anything in specific?", value="", key='menu_search_input', placeholder="Feel free to write in Portuguese")
     if menu_search_input != "":
         st.session_state.menu_search = menu_search_input
     else:
@@ -149,7 +111,7 @@ def show_filters_columns(data):
 
     return  st.session_state.location, st.session_state.cuisine, st.session_state.min_price, st.session_state.max_price, st.session_state.menu_search
 
-def show_results_2(data):
+def show_results(data):
     N_cards_per_row = 3
     j = 0
     for n_row, row in data.reset_index().iterrows():
@@ -186,25 +148,9 @@ def filters_page():
 
         with col2:
             filtered_df = apply_filters(filtered_df)
-
             # Check if there are matching results
             if not filtered_df.empty:
-                #show_results(filtered_df)
-                # # Check if any location is selected before showing the map
-                # if st.session_state.location:
-                #     center_lat = filtered_df['latitude'].median()
-                #     center_long = filtered_df['longitude'].median()
-                #     m = folium.Map(location=(center_lat, center_long), zoom_start=12, tiles="cartodb positron")
-                #     for index, row in filtered_df.iterrows():
-                #         # Create a marker for each observation
-                #         folium.Marker(
-                #             location=[row['latitude'], row['longitude']],
-                #             popup=row['name'],  # Display the name in a popup
-                #         ).add_to(m)
-
-                #     # Render Folium map in Streamlit if a location is selected
-                #     st_data = st_folium(m, width=10000, height=400)
-                show_results_2(filtered_df)
+                show_results(filtered_df)
             else:
                 st.markdown("#### OOoops! Mister Exigente! We couldn't find any restaurants matching your criteria. Please try again.")
                 st.markdown('<br>', unsafe_allow_html=True)
@@ -215,14 +161,12 @@ def filters_page():
 
 if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
     pages_logged_in()
-    st.session_state.menu_search = None
     filters_page()
 
 else:
     pages_logged_off()
     filters_page()
 
-    # HÁ UM PROBLEMINHA QUANDO METEMOS O MAPA, FAZ INTERFERENCIA COM OS RESULTADOS 
 
 
 

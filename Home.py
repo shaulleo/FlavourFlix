@@ -21,7 +21,6 @@ with c2:
 st.divider()    
 
 
-
 def show_kpis():
     cola, colb = st.columns(2)
     with cola:
@@ -123,7 +122,7 @@ def show_analytics(data):
                     """,
             ):
             st.metric(label='Most Common Cuisine', value=f'🍲 {common_cuisines}')
-            
+           
 
 def restaurant_card(restaurant, title, ratingcol='ratingValue'):
     with stylable_container(
@@ -209,7 +208,7 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
         col5, col6 = st.columns([0.8, 0.2], gap='small')
         with col5:
             st.write('')
-            st.write('###### Still unsure? Check out the\ntestimonials of our happy customers!')
+            st.write('###### Still unsure? Check out the testimonials of our happy customers!')
             if st.button('Testimonials', key='testimonials_button'):
                 switch_page('testimonials') 
 
