@@ -6,7 +6,7 @@ import streamlit as st
 import streamlit_authenticator as stauth
 from functions.loginandsignup_func import *
 from functions.streamlitfunc import *
-
+from streamlit_extras.switch_page_button import switch_page 
 
 
 def sign_up():
