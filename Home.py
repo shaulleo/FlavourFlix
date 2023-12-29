@@ -298,7 +298,8 @@ else:
                         location=[row['latitude'], row['longitude']],
                         popup=row['name'],).add_to(m)
                 #Render Folium map in Streamlit if a location is selected
-                st_data = st_folium(m, height=500, use_container_width=True)
+                #st_data = st_folium(m, height=500, use_container_width=True)
+                st_folium(m, height=500, use_container_width=True, returned_objects=[])
                   
                        
     #Se tiver autenticado com true mas não há credenciais, então indica que há algum tipo de erro e manda de volta para o login          

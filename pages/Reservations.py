@@ -11,27 +11,42 @@ client_data = pd.read_csv('data/clientDataClean.csv')
 res_data = pd.read_csv('data/preprocessed_data.csv')
 #st.set_page_config(page_title='Restaurant', page_icon="ext_images\page_icon.png", layout="wide", initial_sidebar_state="collapsed")
 
+if 'confirm_reservation' not in st.session_state:
+    st.session_state['confirm_reservation'] = None
+if 'confirmation_sucessful' not in st.session_state:
+    st.session_state['confirmation_sucessful'] = None
+
+
 def confirm_reservation():
-    st.markdown(f':white_check_mark: Your reservation has been confirmed! \nYou will receive a confirmation email shortly.')
-    user_info = client_data[client_data['email'] == st.session_state['email']]
-    st.markdown(f'**Reservation Details:**\n\n**Name**: {user_info["first_name"].values[0]} {user_info["last_name"].values[0]} **\n**Restaurant:** {st.session_state.selected_restaurant}\n**Date:** {st.session_state.reservation_date}\n**Time:** {st.session_state.reservation_time}\n**Number of People:** {st.session_state["num_people"]}\n**Special Requests:** {st.session_state.special_requests}')
+    col1, col2 = st.columns([0.3, 0.7])
+    with col1:
+        st.image("ext_images/logo1.jpeg", width=200)
+    with col2:
+        st.markdown(f':white_check_mark: Your reservation has been confirmed! \nYou will receive a confirmation email shortly.')
+        user_info = client_data[client_data['email'] == st.session_state['email']]
+        st.markdown("**Reservation Details:**")
+        st.markdown(f'**Name**: {user_info["first_name"].values[0]} {user_info["last_name"].values[0]}')
+        st.markdown(f'**Restaurant**: {st.session_state.selected_restaurant}')
+        st.markdown(f'**Date**: {st.session_state.reservation_date}')
+        st.markdown(f'**Time**: {st.session_state.reservation_time}')  
+        st.markdown(f'**Number of People**: {st.session_state["num_people"]}')
+        st.markdown(f'**Special Requests**: {st.session_state.special_requests}')
+
+def reservation_failed(restaurant, reservation_date, reservation_time):
+    st.error(f'Ups! Unfortunately {restaurant} is closed on {reservation_date} at {reservation_time}.\n Please try another date. Thankyou.')
 
 
 def verify_reservation(restaurant, reservation_date, reservation_time):
     restaurant_schedule = res_data[res_data['name'] == restaurant]['schedule'].values[0]
     availability = check_if_open(restaurant_schedule, reservation_date, reservation_time)
     if availability == 'Open':
-        confirm_reservation()
+        st.session_state['confirm_reservation'] = True
+        st.session_state['confirmation_sucessful'] = True
     elif availability == 'Closed':
-        st.markdown(f'Ups! Unfortunately {restaurant} is closed on {reservation_date} at {reservation_time}.\nPlease try another date. Thankyou.')
-        ##### LIMPAR OS FIELDS
+        st.session_state['confirmation_sucessful'] = False
+        st.session_state['confirm_reservation'] = False
     else:
         st.markdown(f'Ups! Unfortunately we do not have information about the schedule of {restaurant} on {reservation_date}.\nPlease try contacting them directly. Thankyou.')
-        switch_page('restaurant')
-
-
-
-
 
 
 def reservations_page():
@@ -44,7 +59,6 @@ def reservations_page():
         selected_restaurant = st.session_state.selected_restaurant
     # Retrieve the selected restaurant from session state
     
-
     # If the user has not selected a restaurant yet, show a selectbox
     if selected_restaurant is None:
         # Get a list of all the restaurants
@@ -58,6 +72,7 @@ def reservations_page():
     else:
         # select in the select box the restaurant that was selected before
         selected_restaurant = st.selectbox("Select Restaurant", [selected_restaurant])
+        st.session_state.selected_restaurant = selected_restaurant
 
     res_info = res_data[res_data['name'] == selected_restaurant]
     max_party_size = res_info['maxPartySize'].values[0]
@@ -76,24 +91,31 @@ def reservations_page():
     st.session_state.special_requests = special_requests
 
 
-    col1, col2 = st.columns(2)
-    with col1:
-        confirm_res = st.button("Confirm Reservation", key='confirm_res')
-        if confirm_res:
-            verify_reservation(selected_restaurant, reservation_date, reservation_time)
-            # switch_page("restaurant")
-
-    with col2:
-        continue_searching = st.button("Continue Searching", key='continue_searching')
-        if continue_searching:
-            switch_page("Search")
-
-
 
 if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
     pages_logged_in()
-    reservations_page()
-
+    if st.session_state['confirm_reservation'] is None or st.session_state['confirm_reservation'] == False:
+        reservations_page()
+        col1, col2 = st.columns(2)
+        with col1:
+            st.button("Confirm Reservation", on_click=verify_reservation, args=[st.session_state['selected_restaurant'], st.session_state.reservation_date, st.session_state.reservation_time], key='confirm_reservation_1')
+        with col2:
+            continue_searching = st.button("Continue Searching", key='continue_searching_1')
+            if continue_searching:
+                switch_page("Search")
+    elif st.session_state['confirm_reservation'] == True:
+        if st.session_state['confirmation_sucessful'] == True:
+            confirm_reservation()
+            continue_searching = st.button("Continue Searching", key='continue_searching_2')
+            if continue_searching:
+                switch_page("Search")
+        elif st.session_state['confirmation_sucessful'] == False:
+            #st.session_state['confirm_reservation'] = False
+            reservation_failed(st.session_state['selected_restaurant'], st.session_state.reservation_date, st.session_state.reservation_time)
+        else:
+            st.write('Something went wrong nr 2')
+    else:
+        st.write('Something went wrong nr 1')
 else:
     pages_logged_off()
     st.error('Ups! Something went wrong. Please try login again.', icon='🚨')

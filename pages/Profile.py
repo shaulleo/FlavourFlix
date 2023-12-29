@@ -7,8 +7,6 @@ from streamlit_extras.switch_page_button import switch_page
 from functions.utils import *
 
 
-def save_state(variable):
-    st.session_state[f'{variable}'] = variable
 
 if 'save' not in st.session_state:
     st.session_state['save'] = None
@@ -16,86 +14,65 @@ if 'edit' not in st.session_state:
     st.session_state['edit'] = None
 if 'run' not in st.session_state:
     st.session_state['run'] = 0
+if 'user_data' not in st.session_state:
+    st.session_state['user_data'] = None
+
+
 
 def click_save(user_data):
     st.session_state['save'] = True
+    st.session_state['edit'] = False
+    st.session_state['run'] += 1
     save_user_data(user_data)
 
 def click_edit():
     st.session_state['edit'] = True
-    gather_client_data()
+    st.session_state['save'] = False
+    st.session_state['run'] += 1
 
 
 def gather_client_data():
     email = st.session_state['email']
     username = st.session_state['username']
 
-    first_name = st.text_input("First Name")
-    save_state(first_name)
-    last_name = st.text_input("Last Name")
-    save_state(last_name)
+    st.markdown(f'## {username}, please fill in the following information for more accurate recommendations.')
 
-    gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-    save_state(gender)
-
-    date_of_birth = st.date_input("When were you born?", min_value= date.fromisoformat('1899-12-31'), max_value = date.fromisoformat('2005-12-31'), format="YYYY/MM/DD", value=date.fromisoformat('2005-01-01'))
-    save_state(date_of_birth)
-
-    nationality = st.text_input("What is your Nationality?")
-    save_state(nationality)
-
-    #Falta colocar o resto
-    city = st.selectbox("Which region are you based in?", ['Aveiro', 'Beja', 'Braga', 'Bragança', 
-                                                           'Castelo Branco', 'Coimbra', 'Évora', 
-                                                           'Faro', 'Guarda', 'Leiria', 'Lisboa', 
-                                                           'Portalegre', 'Porto', 'Santarém', 'Setúbal',
-                                                             'Viana do Castelo', 'Vila Real', 'Viseu', 
-                                                             'Açores', 'Madeira'])
-    save_state(city)
-
-    has_travel_car = st.checkbox("Do you commonly prefer to travel by car?")
-    save_state(has_travel_car)
-    drinks_alcohol = st.checkbox("Do you drink alcohol?")
-    save_state(drinks_alcohol)
-    smoker = st.checkbox("Are you a smoker?")
-    save_state(smoker)
-
-    dietary_restrictions = st.selectbox("Dietary Restrictions", ["None", "Vegetarian", "Vegan"])
-    save_state(dietary_restrictions)
-    allergies = st.text_input("Do you have any allergies? If so, which?")
-    save_state(allergies)
-
-    favourite_food = st.text_area("What is your favourite food? Feel free to write in Portuguese!")
-    save_state(favourite_food)
-    dislike_food = st.text_area("What is your least favourite food? Feel free to write in Portuguese!")
-    save_state(dislike_food)
+    st.markdown('### Personal Information')
+    first_name = st.text_input("First Name", key=f'first_name_{st.session_state["run"]}')
+    last_name = st.text_input("Last Name", key=f'last_name_{st.session_state["run"]}')
+    gender = st.selectbox("How do you identify yourself?",['Female', 'Male', 'Other'], key=f'gender_{st.session_state["run"]}')
+    dob = st.date_input("When were you born?", min_value= date.fromisoformat('1899-12-31'), max_value = date.fromisoformat('2005-12-31'), format="YYYY/MM/DD", value=date.fromisoformat('2005-01-01'), key=f'dob_{st.session_state["run"]}')
+    nationality = st.text_input('What is your nationality?', key=f'nationality_{st.session_state["run"]}')
+    district = st.selectbox("Where are you based in?",['Aveiro', 'Beja', 'Braga', 'Bragança', 'Castelo Branco', 'Coimbra', 'Évora', 'Faro', 'Guarda', 'Leiria', 'Lisboa', 'Portalegre', 'Porto', 'Santarém', 'Setúbal', 'Viana do Castelo', 'Vila Real', 'Viseu', 'Açores', 'Madeira'], key=f'district_{st.session_state["run"]}')
     
+    st.markdown('### Lifestyle and General Preferences')
+    has_car = st.checkbox('Do you commonly prefer to travel by car?', key=f'has_car_{st.session_state["run"]}')
+    drinks_alcohol = st.checkbox('Do you drink alcohol?', key=f'drinks_alcohol_{st.session_state["run"]}')
+    smoker = st.checkbox('Are you a smoker?', key=f'smoker_{st.session_state["run"]}')
     preferred_payment = st.selectbox("How do you prefer to pay?", ['MBWay', 'Cash', 'Credit Card', 'Apple Pay', 'Visa Electron',
-       'Visa', 'Mastercard', 'Paypal', 'American Express', 'Maestro Card'])
-    save_state(preferred_payment)
+       'Visa', 'Mastercard', 'Paypal', 'American Express', 'Maestro Card'], key=f'preferred_payment_{st.session_state["run"]}')
+    normal_price_range = st.number_input("What is the average price (in Euros) you believe is fair per meal per person?", min_value=0, max_value=100, value=15, key=f'normal_price_range_{st.session_state["run"]}')
+    lunch_hour = st.slider("Lunch Hour", min_value=11, max_value=15,value=(11, 15), key=f'lunch_hour_{st.session_state["run"]}')
+    dinner_hour = st.slider("Dinner Hour", min_value=18, max_value=23,value=(18, 23), key=f'dinner_hour_{st.session_state["run"]}')
+
+    st.markdown('### Dietary Preferences')
+    dietary_restrictions = st.selectbox("Dietary Restrictions", ["None", "Vegetarian", "Vegan"], key=f'dietary_restrictions_{st.session_state["run"]}')
+    allergies = st.text_input("Do you have any allergies? If so, which?", key=f'allergies_{st.session_state["run"]}')
+    favourite_food = st.text_area("What is your favourite food? Feel free to write in Portuguese!", key=f'favourite_food_{st.session_state["run"]}')
+    dislike_food = st.text_area("What is your least favourite food? Feel free to write in Portuguese!", key=f'dislike_food_{st.session_state["run"]}')
     
     #CONFIRMAR ISTO
+    st.markdown('### Restaurant Preferences')
     restaurant_style = st.selectbox("What Restaurant Style do you prefer?", ['Familiar', 'After Work', 'Homemade', 'Traditional',
        'Contemporary', 'Author', 'Cosy', 'Healthy', 'Central', 'Groups',
        'Bistro', 'Terrace', 'Romantic', 'Lunch', 'Organic', 'Fine Dining',
        'Nightlife', 'Street Food', 'View', 'Friendly', 'Breakfast',
-       'Ceremony', 'Oceanfront', 'Wine bar', 'Business'])
-    save_state(restaurant_style)
-
-    normal_price_range = st.number_input("What is the average price (in Euros) you believe is fair per meal per person?", min_value=0, max_value=100, value=15)
-    save_state(normal_price_range)
-
+       'Ceremony', 'Oceanfront', 'Wine bar', 'Business'], key=f'restaurant_style_{st.session_state["run"]}')
     cuisine_type = st.selectbox("Cuisine Type", ['Seafood', 'Portuguese', 'Mediterranean', 'Meat Cuisine', 
        'American', 'Italian', 'International', 'Pizzeria', 'European',
        'Steakhouse', 'African', 'Indian', 'Asian', 'Japanese', 'Fusion',
        'Brazilian', 'Mexican', 'Grilled', 'Vegetarian', 'Chinese',
-       'Greek'])
-    save_state(cuisine_type)
-    
-    lunch_hour = st.slider("Lunch Hour", min_value=11, max_value=15,value=(11, 15))
-    save_state(lunch_hour)
-    dinner_hour = st.slider("Dinner Hour", min_value=18, max_value=22, value=(18, 22))
-    save_state(dinner_hour)
+       'Greek'], key=f'cuisine_type_{st.session_state["run"]}')
 
     user_data = {
             "email": email,
@@ -103,10 +80,10 @@ def gather_client_data():
             "first_name": first_name,
             "last_name": last_name,
             "gender": gender,
-            "date_of_birth": date_of_birth,
+            "date_of_birth": dob,
             "nationality": standardize_text(nationality),
-            "city": city,
-            "travel_car": has_travel_car,
+            "city": district,
+            "travel_car": has_car,
             "drinks_alcohol": drinks_alcohol,
             "dietary_restrictions": dietary_restrictions.lower(),
             "allergies": standardize_text(allergies),
@@ -120,11 +97,11 @@ def gather_client_data():
             "normal_price_range": normal_price_range,
             "smoker_n": smoker
         }
+    
+    st.session_state['user_data'] = user_data
 
-    st.button("Save", on_click= click_save, args=(user_data,), key=f'save_data_{st.session_state["run"]}')
 
-
-def save_user_data(user_data: dict):
+def save_user_data(user_data):
     client_data = pd.read_csv('data/clientDataClean.csv', sep=',')
     client_data = pd.concat([client_data, pd.DataFrame([user_data])], ignore_index=True)
     client_data.drop_duplicates(subset=['email', 'username'], keep = 'last', inplace=True)
@@ -132,9 +109,6 @@ def save_user_data(user_data: dict):
     with st.spinner('Saving your data...'):
         time.sleep(3)
         st.success('Data Saved!', icon='🚀')
-        st.session_state['save'] = False
-        st.session_state['edit'] = False
-    show_client_data(client_data, user_data['email'])
 
 
 def show_client_data(client_data, email):
@@ -162,31 +136,26 @@ def show_client_data(client_data, email):
         st.write(f'Typical Dinner Hour: {client_data.loc[client_data["email"] == email]["dinner_hour"].values[0]}')
     
     st.write('If you would like to change any of the information above, please feel free to edit.')
-    st.button('Edit', key=f'edit_button_{st.session_state["run"]}', on_click=click_edit)
-
-
-
-
-
-
+    
+#If logged in
 if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
     pages_logged_in()
-    header_image = "ext_images/logo.jpeg"  
-    st.image(header_image, width=400)
-    st.title(f'Welcome to your Profile, {st.session_state["username"]}!')
-    ph = st.empty()
+    header_image = "ext_images/logo1.jpeg"
+    #Se o cliente já tiver os dados guardados
     client_data = pd.read_csv('data/clientDataClean.csv', sep=',')
-    email = st.session_state['email']
-    if email in client_data['email'].values and (st.session_state['edit'] is None or st.session_state['edit'] == False):
-        show_client_data(client_data, email)
-    elif st.session_state['edit'] == True:
-        gather_client_data()
-    elif email not in client_data['email'].values:
-        gather_client_data()
+    if st.session_state['username'] in client_data['username'].values and st.session_state['email'] in client_data['email'].values:
+        #E não procura editar OU visita a pagina pela primeira vez apos ter os dados guardados
+        if st.session_state['edit'] == False or st.session_state['edit'] is None:
+            show_client_data(client_data[client_data['username'] == st.session_state['username']], st.session_state['email'])
+            st.button('Edit', on_click=click_edit, key=f'edit_{st.session_state["run"]}')
+        elif st.session_state['edit'] == True:
+            gather_client_data()
+            st.button('Save', on_click=click_save, args=[st.session_state['user_data']], key=f'save_{st.session_state["run"]}')
+    #Se o cliente não tiver os seus dados dados guardados
     else:
+        st.session_state['edit'] = True
         gather_client_data()
-    st.session_state['run'] += 1
-
+        st.button('Save', on_click=click_save, args=[st.session_state['user_data']], key=f'save_{st.session_state["run"]}')
 else:
     pages_logged_off()
     st.error('Ups! Something went wrong. Please try login again.', icon='🚨')
@@ -195,4 +164,3 @@ else:
     with st.spinner('Redirecting you to the Login page...'):
         time.sleep(3)
     switch_page('log in')
-
