@@ -12,6 +12,24 @@ st.set_page_config( page_icon="ext_images\page_icon.png", layout="wide")
 with open('personality_classification_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
+food_personalities = {
+    "The Adventurer": {
+        "description": "Enjoys trying new, exotic, and often challenging foods. Prefers variety and unique culinary experiences over comfort foods.",
+        "image": "the_adventurer.png"},
+    "Fine Dining Connoisseur": {
+        "description": "Appreciates high-end, gourmet food. Values presentation, quality of ingredients, and the overall dining experience in upscale environments.",
+        "image": "fine_dining_connoisseur.png"},
+    "Low-Cost Foodie": {
+        "description": "Enjoys finding delicious food at a bargain. Values taste and affordability over ambiance and presentation.",
+        "image": "low_cost_foodie.png"},
+    "Conscious Eater": {
+        "description": "Prioritizes nutritional value and health benefits. Prefers organic, low-calorie, or diet-specific foods.",
+        "image": "conscious_eater.png"},
+    "Comfort Food Lover": {
+        "description": "Prefers traditional, home-cooked, or familiar dishes. Values the emotional connection and nostalgia associated with food.",
+        "image": "comfort_food_lover.png"}
+}
+
 question_to_num = {"Strongly Disagree": 1, "Disagree": 2, "Neutral": 3, "Agree": 4, "Strongly Agree": 5}
 questions = {"Willingness to Try Exotic Foods":"I am open to trying unfamiliar and exotic dishes.", 
              "Importance of Food Presentation":"The presentation and plating of my meal is very important.",
@@ -70,6 +88,11 @@ def personality_presentation(observation = None):
         personality = st.session_state['personality']
     else:
         personality = observation['personality'].values[0]
+    c1, c2 = st.columns(2,6)
+    with c1:
+        image_path = food_personalities[personality]["image"]
+    with c2:
+        description = food_personalities[personality]["description"]
     st.write(f"You are a {personality}")
     
 
