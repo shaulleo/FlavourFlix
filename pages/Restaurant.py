@@ -129,10 +129,10 @@ def show_time_away(restaurant):
     if 'authentication_status' in st.session_state and st.session_state['authentication_status'] == True:
         if 'username'  in st.session_state and 'email' in st.session_state:
             clients = pd.read_csv('data/clientDataClean.csv')
-            if 'email' in clients['email'].values:
-                current_client = clients[clients['email'] == st.session_state['email']].iloc[0]
-                prefers_driving = current_client['travel_car']
-                if "current_location" in st.session_state and st.session_state.current_location != False:
+            if "current_location" in st.session_state and st.session_state.current_location != False:
+                if 'email' in clients['email'].values:
+                    current_client = clients[clients['email'] == st.session_state['email']].iloc[0]
+                    prefers_driving = current_client['travel_car']
                     if prefers_driving:
                         by_car = st.session_state.current_location.getDirections(restaurant['latitude'].iloc[0], restaurant['longitude'].iloc[0], ['driving'])
                         distance = f'{by_car["driving"].meters} meters' if by_car['driving'].meters < 1000 else f"{by_car['driving'].km} km"
@@ -144,7 +144,10 @@ def show_time_away(restaurant):
                         time_away = f"{by_foot['walking'].minutes}min away" if by_foot['walking'].minutes < 60 else f"{by_foot['walking'].hours} away"
                         st.markdown(f"🚶 **{distance}** ({time_away})")
                 else:
-                    st.markdown('')
+                    by_car = st.session_state.current_location.getDirections(restaurant['latitude'].iloc[0], restaurant['longitude'].iloc[0], ['driving'])
+                    distance = f'{by_car["driving"].meters} meters' if by_car['driving'].meters < 1000 else f"{by_car['driving'].km} km"
+                    time_away = f"{by_car['driving'].minutes}min away" if by_car['driving'].minutes < 60 else f"{by_car['driving'].hours} away"
+                    st.markdown(f"🚗 **{distance}** ({time_away})")
             else:
                 st.markdown('')
         else:
