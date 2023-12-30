@@ -26,54 +26,25 @@ def show_kpis():
     with cola:
         with stylable_container(
                 key="container_with_border",
-                css_styles="""
-                    {
-                        border: 1px solid rgba(49, 51, 63, 0.2);
-                        border-radius: 0.5rem;
-                        padding: calc(1em - 1px);
-                        text-align: justify;
-                    }
-                    """,
+                css_styles=css_styles_justify,
             ):
                     st.metric(label = 'Distinct Restaurants', value = f'🍽️ {len(data.index)}')
     
         with stylable_container(
                 key="container_with_border",
-                css_styles="""
-                    {
-                        border: 1px solid rgba(49, 51, 63, 0.2);
-                        border-radius: 0.5rem;
-                        padding: calc(1em - 1px);
-                        text-align: justify;
-                    }
-                    """,
+                css_styles=css_styles_justify,
             ):
-                    #Depois colocar aqui o número de users
                     st.metric(label = 'Active Users', value = f'👥 1500+')
     with colb:
         with stylable_container(
                 key="container_with_border",
-                css_styles="""
-                    {
-                        border: 1px solid rgba(49, 51, 63, 0.2);
-                        border-radius: 0.5rem;
-                        padding: calc(1em - 1px);
-                        text-align: justify;
-                    }
-                    """,
+                css_styles=css_styles_justify,
             ):
                     st.metric(label = 'Satisfaction Rate', value = f'⭐ 9.7/10')
     
         with stylable_container(
                 key="container_with_border",
-                css_styles="""
-                    {
-                        border: 1px solid rgba(49, 51, 63, 0.2);
-                        border-radius: 0.5rem;
-                        padding: calc(1em - 1px);
-                        text-align: justify;
-                    }
-                    """,
+                css_styles=css_styles_justify,
             ):
                     st.metric(label = 'Cuisine Types', value = f'🍲 {len(data["cuisine"].unique())}')
 
@@ -84,42 +55,21 @@ def show_analytics(data):
         open_restaurants = len(data[data['currently_open'] == 'Open'])
         with stylable_container(
             key="container_with_border",
-            css_styles="""
-                {
-                    border: 1px solid rgba(49, 51, 63, 0.2);
-                    border-radius: 0.5rem;
-                    padding: calc(1em - 1px);
-                    text-align: justify;
-                }
-                """,
+            css_styles=css_styles_justify
         ):
             st.metric(label='Currently Open', value=f'🍽️ {open_restaurants}')
     with c2:
         avg_price = data['averagePrice'].mean()
         with stylable_container(
             key="container_with_border",
-            css_styles="""
-                {
-                    border: 1px solid rgba(49, 51, 63, 0.2);
-                    border-radius: 0.5rem;
-                    padding: calc(1em - 1px);
-                    text-align: justify;
-                }
-                """,
+            css_styles=css_styles_justify
         ):
             st.metric(label='Average Price', value=f'💶 {avg_price:.0f}€')
     with c3:
         common_cuisines = data['cuisine'].value_counts().head(1).index[0]
         with stylable_container(
                 key="container_with_border",
-                css_styles="""
-                    {
-                        border: 1px solid rgba(49, 51, 63, 0.2);
-                        border-radius: 0.5rem;
-                        padding: calc(1em - 1px);
-                        text-align: justify;
-                    }
-                    """,
+                css_styles=css_styles_justify,
             ):
             st.metric(label='Most Common Cuisine', value=f'🍲 {common_cuisines}')
            
@@ -127,14 +77,7 @@ def show_analytics(data):
 def restaurant_card(restaurant, title, ratingcol='ratingValue'):
     with stylable_container(
          key="container_with_border",
-            css_styles="""
-                {
-                    border: 1px solid rgba(49, 51, 63, 0.2);
-                    border-radius: 0.5rem;
-                    padding: calc(1em - 1px);
-                    text-align: justify;
-                }
-                """,):
+            css_styles=css_styles_justify):
         st.markdown(f"<h5 style='text-align: left; color: black;'>{title}</h5>", unsafe_allow_html=True)
         col1, col2 = st.columns([4, 5], gap='small')
         with col1:
@@ -272,15 +215,7 @@ else:
             st.write("")
             with stylable_container(
                 key="container_with_border",
-                css_styles="""
-                    {
-                        border: 1px solid rgba(49, 51, 63, 0.2);
-                        border-radius: 0.5rem;
-                        padding: calc(1em - 1px);
-                        text-align: justify;
-                        width: 100%;
-                    }
-                    """,
+                css_styles=css_styles_justify,
             ):
                 # Check if any location is selected before showing the map
                 if "current_location" not in st.session_state or not st.session_state.use_current_location or not st.session_state.current_location:
@@ -297,8 +232,7 @@ else:
                         location=[row['latitude'], row['longitude']],
                         popup=row['name'],).add_to(m)
                 #Render Folium map in Streamlit if a location is selected
-                #st_data = st_folium(m, height=500, use_container_width=True)
-                st_folium(m, height=50, width=60, returned_objects=[])
+                st_folium(m, height=500, width=650, returned_objects=[])
                 st.caption("""Note that the pins presented on the map are not the exact location of the restaurants,
                            but rather an estimation.""", unsafe_allow_html=True)
                   

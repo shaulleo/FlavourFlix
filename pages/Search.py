@@ -69,7 +69,6 @@ def apply_filters(filtered_df):
             m2 = filtered_df['menu_pt'].str.contains(menu_search, case=False, na=False)
             m3 = filtered_df['menu_pre_proc'].str.contains(menu_search, case=False, na=False)
             filtered_df = filtered_df[m1 | m2 | m3]
-            #filtered_df = filtered_df[filtered_df['menu_standard'].str.contains(menu_search, case=False, na=False)]
 
     return filtered_df
 
@@ -156,9 +155,9 @@ def filters_page():
             if not filtered_df.empty:
                 show_results(filtered_df)
             else:
-                st.markdown("#### OOoops! Mister Exigente! We couldn't find any restaurants matching your criteria. Please try again.")
+                st.markdown("#### Ups! We couldn't find any restaurants matching your criteria. :disappointed: Please try a different search. ")
                 st.markdown('<br>', unsafe_allow_html=True)
-                st.markdown('Do you have anu suggestions for new restaurants? Please share them with us by clicking on the "Suggest a Restaurant" button below.')
+                st.markdown('Do you have any suggestions for new restaurants? Please share them with us by clicking on the "Suggest a Restaurant" button below.')
                 if st.button("Suggest a Restaurant"):
                     switch_page("contact us")
 

@@ -16,18 +16,18 @@ if 'run' not in st.session_state:
     st.session_state['run'] = 1
 if 'user_data' not in st.session_state:
     st.session_state['user_data'] = None
-css_styles_center = """{   
-                        border: 1px solid rgba(49, 51, 63, 0.2);
-                        border-radius: 0.5rem;
-                        padding: calc(1em - 10px);
-                        text-align: center;
-                        font-size: 20px;}"""
-css_styles_justify = """{   
-                        border: 1px solid rgba(49, 51, 63, 0.2);
-                        border-radius: 0.5rem;
-                        padding: calc(1em - 10px);
-                        text-align: justify;
-                        font-size: 20px;}"""
+# css_styles_center = """{   
+#                         border: 1px solid rgba(49, 51, 63, 0.2);
+#                         border-radius: 0.5rem;
+#                         padding: calc(1em - 10px);
+#                         text-align: center;
+#                         font-size: 20px;}"""
+# css_styles_justify = """{   
+#                         border: 1px solid rgba(49, 51, 63, 0.2);
+#                         border-radius: 0.5rem;
+#                         padding: calc(1em - 10px);
+#                         text-align: justify;
+#                         font-size: 20px;}"""
 
 
 def click_save(user_data):

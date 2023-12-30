@@ -271,9 +271,9 @@ def preprocess_chefs(index, chef_list):
 
 def standardize_location(location):
     """Standardizes a location string.
-        Parameters:
+    Parameters:
         - location (str): Location of the restaurant.
-        Returns:
+    Returns:
         - location (str): Standardized location of the restaurant."""
 
     
