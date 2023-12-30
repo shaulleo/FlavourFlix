@@ -1,125 +1,147 @@
 [{    "Client First Name": "Sara",
     "Review Date": "2023-05-12",
     "Rating value (out of ten)": 9,
-    "Testimonial text": "FlavourFlix turned our food hunt into an adventure! The personalized restaurant suggestions were top-notch, catering perfectly to our preferences."},
+    "Testimonial text": "FlavourFlix turned our food hunt into an adventure! The personalized restaurant suggestions were top-notch, catering perfectly to our preferences.",
+    "Image": "testimonials_img/img_f1.jpg"},
+
   {
     "Client First Name": "Carlos",
     "Review Date": "2023-07-28",
     "Rating value (out of ten)": 8,
-    "Testimonial text": "Using FlavourFlix during our trip made exploring Portuguese cuisine effortless. Filomena's recommendations were on point!"
+    "Testimonial text": "Using FlavourFlix during our trip made exploring Portuguese cuisine effortless. Filomena's recommendations were on point!",
+    "Image": "testimonials_img/img_m1.jpg"
   },
   {
     "Client First Name": "Sophie",
     "Review Date": "2023-09-05",
     "Rating value (out of ten)": 9,
-    "Testimonial text": "FlavourFlix helped me delve into Portuguese flavors effortlessly. The 'Food Personality' feature was a delightful surprise!"
+    "Testimonial text": "FlavourFlix helped me delve into Portuguese flavors effortlessly. The 'Food Personality' feature was a delightful surprise!",
+    "Image" : "testimonials_img/img_f80.jpg"
   },
   {
     "Client First Name": "Liam",
     "Review Date": "2023-10-17",
     "Rating value (out of ten)": 8,
-    "Testimonial text": "As a conscious eater, FlavourFlix was a gem. It respected my dietary needs and recommended great spots!"
+    "Testimonial text": "As a conscious eater, FlavourFlix was a gem. It respected my dietary needs and recommended great spots!",
+    "Image" : "testimonials_img/img_m2.jpg"
   },
   {
     "Client First Name": "Ana",
     "Review Date": "2023-11-02",
     "Rating value (out of ten)": 9,
-    "Testimonial text": "FlavourFlix made my solo trip delicious! The app's tailored suggestions made dining alone a delightful experience."
+    "Testimonial text": "FlavourFlix made my solo trip delicious! The app's tailored suggestions made dining alone a delightful experience.",
+    "Image" : "testimonials_img/img_f2.jpg"
   },
   {
     "Client First Name": "Raj",
     "Review Date": "2023-12-10",
     "Rating value (out of ten)": 7,
-    "Testimonial text": "FlavourFlix gave us a taste of Portugal's diverse cuisine. Improved suggestions based on user input would make it even better."
+    "Testimonial text": "FlavourFlix gave us a taste of Portugal's diverse cuisine. Improved suggestions based on user input would make it even better.",
+    "Image" : "testimonials_img/img_m3.jpg"
   },
   {
     "Client First Name": "Eva",
     "Review Date": "2023-12-15",
     "Rating value (out of ten)": 9,
-    "Testimonial text": "FlavourFlix was a game-changer for our group. It helped us navigate our diverse preferences and find the perfect spots!"
+    "Testimonial text": "FlavourFlix was a game-changer for our group. It helped us navigate our diverse preferences and find the perfect spots!",
+    "Image" : "testimonials_img/img_f3.jpg"
   },
   {
     "Client First Name": "Diego",
     "Review Date": "2023-12-20",
     "Rating value (out of ten)": 8,
-    "Testimonial text": "FlavourFlix made our family trip memorable! It's a great tool for finding hidden culinary gems."
+    "Testimonial text": "FlavourFlix made our family trip memorable! It's a great tool for finding hidden culinary gems.",
+    "Image" : "testimonials_img/img_m4.jpg"
   },
   {
     "Client First Name": "Amelia",
     "Review Date": "2023-12-22",
     "Rating value (out of ten)": 9,
-    "Testimonial text": "FlavourFlix made our culinary exploration in Portugal exciting! The personalized recommendations were fantastic."
+    "Testimonial text": "FlavourFlix made our culinary exploration in Portugal exciting! The personalized recommendations were fantastic.",
+    "Image" : "testimonials_img/img_f4.jpg"
   },
   {
     "Client First Name": "Marta",
     "Review Date": "2023-12-24",
     "Rating value (out of ten)": 7,
-    "Testimonial text": "FlavourFlix was handy, but I wished for more off-beat restaurant suggestions to explore."
+    "Testimonial text": "FlavourFlix was handy, but I wished for more off-beat restaurant suggestions to explore.",
+    "Image" : "testimonials_img/img_f5.jpg"
   },
   {
     "Client First Name": "Javier",
     "Review Date": "2023-12-25",
     "Rating value (out of ten)": 8,
-    "Testimonial text": "FlavourFlix was a great guide in discovering traditional Portuguese cuisines. A wider range of price options would be beneficial."
+    "Testimonial text": "FlavourFlix was a great guide in discovering traditional Portuguese cuisines. A wider range of price options would be beneficial.",
+    "Image" : "testimonials_img/img_m5.jpg"
   },
   {
     "Client First Name": "Katie",
     "Review Date": "2023-12-26",
     "Rating value (out of ten)": 9,
-    "Testimonial text": "FlavourFlix made our food journey in Portugal exciting and hassle-free. The personalized recommendations were impressive!"
+    "Testimonial text": "FlavourFlix made our food journey in Portugal exciting and hassle-free. The personalized recommendations were impressive!",
+    "Image" : "testimonials_img/img_f6.jpg"
   },
   {
     "Client First Name": "Lucas",
     "Review Date": "2023-12-27",
     "Rating value (out of ten)": 8,
-    "Testimonial text": "FlavourFlix was a handy companion during our vacation. More variety in cuisine filters would make it even better."
+    "Testimonial text": "FlavourFlix was a handy companion during our vacation. More variety in cuisine filters would make it even better.",
+    "Image" : "testimonials_img/img_m6.jpg"
   },
   {
     "Client First Name": "Hannah",
     "Review Date": "2023-12-28",
     "Rating value (out of ten)": 9,
-    "Testimonial text": "FlavourFlix made our group dinner decisions a breeze! The app's tailored suggestions saved us time and arguments."
+    "Testimonial text": "FlavourFlix made our group dinner decisions a breeze! The app's tailored suggestions saved us time and arguments.",
+    "Image" : "testimonials_img/img_f7.jpg"
   },
   {
     "Client First Name": "Lina",
     "Review Date": "2023-12-29",
     "Rating value (out of ten)": 8,
-    "Testimonial text": "FlavourFlix was our go-to during our culinary adventures in Portugal. Improved allergy filtering options would be beneficial."
+    "Testimonial text": "FlavourFlix was our go-to during our culinary adventures in Portugal. Improved allergy filtering options would be beneficial.",
+    "Image" : "testimonials_img/img_f80.jpg"
   },
   {
     "Client First Name": "Daniel",
     "Review Date": "2023-12-30",
     "Rating value (out of ten)": 9,
-    "Testimonial text": "FlavourFlix made our dining experiences in Portugal unforgettable! The app's recommendations were tailored perfectly."
+    "Testimonial text": "FlavourFlix made our dining experiences in Portugal unforgettable! The app's recommendations were tailored perfectly.",
+    "Image" : "testimonials_img/img_m7.jpg"
   },
   {
     "Client First Name": "Elena",
     "Review Date": "2023-12-31",
     "Rating value (out of ten)": 8,
-    "Testimonial text": "FlavourFlix enhanced our food journey in Portugal! More local hidden gems in the recommendations would be great."
+    "Testimonial text": "FlavourFlix enhanced our food journey in Portugal! More local hidden gems in the recommendations would be great.",
+    "Image" : "testimonials_img/img_f8.jpg"
   },
   {
     "Client First Name": "Oscar",
     "Review Date": "2024-01-01",
     "Rating value (out of ten)": 7,
-    "Testimonial text": "FlavourFlix helped us explore Portuguese cuisine, but more information about restaurant ambiance would improve the experience."
+    "Testimonial text": "FlavourFlix helped us explore Portuguese cuisine, but more information about restaurant ambiance would improve the experience.",
+    "Image" : "testimonials_img/img_m8.jpg"
   },
   {
     "Client First Name": "Isabel",
     "Review Date": "2024-01-02",
     "Rating value (out of ten)": 9,
-    "Testimonial text": "FlavourFlix personalized our dining experience beautifully! The app's recommendations were tailored to perfection."
+    "Testimonial text": "FlavourFlix personalized our dining experience beautifully! The app's recommendations were tailored to perfection.",
+    "Image" : "testimonials_img/img_f91.jpg"
   },
   {
     "Client First Name": "João",
     "Review Date": "2024-01-03",
     "Rating value (out of ten)": 8,
-    "Testimonial text": "FlavourFlix was a great companion during our culinary exploration. More detailed restaurant descriptions would be helpful."
+    "Testimonial text": "FlavourFlix was a great companion during our culinary exploration. More detailed restaurant descriptions would be helpful.",
+    "Image" : "testimonials_img/img_m9.jpg"
   },
   {
     "Client First Name": "Sophia",
     "Review Date": "2024-01-04",
     "Rating value (out of ten)": 9,
-    "Testimonial text": "FlavourFlix made our food adventures in Portugal exciting and hassle-free. The personalized recommendations were impressive!"
+    "Testimonial text": "FlavourFlix made our food adventures in Portugal exciting and hassle-free. The personalized recommendations were impressive!",
+    "Image" : "testimonials_img/img_f92.jpg"
   }
   ]
