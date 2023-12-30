@@ -136,16 +136,16 @@ def restaurant_card(restaurant, title, ratingcol='ratingValue'):
                 }
                 """,):
         st.markdown(f"<h5 style='text-align: left; color: black;'>{title}</h5>", unsafe_allow_html=True)
-        col1, col2 = st.columns([1, 2], gap='large')
+        col1, col2 = st.columns([4, 5], gap='small')
         with col1:
-            st.image(restaurant['photo'], width=250)
+            st.image(restaurant['photo'], width=200)
         with col2:
             st.markdown(f"**{restaurant['name'].strip()}**")
-            st.markdown(f"*{restaurant['address'].strip()}*")
-            st.markdown(f"**Rating**: {restaurant[ratingcol]}/10.0")
-            if st.button(f"View Details for {restaurant['name']}", key=f'highest_rated_{ratingcol}'):
-                st.session_state.selected_restaurant = restaurant['name']
-                switch_page("restaurant")
+            st.caption(f"*{restaurant['address'].strip()}*")
+            st.caption(f"**Rating**: {restaurant[ratingcol]}/10.0")
+        if st.button(f"View Details for {restaurant['name']}", key=f'highest_rated_{ratingcol}'):
+            st.session_state.selected_restaurant = restaurant['name']
+            switch_page("restaurant")
 
 def show_top_rated(data):
     highest_rating = data[data['ratingValue'] == data['ratingValue'].max()].iloc[0]
@@ -244,7 +244,7 @@ else:
             if st.button('Contact Us', key='feedback_button', use_container_width=True):
                 switch_page('contact us')
         st.divider()
-        col1, col2, = st.columns(2)
+        col1, col2, = st.columns((4,3))
         with col2:
             location_permission = st.toggle('Use my location', key='location_permission')
             if location_permission:
@@ -298,7 +298,7 @@ else:
                         popup=row['name'],).add_to(m)
                 #Render Folium map in Streamlit if a location is selected
                 #st_data = st_folium(m, height=500, use_container_width=True)
-                st_folium(m, height=500, width=700, returned_objects=[])
+                st_folium(m, height=50, width=60, returned_objects=[])
                 st.caption("""Note that the pins presented on the map are not the exact location of the restaurants,
                            but rather an estimation.""", unsafe_allow_html=True)
                   

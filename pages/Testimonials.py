@@ -37,8 +37,8 @@ icons = os.listdir('user_icons')[:-2]
 def show_testimonial(num=0):
     testimonial = data[num]
     with stylable_container(
-        key="container_with_border",
-                css_styles="""
+        key=f"container_with_border_{num}",
+        css_styles="""
             {
                 border: 0px solid rgb(15, 92, 156);
                 background-color: #FFFFFF;
@@ -48,13 +48,14 @@ def show_testimonial(num=0):
             }
         """,
     ):
-        col1, col2 = st.columns([1, 4], gap = 'medium')
+        col1, col2 = st.columns([1, 4], gap='small')
         with col1:
-            st.image(f'user_icons/{icons[num]}', width=100)
+            st.image(testimonial['Image'], width=95)
         with col2:
-            st.subheader(testimonial['name'])
-            st.write(testimonial['date'])
-        st.text(add_newlines(testimonial['testimonial']))
+            st.subheader(testimonial['Client First Name'])
+            st.caption(f" Date: {testimonial['Review Date']}")
+            st.caption(f' Rating: {testimonial["Rating value (out of ten)"]} / 10')
+        st.text(add_newlines(f'"{testimonial["Testimonial text"]}"'))
 
 
 def show_complete_testimonials():
@@ -68,7 +69,7 @@ def show_complete_testimonials():
     st.write('Have any feedback? Feel free to give your own opinion! We are always looking to improve our services. ')
     if st.button('Add a testimonial'):
         pass
-    
+
     st.markdown('<br>', unsafe_allow_html=True)
     st.markdown('<br>', unsafe_allow_html=True)
 
