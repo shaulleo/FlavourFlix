@@ -16,7 +16,18 @@ if 'run' not in st.session_state:
     st.session_state['run'] = 1
 if 'user_data' not in st.session_state:
     st.session_state['user_data'] = None
-
+css_styles_center = """{   
+                        border: 1px solid rgba(49, 51, 63, 0.2);
+                        border-radius: 0.5rem;
+                        padding: calc(1em - 1px);
+                        text-align: center;
+                        font-size: 20px;}"""
+css_styles_justify = """{   
+                        border: 1px solid rgba(49, 51, 63, 0.2);
+                        border-radius: 0.5rem;
+                        padding: calc(1em - 1px);
+                        text-align: justify;
+                        font-size: 20px;}"""
 
 
 def click_save(user_data):
@@ -42,16 +53,16 @@ def gather_client_data():
     
     col1, col2 = st.columns(2)
     with col1:
-        first_name = st.text_input("First Name", key=f'first_name_{st.session_state["run"]}')
+        first_name = st.text_input("**First Name**", key=f'first_name_{st.session_state["run"]}')
     #last_name = st.text_input("Last Name", key=f'last_name_{st.session_state["run"]}')
-        gender = st.selectbox("How do you identify yourself?",['Female', 'Male', 'Other'], key=f'gender_{st.session_state["run"]}')
+        gender = st.selectbox("**How do you identify yourself?**",[' ', 'Female', 'Male', 'Other'], key=f'gender_{st.session_state["run"]}')
     #dob = st.date_input("When were you born?", min_value= date.fromisoformat('1899-12-31'), max_value = date.fromisoformat('2005-12-31'), format="YYYY/MM/DD", value=date.fromisoformat('2005-01-01'), key=f'dob_{st.session_state["run"]}')
-        nationality = st.text_input('What is your nationality?', key=f'nationality_{st.session_state["run"]}')
+        nationality = st.text_input('**What is your nationality?**', key=f'nationality_{st.session_state["run"]}')
     #district = st.selectbox("Where are you based in?",['Aveiro', 'Beja', 'Braga', 'Bragança', 'Castelo Branco', 'Coimbra', 'Évora', 'Faro', 'Guarda', 'Leiria', 'Lisboa', 'Portalegre', 'Porto', 'Santarém', 'Setúbal', 'Viana do Castelo', 'Vila Real', 'Viseu', 'Açores', 'Madeira'], key=f'district_{st.session_state["run"]}')
     with col2:
         last_name = st.text_input("Last Name", key=f'last_name_{st.session_state["run"]}')
         dob = st.date_input("When were you born?", min_value= date.fromisoformat('1899-12-31'), max_value = date.fromisoformat('2005-12-31'), format="YYYY/MM/DD", value=date.fromisoformat('2005-01-01'), key=f'dob_{st.session_state["run"]}')
-        district = st.selectbox("Where are you based in?",['Aveiro', 'Beja', 'Braga', 'Bragança', 'Castelo Branco', 'Coimbra', 'Évora', 'Faro', 'Guarda', 'Leiria', 'Lisboa', 'Portalegre', 'Porto', 'Santarém', 'Setúbal', 'Viana do Castelo', 'Vila Real', 'Viseu', 'Açores', 'Madeira'], key=f'district_{st.session_state["run"]}')
+        district = st.selectbox("**Where are you based in?**",[' ', 'Aveiro', 'Beja', 'Braga', 'Bragança', 'Castelo Branco', 'Coimbra', 'Évora', 'Faro', 'Guarda', 'Leiria', 'Lisboa', 'Portalegre', 'Porto', 'Santarém', 'Setúbal', 'Viana do Castelo', 'Vila Real', 'Viseu', 'Açores', 'Madeira'], key=f'district_{st.session_state["run"]}')
     
     st.divider()
     st.markdown('### Lifestyle and General Preferences')
@@ -62,27 +73,27 @@ def gather_client_data():
         drinks_alcohol = st.checkbox('Do you drink alcohol?', key=f'drinks_alcohol_{st.session_state["run"]}')
         smoker = st.checkbox('Are you a smoker?', key=f'smoker_{st.session_state["run"]}')
     with col4:
-        preferred_payment = st.selectbox("How do you prefer to pay?", ['MBWay', 'Cash', 'Credit Card', 'Apple Pay', 'Visa Electron',
+        preferred_payment = st.selectbox("**How do you prefer to pay?**", [' ', 'MBWay', 'Cash', 'Credit Card', 'Apple Pay', 'Visa Electron',
         'Visa', 'Mastercard', 'Paypal', 'American Express', 'Maestro Card'], key=f'preferred_payment_{st.session_state["run"]}')
-        normal_price_range = st.number_input("What is the average price (in Euros) you believe is fair per meal per person?", min_value=0, max_value=100, value=15, key=f'normal_price_range_{st.session_state["run"]}')
-    lunch_hour = st.slider("Lunch Hour", min_value=11, max_value=15,value=(11, 15), key=f'lunch_hour_{st.session_state["run"]}')
-    dinner_hour = st.slider("Dinner Hour", min_value=18, max_value=23,value=(18, 23), key=f'dinner_hour_{st.session_state["run"]}')
+        normal_price_range = st.number_input("**What is the average price (in Euros) you believe is fair per meal per person?**", min_value=0, max_value=100, value=15, key=f'normal_price_range_{st.session_state["run"]}')
+    lunch_hour = st.slider("**Lunch Hour**", min_value=11, max_value=15,value=(11, 15), key=f'lunch_hour_{st.session_state["run"]}')
+    dinner_hour = st.slider("**Dinner Hour**", min_value=18, max_value=23,value=(18, 23), key=f'dinner_hour_{st.session_state["run"]}')
 
     st.divider()
     st.markdown('### Dietary Preferences')
-    dietary_restrictions = st.selectbox("Dietary Restrictions", ["None", "Vegetarian", "Vegan"], key=f'dietary_restrictions_{st.session_state["run"]}')
-    allergies = st.text_input("Do you have any allergies? If so, which?", key=f'allergies_{st.session_state["run"]}')
-    favourite_food = st.text_area("What is your favourite food? Feel free to write in Portuguese!", key=f'favourite_food_{st.session_state["run"]}')
-    dislike_food = st.text_area("What is your least favourite food? Feel free to write in Portuguese!", key=f'dislike_food_{st.session_state["run"]}')
+    dietary_restrictions = st.selectbox("**Dietary Restrictions**", ["None", "Vegetarian", "Vegan"], key=f'dietary_restrictions_{st.session_state["run"]}')
+    allergies = st.text_input("**Do you have any allergies? If so, which?**", key=f'allergies_{st.session_state["run"]}')
+    favourite_food = st.text_area("**What is your favourite food? Feel free to write in Portuguese!**", key=f'favourite_food_{st.session_state["run"]}')
+    dislike_food = st.text_area("**What is your least favourite food? Feel free to write in Portuguese!**", key=f'dislike_food_{st.session_state["run"]}')
     
     st.divider()
     st.markdown('### Restaurant Preferences')
-    restaurant_style = st.selectbox("What Restaurant Style do you prefer?", ['Familiar', 'After Work', 'Homemade', 'Traditional',
+    restaurant_style = st.selectbox("**What Restaurant Style do you prefer?**", [' ', 'Familiar', 'After Work', 'Homemade', 'Traditional',
        'Contemporary', 'Author', 'Cosy', 'Healthy', 'Central', 'Groups',
        'Bistro', 'Terrace', 'Romantic', 'Lunch', 'Organic', 'Fine Dining',
        'Nightlife', 'Street Food', 'View', 'Friendly', 'Breakfast',
        'Ceremony', 'Oceanfront', 'Wine bar', 'Business'], key=f'restaurant_style_{st.session_state["run"]}')
-    cuisine_type = st.selectbox("Cuisine Type", ['Seafood', 'Portuguese', 'Mediterranean', 'Meat Cuisine', 
+    cuisine_type = st.selectbox("**Cuisine Type**", [' ', 'Seafood', 'Portuguese', 'Mediterranean', 'Meat Cuisine', 
        'American', 'Italian', 'International', 'Pizzeria', 'European',
        'Steakhouse', 'African', 'Indian', 'Asian', 'Japanese', 'Fusion',
        'Brazilian', 'Mexican', 'Grilled', 'Vegetarian', 'Chinese',
@@ -127,44 +138,80 @@ def save_user_data(user_data):
 
 def show_client_data(client_data, email):
     st.title(f'{st.session_state["username"]}\'s Profile')
-
-    st.divider()
+    #st.divider()
+    st.markdown('<br>', unsafe_allow_html=True)
     st.markdown('### Personal Information 😊')
-    # cola, colb = st.columns([0.4, 0.6])
-    # with cola:
-    with stylable_container(key="container_with_border",
-                            css_styles="""
-                {
-                    border: 1px solid rgba(49, 51, 63, 0.2);
-                    border-radius: 0.5rem;
-                    padding: calc(1em - 1px);
-                    text-align: justify;
-                }                """,):
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown(f'**First Name**: {client_data.loc[client_data["email"] == email]["first_name"].values[0].capitalize()}')
-            st.markdown(f'**Gender**: {client_data.loc[client_data["email"] == email]["gender"].values[0]}')
-            st.markdown(f'**Nationality**: {client_data.loc[client_data["email"] == email]["nationality"].values[0].capitalize()}')
-        # st.write(f'Smoker: {client_data.loc[client_data["email"] == email]["smoker_n"].values[0]}')
-        # st.write(f'Drinks Alcohol: {client_data.loc[client_data["email"] == email]["drinks_alcohol"].values[0]}')
-        # st.write(f'Travels by Car: {client_data.loc[client_data["email"] == email]["travel_car"].values[0]}')
-        with col2:
-            st.markdown(f'**Last Name**: {client_data.loc[client_data["email"] == email]["last_name"].values[0].capitalize()}')
-            st.markdown(f'**Birthdate:** {client_data.loc[client_data["email"] == email]["date_of_birth"].values[0]}')
-            st.markdown(f'**District**: {client_data.loc[client_data["email"] == email]["city"].values[0]}')
-        #st.text_input('Last Name', client_data.loc[client_data["email"] == email]["last_name"].values[0], disabled=True)
+    st.markdown('<br>', unsafe_allow_html=True)
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify):
+                st.markdown(f'**First Name:** {client_data.loc[client_data["email"] == email]["first_name"].values[0].capitalize()}')
 
-        # st.write(f'Favourite Food: {client_data.loc[client_data["email"] == email]["favourite_food"].values[0]}')
-        # st.write(f'Dislike Food: {client_data.loc[client_data["email"] == email]["dislike_food"].values[0]}')
-        # st.write(f'Dietary Restrictions: {client_data.loc[client_data["email"] == email]["dietary_restrictions"].values[0]}')
-        # st.write(f'Allergies: {client_data.loc[client_data["email"] == email]["allergies"].values[0]}')
-        # st.write(f'Preferred Payment Method: {client_data.loc[client_data["email"] == email]["preferred_payment"].values[0]}')
-        # st.write(f'Average Price Per Meal Per Person: {client_data.loc[client_data["email"] == email]["normal_price_range"].values[0]}')
-        # st.write(f'Preferred Restaurant Style: {client_data.loc[client_data["email"] == email]["restaurant_style"].values[0]}')
-        # st.write(f'Preferred Cuisine Type: {client_data.loc[client_data["email"] == email]["cuisine_type"].values[0]}')
-        # st.write(f'Typical Lunch Hour: {client_data.loc[client_data["email"] == email]["lunch_hour"].values[0]}')
-        # st.write(f'Typical Dinner Hour: {client_data.loc[client_data["email"] == email]["dinner_hour"].values[0]}')
-    
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify):
+                st.markdown(f'**Gender:** {client_data.loc[client_data["email"] == email]["gender"].values[0]}')
+                
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify):
+                st.markdown(f'**Nationality:** {client_data.loc[client_data["email"] == email]["nationality"].values[0].capitalize()}')
+
+    with c2:
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify):
+                st.markdown(f'**Last Name:** {client_data.loc[client_data["email"] == email]["last_name"].values[0].capitalize()}')
+        
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify):
+                st.markdown(f'**Birthdate:** {client_data.loc[client_data["email"] == email]["date_of_birth"].values[0]}')
+        
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify):
+                st.markdown(f'**District:** {client_data.loc[client_data["email"] == email]["city"].values[0]}')
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.markdown('### Lifestyle and General Preferences 📱')
+    st.markdown('<br>', unsafe_allow_html=True)
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify):
+                st.write(f'**Travels by Car:** {client_data.loc[client_data["email"] == email]["travel_car"].values[0]}')
+                st.write(f'**Drinks Alcohol:** {client_data.loc[client_data["email"] == email]["drinks_alcohol"].values[0]}')
+                st.write(f'**Smoker:** {client_data.loc[client_data["email"] == email]["smoker_n"].values[0]}')
+            
+    with c2:
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify):
+                st.write(f'**Preferred Payment Method:** {client_data.loc[client_data["email"] == email]["preferred_payment"].values[0]}')
+        
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify):
+                st.write(f'**Average Price Per Meal Per Person:** {client_data.loc[client_data["email"] == email]["normal_price_range"].values[0]}')
+
+    c1, c2 = st.columns((2,1))
+    with c1:
+        with stylable_container(key="container_with_border_center", css_styles=css_styles_center):
+                st.write(f'**Typical Lunch Hour:** {client_data.loc[client_data["email"] == email]["lunch_hour"].values[0]}')
+        with stylable_container(key="container_with_border_center", css_styles=css_styles_center):
+                st.write(f'**Typical Dinner Hour:** {client_data.loc[client_data["email"] == email]["dinner_hour"].values[0]}')   
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.markdown('### Dietary Preferences 🍽️')
+    st.markdown('<br>', unsafe_allow_html=True)
+    c1, c2 = st.columns((2,1)) 
+    with c1:
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify):
+            st.write(f'**Dietary Restrictions:** {client_data.loc[client_data["email"] == email]["dietary_restrictions"].values[0]}')
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify):
+            st.write(f'**Allergies:** {client_data.loc[client_data["email"] == email]["allergies"].values[0]}')
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify):
+            st.write(f'**Favourite Food:** {client_data.loc[client_data["email"] == email]["favourite_food"].values[0]}')
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify):
+            st.write(f'**Dislike Food:** {client_data.loc[client_data["email"] == email]["dislike_food"].values[0]}')
+
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.markdown('### Restaurant Preferences 👩🏻‍🍳')
+    st.markdown('<br>', unsafe_allow_html=True)
+    c1, c2 = st.columns((2,1)) 
+    with c1:
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify):
+            st.write(f'Preferred Restaurant Style: {client_data.loc[client_data["email"] == email]["restaurant_style"].values[0]}')
+        with stylable_container(key="container_with_border", css_styles=css_styles_justify): 
+            st.write(f'Preferred Cuisine Type: {client_data.loc[client_data["email"] == email]["cuisine_type"].values[0]}')
+
+
+        
     st.caption('If you would like to change any of the information above, please feel free to edit.')
     
 #If logged in
