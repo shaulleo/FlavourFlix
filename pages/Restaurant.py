@@ -312,20 +312,26 @@ if 'reserve' not in st.session_state:
     
 
     # If the user has not selected a restaurant yet, show a selectbox
+# Get a list of all the restaurants
+restaurants = ["Search"] + data['name'].unique().tolist()
 if selected_restaurant is None:
-    # Get a list of all the restaurants
-    restaurants = ["Search"] + data['name'].unique().tolist()
     # Create a selectbox for the user to choose a restaurant
-    selected = st.selectbox("Select Restaurant", restaurants)
+    selected = st.selectbox("Select a Restaurant", restaurants)
     if selected != "Search":
         selected_restaurant = data.loc[data['name'] == selected, 'name'].iloc[0]
     # Store the selected restaurant in session state
         st.session_state.selected_restaurant = selected_restaurant
         restaurant_details()
-   
     else:
-        st.write("Please select a restaurant from the list above :)")   
+        st.write("Please select a restaurant from the list above.")   
+elif st.session_state.selected_restaurant is not None and st.session_state.reserve == False:
+    selected = st.selectbox("Select a Restaurant",  options=restaurants)
+    if selected != st.session_state.selected_restaurant:
+        selected_restaurant = data.loc[data['name'] == selected, 'name'].iloc[0]
+        st.session_state.selected_restaurant = selected_restaurant
+        restaurant_details()
+    else:
+        restaurant_details()
 else:
-
     restaurant_details()
 

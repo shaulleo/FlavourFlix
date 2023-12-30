@@ -4,6 +4,8 @@ import time
 from functions.streamlitfunc import *
 from functions.utils import *
 from datetime import date
+import folium
+from streamlit_folium import st_folium
 from streamlit_extras.switch_page_button import switch_page 
 from streamlit_extras.stylable_container import stylable_container
 
@@ -111,53 +113,67 @@ def verify_reservation(restaurant, reservation_date, reservation_time):
 
 def fill_reservation():
     restaurants = pd.read_csv('data/preprocessed_data.csv')
-    with stylable_container(
-        key="container_with_border",
-                css_styles="""
-            {
-                border: 0px solid rgb(36, 36, 37);
-                background-color: #FFFFFF;
-                padding: calc(1em - 1px);
-                text-align: justify;
-                width: 90%;
-            }
-        """,
-    ):
-        st.title("Reserve Now!")
+    col1, col2 = st.columns(2, gap='large')
+    with col1:
+        with stylable_container(
+            key="container_with_border",
+                    css_styles="""
+                {
+                    border: 0px solid rgb(36, 36, 37);
+                    background-color: #FFFFFF;
+                    padding: calc(1em - 1px);
+                    text-align: justify;
+                    width: 90%;
+                }
+            """,
+        ):
+            st.title("Reserve Now!")
+            if 'selected_restaurant' not in st.session_state or st.session_state['selected_restaurant'] is None:
+                # Get a list of all the restaurants
+                restaurants = restaurants['name'].unique().tolist()
+                # Add an option for no selection
+                restaurants = [""] + restaurants
+                # Create a selectbox for the user to choose a restaurant
+                selected_restaurant = st.selectbox("Select Restaurant", restaurants)
+                # Store the selected restaurant in session state
+                st.session_state.selected_restaurant = selected_restaurant
+            elif st.session_state['selected_restaurant'] is not None:
+                st.markdown(f'**Reserve for restaurant**: {st.session_state["selected_restaurant"]}')
+                selected_restaurant = st.session_state['selected_restaurant']
+            else:
+                st.write("Something went wrong. Please try again.")
+                st.session_state['reserve'] = True
+            restaurant_info = restaurants[restaurants['name'] == selected_restaurant]
+            max_party_size = restaurant_info['maxPartySize'].values[0]
+            if np.isnan(max_party_size):
+                max_party_size = 20
+            else:
+                max_party_size = int(max_party_size)
+
+            reservation_name = st.text_input('Reservation Name', value=st.session_state['reservation_name'])
+            st.session_state.reservation_name = reservation_name
+            reservation_date = st.date_input('Reservation Date',  min_value=date.today(), value=st.session_state['reservation_date'])
+            st.session_state.reservation_date = reservation_date
+            reservation_time = st.time_input('Reservation Time', value=st.session_state['reservation_time'])
+            st.session_state.reservation_time = reservation_time
+            num_people = st.number_input('Number of People', min_value=1, max_value=max_party_size, value=st.session_state['num_people'])
+            st.session_state.num_people = num_people
+            special_requests = st.text_input('Any Special Requests?', value=st.session_state['special_requests'], max_chars=500, placeholder='Feel free to ask for any special elements to your reservation.')
+            st.session_state.special_requests = special_requests
+    with col2:
         if 'selected_restaurant' not in st.session_state or st.session_state['selected_restaurant'] is None:
-            # Get a list of all the restaurants
-            restaurants = restaurants['name'].unique().tolist()
-            # Add an option for no selection
-            restaurants = [""] + restaurants
-            # Create a selectbox for the user to choose a restaurant
-            selected_restaurant = st.selectbox("Select Restaurant", restaurants)
-            # Store the selected restaurant in session state
-            st.session_state.selected_restaurant = selected_restaurant
-        elif st.session_state['selected_restaurant'] is not None:
-            st.markdown(f'**Reserve for restaurant**: {st.session_state["selected_restaurant"]}')
-            selected_restaurant = st.session_state['selected_restaurant']
+            st.write('')
         else:
-            st.write("Something went wrong. Please try again.")
-            st.session_state['reserve'] = True
-
-        restaurant_info = restaurants[restaurants['name'] == selected_restaurant]
-        max_party_size = restaurant_info['maxPartySize'].values[0]
-        if np.isnan(max_party_size):
-            max_party_size = 20
-        else:
-            max_party_size = int(max_party_size)
-
-        reservation_name = st.text_input('Reservation Name', value=st.session_state['reservation_name'])
-        st.session_state.reservation_name = reservation_name
-        reservation_date = st.date_input('Reservation Date',  min_value=date.today(), value=st.session_state['reservation_date'])
-        st.session_state.reservation_date = reservation_date
-        reservation_time = st.time_input('Reservation Time', value=st.session_state['reservation_time'])
-        st.session_state.reservation_time = reservation_time
-        num_people = st.number_input('Number of People', min_value=1, max_value=max_party_size, value=st.session_state['num_people'])
-        st.session_state.num_people = num_people
-        special_requests = st.text_input('Any Special Requests?', value=st.session_state['special_requests'], max_chars=500, placeholder='Feel free to ask for any special elements to your reservation.')
-        st.session_state.special_requests = special_requests
-    
+            st.write('')
+            st.write('')
+            latitude = restaurant_info['latitude'].values[0]
+            longitude = restaurant_info['longitude'].values[0]
+            m = folium.Map(location=(latitude, longitude), zoom_start=12, tiles="OpenStreetMap")
+            folium.Marker(location=(latitude, longitude), popup=selected_restaurant).add_to(m)
+            st_folium(m, height=300, width=600, returned_objects=[])
+            st.caption("""Note that the pin presented on the map is not the exact location of the restaurant, but rather an estimation.""", unsafe_allow_html=True)
+            st.write('')
+            show_schedule(restaurant_info)
 
 
 
