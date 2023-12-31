@@ -12,7 +12,7 @@ import folium
 
 st.set_page_config(page_title='Search', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
 
-data = pd.read_csv('data/preprocessed_data.csv')
+data = pd.read_csv('data/preprocessed_restaurant_data.csv')
 data['location'] = data['location'].apply(lambda x: standardize_location(x))
 data['menu_standard'] = data['menu_pre_proc'].apply(lambda x: standardize_text(x))
 
@@ -169,8 +169,6 @@ if ('authentication_status' in st.session_state) and (st.session_state['authenti
 else:
     pages_logged_off()
     filters_page()
-
-
 
 
 restaurant_details = {}

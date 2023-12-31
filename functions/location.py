@@ -5,13 +5,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import requests
-#from geopy.geocoders import Nominatim
 import requests
 import numpy as np
 from sklearn.metrics.pairwise import haversine_distances
 from math import radians
 from functions.env_colors import *
 from functions.utils import *
+import streamlit as st
 
 
 
@@ -202,16 +202,20 @@ def nearYou(location, df, top=None):
         - top (int): Number of restaurants to be returned.
     Returns:
         - distances_df (pandas.DataFrame): DataFrame containing the top nearest restaurants to the user. """
-    distances_df = df.copy()
-    current_radians = [radians(float(location.latitude)), radians(float(location.longitude))]
-    distances_df['haversine_distances'] = distances_df.apply(lambda row: haversine_distances([current_radians, [radians(row.latitude), radians(row.longitude)]]), axis=1)
-    distances_df['haversine_distances'] = distances_df['haversine_distances']  * 6371000/1000
-    distances_df['haversine_distances'] = distances_df['haversine_distances'].apply(lambda x: x[1][0])
-    distances_df.sort_values(by='haversine_distances', inplace=True)
-    
-    if top is None:
-        return distances_df
-    else:
-        return distances_df.head(top)
+    try:
+        distances_df = df.copy()
+        current_radians = [radians(float(location.latitude)), radians(float(location.longitude))]
+        distances_df['haversine_distances'] = distances_df.apply(lambda row: haversine_distances([current_radians, [radians(row.latitude), radians(row.longitude)]]), axis=1)
+        distances_df['haversine_distances'] = distances_df['haversine_distances']  * 6371000/1000
+        distances_df['haversine_distances'] = distances_df['haversine_distances'].apply(lambda x: x[1][0])
+        distances_df.sort_values(by='haversine_distances', inplace=True)
+        
+        if top is None:
+            return distances_df
+        else:
+            return distances_df.head(top)
+    except:
+        st.error('Ups! Seems that we are unable to gather your current location. :disappointed: Please try again later.')
+        return df
 
 

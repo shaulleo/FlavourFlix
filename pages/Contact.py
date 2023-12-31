@@ -24,9 +24,9 @@ def feedback_page():
     feedback = st.text_area('Your Message', key='feedback_f', placeholder='Feel free to write your feature suggestions, restaurant recommendations or any other feedback or complaint here!')
 
     if st.button('Submit Contact'):
-        # take the current date
-        today = datetime.datetime.today()  # Use datetime.datetime.today() for current date and time
-        # convert the date to a string
+
+        today = datetime.datetime.today()  
+
         date_today = today.strftime("%d/%m/%Y")
         date = date_today
 
@@ -45,9 +45,11 @@ def feedback_page():
 
         st.success("Message sent with success!")
         st.markdown('Thank you for your message! We will take it into consideration as soon as possible! :smile:')
-
         time.sleep(3)
-        #CODIGO PARA LIMPAR AS TEXT BOXES DEPOIS DE SUBMETER O FEEDBACK
+        with st.spinner('Redirecting you to the Home Page...'):
+            time.sleep(3)
+        switch_page('Home')
+
 
 
 

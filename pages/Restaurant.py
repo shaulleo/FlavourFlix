@@ -12,12 +12,14 @@ from streamlit_extras.switch_page_button import switch_page
 
 
 st.set_page_config(page_title='Restaurant', page_icon="ext_images\page_icon.png", layout="wide", initial_sidebar_state="collapsed")
-data = pd.read_csv('data/preprocessed_data.csv')
+
+
+data = pd.read_csv('data/preprocessed_restaurant_data.csv')
 
 
 
 def find_res_photos(restaurant):
-    data_with_photos = pd.read_csv('data/alltheforkscrapes2.csv')
+    data_with_photos = pd.read_csv('data/og_restaurant_data.csv')
     photo_columns = [col for col in list(data_with_photos.columns) if 'photos' in col]
     photo_columns.append('name')
     data_with_photos = data_with_photos[photo_columns]
@@ -93,7 +95,6 @@ def show_menu(restaurant, menu_col1, menu_col2):
                             st.markdown(f"- {dish}: {price} €")
             else:
                 not_available = True
-                #st.markdown('Sorry! It seems that the restaurant did not make their menu1 available yet... :disappointed:')
         with col2:
             st.markdown(f"**English Menu**")
             if menu_items2 is not None:
@@ -128,7 +129,7 @@ def show_schedule(restaurant):
 def show_time_away(restaurant):
     if 'authentication_status' in st.session_state and st.session_state['authentication_status'] == True:
         if 'username'  in st.session_state and 'email' in st.session_state:
-            clients = pd.read_csv('data/clientDataClean.csv')
+            clients = pd.read_csv('data/clientData.csv')
             if "current_location" in st.session_state and st.session_state.current_location != False:
                 if 'email' in clients['email'].values:
                     current_client = clients[clients['email'] == st.session_state['email']].iloc[0]
@@ -164,6 +165,11 @@ def restaurant_details():
     michelin_value = data.loc[data['name'] == selected_restaurant,'michelin'].iloc[0]
     max_party_size = data.loc[data['name'] == selected_restaurant, 'maxPartySize'].iloc[0]
     outdoor_area = data.loc[data['name'] == selected_restaurant,'outdoor_area'].iloc[0]
+    if outdoor_area == 1:
+            outdoor_area = 'Yes'
+    else:
+            outdoor_area = 'No'
+    current_occupation = data.loc[data['name'] == selected_restaurant, 'current_occupation'].iloc[0]
 
 
     st.markdown(f"<h1 style='text-align: center; color: black;'>{selected_restaurant}</h1>", unsafe_allow_html=True)
@@ -254,10 +260,6 @@ def restaurant_details():
                 st.metric(label= '🏙️ Ambience Rating', value=f'{ambience_rating}')
 
     with m5:
-        if outdoor_area == 1:
-            outdoor_area = 'Yes'
-        else:
-            outdoor_area = 'No'
         with stylable_container(
         key="container_with_border",
         css_styles="""
@@ -269,7 +271,7 @@ def restaurant_details():
             }
             """,
     ):
-            st.metric(label= '🏖️ Outdoor Area', value=outdoor_area)
+            st.metric(label= '🧑🏻‍🤝‍🧑🏿 Current Ocupation', value=current_occupation)
 
 
     st.markdown('<br>', unsafe_allow_html=True)
@@ -291,11 +293,24 @@ def restaurant_details():
             }
             """,
     ):
+            promotion = data.loc[data['name'] == selected_restaurant, 'promotions'].iloc[0]
+            try:
+                promotion_dict = ast.literal_eval(promotion)
+                if isinstance(promotion_dict, dict):
+                    promotion = f"{promotion_dict['promotion_type']} on {promotion_dict['day_of_week']} from {promotion_dict['start_time']} to {promotion_dict['end_time']}"
+                elif isinstance(promotion_dict, str):
+                    promotion = promotion
+            except:
+                promotion = 'No Offers'
+
             st.markdown(f"**Address:** {data.loc[data['name'] == selected_restaurant, 'address'].iloc[0]}")
             st.markdown(f"**Phone:** {data.loc[data['name'] == selected_restaurant, 'phone'].iloc[0]}")
             st.markdown(f"**Cuisine:** {data.loc[data['name'] == selected_restaurant, 'cuisine'].iloc[0]}")
             st.markdown(f"**Style:** {data.loc[data['name'] == selected_restaurant,'style'].iloc[0]}")
+            st.markdown(f"**Outdoor Area:** {outdoor_area}")
             st.markdown(f"**Average Price:** {data.loc[data['name'] == selected_restaurant, 'averagePrice'].iloc[0]}€")
+            st.markdown(f"**Promotion**: {promotion}")
+
             show_time_away(data.loc[data['name'] == selected_restaurant])
             if st.button(f"Reserve Now!"):
                 st.session_state.selected_restaurant = selected_restaurant
@@ -313,7 +328,6 @@ if 'reserve' not in st.session_state:
     st.session_state.reserve = False
 
     
-
     # If the user has not selected a restaurant yet, show a selectbox
 # Get a list of all the restaurants
 restaurants = ["Search"] + data['name'].unique().tolist()
@@ -327,14 +341,17 @@ if selected_restaurant is None:
         restaurant_details()
     else:
         st.write("Please select a restaurant from the list above.")   
+
 elif st.session_state.selected_restaurant is not None and st.session_state.reserve == False:
     selected = st.selectbox("Select a Restaurant",  options=restaurants)
     if selected != st.session_state.selected_restaurant:
         selected_restaurant = data.loc[data['name'] == selected, 'name'].iloc[0]
         st.session_state.selected_restaurant = selected_restaurant
         restaurant_details()
+    # elif st.session_state.selected_restaurant != selected_restaurant:
+    #     selected_restaurant = st.session_state.selected_restaurant
+    #     restaurant_details()
     else:
         restaurant_details()
 else:
     restaurant_details()
-

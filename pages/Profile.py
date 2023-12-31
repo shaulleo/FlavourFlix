@@ -16,18 +16,7 @@ if 'run' not in st.session_state:
     st.session_state['run'] = 1
 if 'user_data' not in st.session_state:
     st.session_state['user_data'] = None
-# css_styles_center = """{   
-#                         border: 1px solid rgba(49, 51, 63, 0.2);
-#                         border-radius: 0.5rem;
-#                         padding: calc(1em - 10px);
-#                         text-align: center;
-#                         font-size: 20px;}"""
-# css_styles_justify = """{   
-#                         border: 1px solid rgba(49, 51, 63, 0.2);
-#                         border-radius: 0.5rem;
-#                         padding: calc(1em - 10px);
-#                         text-align: justify;
-#                         font-size: 20px;}"""
+
 
 
 def click_save(user_data):
@@ -55,14 +44,14 @@ def gather_client_data():
     with col1:
         first_name = st.text_input("**First Name**", key=f'first_name_{st.session_state["run"]}')
     #last_name = st.text_input("Last Name", key=f'last_name_{st.session_state["run"]}')
-        gender = st.selectbox("**How do you identify yourself?**",['   ', 'Female', 'Male', 'Other'], key=f'gender_{st.session_state["run"]}')
+        gender = st.selectbox("**How do you identify yourself?**",[ 'Female', 'Male', 'Other'], key=f'gender_{st.session_state["run"]}')
     #dob = st.date_input("When were you born?", min_value= date.fromisoformat('1899-12-31'), max_value = date.fromisoformat('2005-12-31'), format="YYYY/MM/DD", value=date.fromisoformat('2005-01-01'), key=f'dob_{st.session_state["run"]}')
         nationality = st.text_input('**What is your nationality?**', key=f'nationality_{st.session_state["run"]}')
     #district = st.selectbox("Where are you based in?",['Aveiro', 'Beja', 'Braga', 'Bragança', 'Castelo Branco', 'Coimbra', 'Évora', 'Faro', 'Guarda', 'Leiria', 'Lisboa', 'Portalegre', 'Porto', 'Santarém', 'Setúbal', 'Viana do Castelo', 'Vila Real', 'Viseu', 'Açores', 'Madeira'], key=f'district_{st.session_state["run"]}')
     with col2:
         last_name = st.text_input("Last Name", key=f'last_name_{st.session_state["run"]}')
         dob = st.date_input("When were you born?", min_value= date.fromisoformat('1899-12-31'), max_value = date.fromisoformat('2005-12-31'), format="YYYY/MM/DD", value=date.fromisoformat('2005-01-01'), key=f'dob_{st.session_state["run"]}')
-        district = st.selectbox("**Where are you based in?**",['   ', 'Aveiro', 'Beja', 'Braga', 'Bragança', 'Castelo Branco', 'Coimbra', 'Évora', 'Faro', 'Guarda', 'Leiria', 'Lisboa', 'Portalegre', 'Porto', 'Santarém', 'Setúbal', 'Viana do Castelo', 'Vila Real', 'Viseu', 'Açores', 'Madeira'], key=f'district_{st.session_state["run"]}')
+        district = st.selectbox("**Where are you based in?**",['Aveiro', 'Beja', 'Braga', 'Bragança', 'Castelo Branco', 'Coimbra', 'Évora', 'Faro', 'Guarda', 'Leiria', 'Lisboa', 'Portalegre', 'Porto', 'Santarém', 'Setúbal', 'Viana do Castelo', 'Vila Real', 'Viseu', 'Açores', 'Madeira'], key=f'district_{st.session_state["run"]}')
     
     st.divider()
     st.markdown('### Lifestyle and General Preferences')
@@ -73,7 +62,7 @@ def gather_client_data():
         drinks_alcohol = st.checkbox('Do you drink alcohol?', key=f'drinks_alcohol_{st.session_state["run"]}')
         smoker = st.checkbox('Are you a smoker?', key=f'smoker_{st.session_state["run"]}')
     with col4:
-        preferred_payment = st.selectbox("**How do you prefer to pay?**", ['   ', 'MBWay', 'Cash', 'Credit Card', 'Apple Pay', 'Visa Electron',
+        preferred_payment = st.selectbox("**How do you prefer to pay?**", ['MBWay', 'Cash', 'Credit Card', 'Apple Pay', 'Visa Electron',
         'Visa', 'Mastercard', 'Paypal', 'American Express', 'Maestro Card'], key=f'preferred_payment_{st.session_state["run"]}')
         normal_price_range = st.number_input("**What is the average price (in Euros) you believe is fair per meal per person?**", min_value=0, max_value=100, value=15, key=f'normal_price_range_{st.session_state["run"]}')
     lunch_hour = st.slider("**Lunch Hour**", min_value=11, max_value=15,value=(11, 15), key=f'lunch_hour_{st.session_state["run"]}')
@@ -88,16 +77,18 @@ def gather_client_data():
     
     st.divider()
     st.markdown('### Restaurant Preferences')
-    restaurant_style = st.selectbox("**What Restaurant Style do you prefer?**", ['   ', 'Familiar', 'After Work', 'Homemade', 'Traditional',
-       'Contemporary', 'Author', 'Cosy', 'Healthy', 'Central', 'Groups',
-       'Bistro', 'Terrace', 'Romantic', 'Lunch', 'Organic', 'Fine Dining',
-       'Nightlife', 'Street Food', 'View', 'Friendly', 'Breakfast',
-       'Ceremony', 'Oceanfront', 'Wine bar', 'Business'], key=f'restaurant_style_{st.session_state["run"]}')
-    cuisine_type = st.selectbox("**Cuisine Type**", ['   ', 'Seafood', 'Portuguese', 'Mediterranean', 'Meat Cuisine', 
-       'American', 'Italian', 'International', 'Pizzeria', 'European',
-       'Steakhouse', 'African', 'Indian', 'Asian', 'Japanese', 'Fusion',
-       'Brazilian', 'Mexican', 'Grilled', 'Vegetarian', 'Chinese',
-       'Greek'], key=f'cuisine_type_{st.session_state["run"]}')
+    restaurant_style = st.selectbox("**What Restaurant Style do you prefer?**", [ 'Festivities', 'Chill Out', 'Buffet', 'Family', 'Modern',
+       'Fine Dining', 'Groups', 'Central Location', 'Friends',
+       'Not Available', 'Brunch', 'Casual', 'Homemade', 'Meetings',
+       'View', 'Café', 'Breakfast', 'Street Food', 'Healthy', 'Ethnic'], key=f'restaurant_style_{st.session_state["run"]}')
+    cuisine_type = st.selectbox("**Cuisine Type**", ['International', 'Japanese', 'Indian', 'Portuguese', 'Italian',
+       'Pizzeria', 'Mediterranean', 'Fusion', 'Nepalese', 'European',
+       'Seafood', 'Vegan', 'Traditional', 'Steakhouse', 'Greek',
+       'Vegetarian', 'Varied', 'Grilled', 'Thai', 'Mexican', 'Asian',
+       'French', 'South American', 'Pub grub', 'Brazilian', 'Venezuelan',
+       'Peruvian', 'Meat', 'Korean', 'American', 'Spanish', 'African',
+       'Syrian', 'Iranian', 'Lebanese', 'Chinese', 'Tibetan',
+       'Vietnamese', 'Argentinian'], key=f'cuisine_type_{st.session_state["run"]}')
 
     user_data = {
             "email": email,
@@ -127,11 +118,11 @@ def gather_client_data():
 
 
 def save_user_data(user_data):
-    client_data = pd.read_csv('data/clientDataClean.csv', sep=',')
+    client_data = pd.read_csv('data/clientData.csv', sep=',')
     client_data = pd.concat([client_data, pd.DataFrame([user_data])], ignore_index=True)
     client_data.drop_duplicates(subset=['email', 'username'], keep = 'last', inplace=True)
     if not any(x =='   ' for x in user_data.values()):
-        client_data.to_csv('data/clientDataClean.csv', index=False)
+        client_data.to_csv('data/clientData.csv', index=False)
         with st.spinner('Saving your data...'):
             time.sleep(3)
             st.success('Data Saved!', icon='🚀')
@@ -222,7 +213,7 @@ if ('authentication_status' in st.session_state) and (st.session_state['authenti
     pages_logged_in()
     header_image = "ext_images/logo1.jpeg"
     #Se o cliente já tiver os dados guardados
-    client_data = pd.read_csv('data/clientDataClean.csv', sep=',')
+    client_data = pd.read_csv('data/clientData.csv', sep=',')
     if st.session_state['username'] in client_data['username'].values and st.session_state['email'] in client_data['email'].values:
         #E não procura editar OU visita a pagina pela primeira vez apos ter os dados guardados
         if st.session_state['edit'] == False or st.session_state['edit'] is None:
