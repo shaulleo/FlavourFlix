@@ -20,7 +20,7 @@ def feedback_page():
 
     email = st.session_state.email
     name = st.text_input('Name', key='client_name_f', placeholder='Enter your name')
-    subject = st.selectbox('Subject', ['General', 'Restaurant Recommendation', 'New Feature', 'Complaint', 'Other'], key='subject_f', placeholder='Select a subject')
+    subject = st.selectbox('Subject', ['General', 'Testimonial','Restaurant Recommendation', 'New Feature', 'Complaint', 'Other'], key='subject_f', placeholder='Select a subject')
     feedback = st.text_area('Your Message', key='feedback_f', placeholder='Feel free to write your feature suggestions, restaurant recommendations or any other feedback or complaint here!')
 
     if st.button('Submit Contact'):
