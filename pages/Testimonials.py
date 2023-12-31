@@ -68,7 +68,7 @@ def show_complete_testimonials():
     st.title("Hear what our users have to say about us!")
     st.write('Have any feedback? Feel free to give your own opinion! We are always looking to improve our services. ')
     if st.button('Add a testimonial'):
-        pass
+        switch_page("contact us")
 
     st.markdown('<br>', unsafe_allow_html=True)
     st.markdown('<br>', unsafe_allow_html=True)
