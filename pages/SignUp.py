@@ -1,4 +1,4 @@
-#Homem milagreiro que permitiu isto: https://www.youtube.com/watch?v=8X1OidYYVQw&ab_channel=SnakeByte
+#Video https://www.youtube.com/watch?v=8X1OidYYVQw&ab_channel=SnakeByte
 #Source code: https://github.com/Frost-Codes/Streamlit-Authentication/blob/main/main.py
 
 

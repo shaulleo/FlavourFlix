@@ -29,7 +29,7 @@ if 'selected_restaurant' not in st.session_state:
 
 
 def display_reservation_card(reservation):
-    restaurants = pd.read_csv('data/preprocessed_data.csv')
+    restaurants = pd.read_csv('data/preprocessed_restaurant_data.csv')
     with stylable_container(key="container_with_border",
             css_styles="""
                 {
@@ -98,7 +98,7 @@ def reservation_state(status):
         return True
 
 def verify_reservation(restaurant, reservation_date, reservation_time):
-    restaurants = pd.read_csv('data/preprocessed_data.csv')
+    restaurants = pd.read_csv('data/preprocessed_restaurant_data.csv')
     restaurant_schedule = restaurants[restaurants['name'] == restaurant]['schedule'].values[0]
     availability = check_if_open(restaurant_schedule, reservation_date, reservation_time)
     if availability == 'Open':
@@ -112,7 +112,7 @@ def verify_reservation(restaurant, reservation_date, reservation_time):
 
 
 def fill_reservation():
-    restaurants = pd.read_csv('data/preprocessed_data.csv')
+    restaurants = pd.read_csv('data/preprocessed_restaurant_data.csv')
     col1, col2 = st.columns(2, gap='large')
     with col1:
         with stylable_container(

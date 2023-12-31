@@ -9,7 +9,7 @@ import folium
 from streamlit_folium import st_folium
 from functions.location import *
 
-data = pd.read_csv('data/preprocessed_data.csv')
+data = pd.read_csv('data/preprocessed_restaurant_data.csv')
 filtered_df = data.copy()
 
 st.set_page_config(page_title="FlavourFlix", page_icon="ext_images/page_icon.png",  layout='wide', initial_sidebar_state="collapsed")

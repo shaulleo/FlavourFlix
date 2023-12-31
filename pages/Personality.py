@@ -36,7 +36,7 @@ questions = {"Willingness to Try Exotic Foods":"I am open to trying unfamiliar a
              "Value for Money in Meals":"I prioritize getting good value for price when choosing a meal.",
              "Preference for Gourmet Restaurants":"I prefer dining at high-end gourmet restaurants.",
              "Interest in Nutritional Content": "I pay a lot of attention to the nutritional content and health benefits of my meals.",
-             "Frequency of Home-Cooked Meals": "I often opt for home-cooked meals over dining out.",
+             "Frequency of Eating Home-Cooked Meals": "I often opt for home-cooked meals over dining out.",
              "Desire for New Culinary Experiences": "It is important to me to consistently explore new culinary experiences.",
              "Preference for Organic or Diet-Specific Foods": "I often incorporate organic or diet-specific foods (e.g., vegan, keto) in my meals.",
              "Enjoyment of Traditional or Familiar Foods": "I mostly enjoy eating traditional and/or familiar dishes.",
