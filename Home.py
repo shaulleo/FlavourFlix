@@ -12,10 +12,10 @@ from functions.location import *
 data = pd.read_csv('data/preprocessed_restaurant_data.csv')
 filtered_df = data.copy()
 
-st.set_page_config(page_title="FlavourFlix", page_icon="ext_images/page_icon.png",  layout='wide', initial_sidebar_state="collapsed")
+st.set_page_config(page_title="FlavourFlix", page_icon="ext_images/page_icon.png",  layout='wide', initial_sidebar_state = 'collapsed')
 
 header_image = "ext_images/logo1.jpeg"  
-c1, c2, c3 = st.columns([1, 1, 1], gap = 'small')
+c1, c2, c3 = st.columns([1, 1, 1], gap = 'large')
 with c2:
     st.image(header_image, width=400)
 st.divider()    
@@ -114,10 +114,8 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
             st.markdown('<br>', unsafe_allow_html=True)
             st.markdown('<br>', unsafe_allow_html=True)
             st.markdown('<br>', unsafe_allow_html=True)
-            st.markdown('<br>', unsafe_allow_html=True)
             header_image = "ext_images/pnas.1913308116fig01.jpeg"  
             st.image(header_image)
-            st.markdown('<br>', unsafe_allow_html=True)
         with col1:
             st.markdown(f"<h1 style='text-align: left; color: black;'>Welcome to FlavourFlix!</h1>", unsafe_allow_html=True)
             # st.header("Welcome to FlavourFlix!")
@@ -126,7 +124,6 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
             st.markdown('<br>', unsafe_allow_html=True)
             show_kpis()
             st.caption("To get started, please log in or sign up.")
-        st.write("")
         st.divider()
         col3, col4 = st.columns([1,1], gap='large')
         with col3:
@@ -148,12 +145,17 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
             if st.button('Blog', key='blog_button'):
                 switch_page('blog page')
 
-        col5, col6 = st.columns([0.8, 0.2], gap='small')
+        col5, col6 = st.columns([1, 1], gap='large')
         with col5:
             st.write('')
             st.write('###### Still unsure? Check out the testimonials of our happy customers!')
             if st.button('Testimonials', key='testimonials_button'):
                 switch_page('testimonials') 
+        with col6:
+            st.write('')
+            st.write('###### Not sure yet? Feel free to contact us!')
+            if st.button('Contact Us', key='contact_button'):
+                switch_page('contact us')
 
     #Se o estado de autenticação não existir ou for falso mas há memória de user login, então
     #indica que há algum tipo de erro e manda de volta para a página do login para o refazer.
@@ -232,7 +234,7 @@ else:
                         location=[row['latitude'], row['longitude']],
                         popup=row['name'],).add_to(m)
                 #Render Folium map in Streamlit if a location is selected
-                st_folium(m, height=500, width=650, returned_objects=[])
+                st_folium(m, height=500, width=620, returned_objects=[])
                 st.caption("""Note that the pins presented on the map are not the exact location of the restaurants,
                            but rather an estimation.""", unsafe_allow_html=True)
                   

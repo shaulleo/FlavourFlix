@@ -21,9 +21,8 @@ data['menu_standard'] = data['menu_pre_proc'].apply(lambda x: standardize_text(x
 data['location'] = data['location'].apply(lambda x: x.title())
 
 st.header("Let us help you find the perfect restaurant for you!")
-
 st.markdown('<br>', unsafe_allow_html=True)
-
+st.markdown('<br>', unsafe_allow_html=True)
 if 'filters' not in st.session_state:
     st.session_state.filters = False
     #Significa que ainda não capturou a localização do user

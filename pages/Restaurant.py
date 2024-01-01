@@ -12,7 +12,12 @@ from streamlit_extras.switch_page_button import switch_page
 
 
 st.set_page_config(page_title='Restaurant', page_icon="ext_images\page_icon.png", layout="wide", initial_sidebar_state="collapsed")
-
+header_image = "ext_images/logo1.jpeg"  
+c1, c2, c3 = st.columns([1, 1, 1], gap = 'small')
+with c2:
+    st.image(header_image, width=400)
+st.divider()    
+st.markdown('<br>', unsafe_allow_html=True)
 
 data = pd.read_csv('data/preprocessed_restaurant_data.csv')
 
@@ -75,6 +80,9 @@ def show_menu(restaurant, menu_col1, menu_col2):
         menu_items2 = None
         menu2 = 'Not Available'
 
+    continue_searching = st.button("Continue Searching", key=f'continue_searching_1')
+    if continue_searching:
+        switch_page("Search")
 
     with st.expander("Check out the menu!"):
         not_available = False
@@ -344,14 +352,26 @@ if selected_restaurant is None:
 
 elif st.session_state.selected_restaurant is not None and st.session_state.reserve == False:
     selected = st.selectbox("Select a Restaurant",  options=restaurants)
-    if selected != st.session_state.selected_restaurant:
+    if st.session_state.selected_restaurant != selected:
+        if selected == "Search":
+            selected = st.session_state.selected_restaurant
+            selected_restaurant = data.loc[data['name'] == selected, 'name'].iloc[0]
+            st.session_state.selected_restaurant = selected_restaurant
+            restaurant_details()
+        else: 
+            selected_restaurant = data.loc[data['name'] == selected, 'name'].iloc[0]
+        # Store the selected restaurant in session state
+            st.session_state.selected_restaurant = selected_restaurant
+            restaurant_details()
+
+    elif selected == st.session_state.selected_restaurant:
         selected_restaurant = data.loc[data['name'] == selected, 'name'].iloc[0]
         st.session_state.selected_restaurant = selected_restaurant
         restaurant_details()
-    # elif st.session_state.selected_restaurant != selected_restaurant:
-    #     selected_restaurant = st.session_state.selected_restaurant
-    #     restaurant_details()
+
     else:
         restaurant_details()
+
 else:
+    selected = st.selectbox("Select a Restaurant", restaurants)
     restaurant_details()
