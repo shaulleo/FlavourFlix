@@ -8,6 +8,14 @@ from functions.loginandsignup_func import *
 from functions.streamlitfunc import *
 from streamlit_extras.switch_page_button import switch_page 
 
+st.set_page_config(page_title='FlavourFlix', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
+
+header_image = "ext_images/logo1.jpeg"  
+c1, c2, c3 = st.columns([1, 1, 1], gap = 'large')
+with c2:
+    st.image(header_image, width=400)
+st.divider()    
+st.markdown('<br>', unsafe_allow_html=True)
 
 def sign_up():
     """ 
@@ -61,7 +69,7 @@ def sign_up():
                 st.warning('Sorry. That e-mail is not valid.')
 
 
-    st.markdown(
+    st.caption(
                     """
                     ---
                     Login Page and Sign Up Page created with ❤️ by SnakeByte.
