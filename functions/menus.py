@@ -26,33 +26,40 @@ def find_la_carte(json_body: str):
     return text
 
 
-def clean_section_name(json_body):
+def clean_section_name(json_body: str):
     """ Clean the section name.
     - Parameters:
-       - json_body: json html body of the restaurant TheFork's page menu section.
+       - json_body (str): json html body of the restaurant TheFork's page menu section.
        - Returns:
-       - text: string containing the meal section name."""
+       - text (str): string containing the meal section name."""
+    #Split the json body to extract the meal section name
     text = json_body.split("\\")
+    #The meal section name is the fourth element of the list
     text = text[3]
+    #Remove the quotation marks from the string
     text = text.replace('"', "")
     return text
 
 
-def clean_menu_items(items):
+def clean_menu_items(items: list[str]):
     """Extract menu items and their information from a list of strings of html code 
     and return them formatted as a dictionary.
     Parameters:
-        - items: list of strings of html code.
+        - items (list[str]): list of strings of html code.
     Returns:
-        - items_cleaned: dictionary containing menu items and their information in 
-        the format: {meal_name: {isMainDish, price, description}}. """
+        - items_cleaned (dict): dictionary containing menu items and their information
+         in the format: {meal_name: {isMainDish, price, description}}. 
+    """
+    #Create an empty dictionary
     items_cleaned = {}
 
+    #For each item in the list
     for item in items:
+        #Clean the string representing the item
         item = item.replace('\\"', '')
         pattern = r'([^,]+):([^,]+)'
         matches = re.findall(pattern, item)
-
+        #Create a dictionary with the item information
         menu_item_dict = {key.strip(): value.strip() for key, value in matches}
 
         # Check if 'name' exists in menu_item_dict
@@ -69,9 +76,6 @@ def clean_menu_items(items):
             except ValueError:
                 pass
 
-        # Check if 'isMainDish' exists in menu_item_dict
-        is_main_dish = menu_item_dict.get('isMainDish', 'false').lower() == 'true'
-
         # Apply regex to 'description' to remove parentheses
         description = re.sub(r'[()]', '', menu_item_dict.get('description', '')).strip()
 
@@ -86,12 +90,12 @@ def clean_menu_items(items):
     return items_cleaned
 
 
-def retrieve_menu(json_body):
+def retrieve_menu(json_body: str):
     """ Retrieve the restaurant's menu from a JSON string containing the menu data.
     Parameters:
         - json_body (str): JSON string containing the menu data.
     Returns:
-        - dict: Dictionary containing the menu data in the following format:
+        - dict (dict): Dictionary containing the menu data in the following format:
         {meal_section: {meal_name: {isMainDish, price, description}}}."""
     
     #Slice the initial json body to include everything after the "A LA CARTE" section.
@@ -120,7 +124,13 @@ def retrieve_menu(json_body):
     return results
 
 
-def extract_input(json_body):
+def extract_input(json_body:str):
+    """Extract the input from the json body.
+    Parameters:
+        - json_body (str): json html body of the restaurant TheFork's page menu section.
+    Returns:
+        - extracted_value (str): string containing the input."""
+    
     # Define the regular expression pattern
     pattern = r'"input": "(.*?)", "result"'
 
@@ -140,14 +150,14 @@ def extract_input(json_body):
 portuguese_to_eng = {}
 eng_to_portuguese = {}
 
-def translator_sentences(sentence, language, translator):
+def translator_sentences(sentence:str, language:str, translator ):
     """Translate a sentence from Portuguese to English or vice-versa.
     Parameters:
-        - sentence: string containing the sentence to be translated.
-        - language: string containing the language to be translated.
-        - translator: Translator object instance.
+        - sentence (str): string containing the sentence to be translated.
+        - language (str): string containing the language to be translated.
+        - translator (deep-translator Translator): Translator object instance.
     Returns:
-        - translated_sentence: string containing the translated sentence."""
+        - translated_sentence (str): string containing the translated sentence."""
     
     #If the sentence is too short, don't translate
     if len(sentence) <= 3:
@@ -177,13 +187,13 @@ def translator_sentences(sentence, language, translator):
         return translated_sentence
     
 
-def translate_menus(menu, language):
+def translate_menus(menu:dict, language:str):
     """Translate the complete menu from Portuguese to English or vice-versa.
     Parameters:
-        - menu: dictionary containing the menu.
-        - language: string containing the language to be translated.
+        - menu (dict): dictionary containing the menu.
+        - language (str): string containing the language to be translated.
     Returns:
-        - translated_menu: dictionary containing the translated menu.
+        - translated_menu (dict): dictionary containing the translated menu.
     """
     #Set up the translator object, if the target language is not supported, return None
     if language=='en' or language=='pt':

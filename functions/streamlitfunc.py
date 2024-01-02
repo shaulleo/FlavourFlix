@@ -6,34 +6,12 @@ from st_pages import Page, show_pages
 import ast
 
 
-# def nav_page(page_name, timeout_secs=3):
-#     nav_script = """
-#         <script type="text/javascript">
-#             function attempt_nav_page(page_name, start_time, timeout_secs) {
-#                 var links = window.parent.document.getElementsByTagName("a");
-#                 for (var i = 0; i < links.length; i++) {
-#                     if (links[i].href.toLowerCase().endsWith("/" + page_name.toLowerCase())) {
-#                         links[i].click();
-#                         return;
-#                     }
-#                 }
-#                 var elasped = new Date() - start_time;
-#                 if (elasped < timeout_secs * 1000) {
-#                     setTimeout(attempt_nav_page, 100, page_name, start_time, timeout_secs);
-#                 } else {
-#                     alert("Unable to navigate to page '" + page_name + "' after " + timeout_secs + " second(s).");
-#                 }
-#             }
-#             window.addEventListener("load", function() {
-#                 attempt_nav_page("%s", new Date(), %d);
-#             });
-#         </script>
-#     """ % (page_name, timeout_secs)
-#     html(nav_script)
-
-
 @st.cache_data
-def read_data(path='data/preprocessed_data.csv', sep=';'):
+def read_data(path: str='data/preprocessed_data.csv', sep:str=','):
+    """ Read the data from a csv file.
+    Parameters:
+        - path (str): Path to the csv file.
+        - sep (str): Separator of the csv file."""
     data = pd.read_csv(path, sep=sep)
     return data
 
@@ -42,10 +20,11 @@ def read_data(path='data/preprocessed_data.csv', sep=';'):
 #Show Pages available when logged in
 def pages_logged_in():
     """ Shows the pages available when logged in.
-    When the user is logged in, they have access to the Home page, Search page, Profile page,
-    Search page, Restaurant page, Personality page, Reservations page and ChatBot Filomena."""
-    show_pages(
-        [
+    When the user is logged in, they have access to 
+    a wider range of pages, such as the Home Page, 
+    Filomena ChatBot, Profile, Reservations...
+    """
+    show_pages([
             Page("Home.py", "Home", "🏠"),
             Page("pages/Filomena.py", "Chat with Filomena", ":books:"),
             Page("pages/Profile.py", "Profile", "👤"),
@@ -62,8 +41,8 @@ def pages_logged_in():
 #Show Pages available when logged out
 def pages_logged_off():
     """ Shows the pages available when logged out.
-    When the user is logged out, they have access to the Home page, the authentication pages,
-    Search page and the Restaurants page.
+    When the user is logged out, they have access to the Home page, 
+    the authentication pages, Search page and the Restaurants page.
     """
     show_pages(
         [Page("Home.py", "Home", "🏠"),
@@ -91,7 +70,14 @@ css_styles_justify = """{
                         text-align: justify;
                         font-size: 20px;}"""
 
+
 def show_schedule(restaurant):
+    """ Show the schedule of the restaurant.
+    Parameters:
+        - restaurant (pd.DataFrame): Restaurant information.
+    Returns:
+        - None
+    """
     with st.expander("View Restaurant Schedule"):
         if restaurant['schedule'].iloc[0] == 'Not Available':
             st.markdown('Sorry! It seems that the restaurant did\nnot make their schedule available yet... :disappointed:')
@@ -100,3 +86,17 @@ def show_schedule(restaurant):
             for day, hours in schedule.items():
                 st.markdown(f"###### {day}:")
                 st.markdown(f" - {hours}")
+
+def display_header():
+    """ Displays the header of the page.
+    Parameters:
+        - None
+    Returns:
+        - None
+    """
+    header_image = "ext_images/logo1.jpeg"  
+    c1, c2, c3 = st.columns([1, 1, 1], gap = 'small')
+    with c2:
+        st.image(header_image, width=400)
+    st.divider()    
+    st.markdown('<br>', unsafe_allow_html=True)

@@ -12,12 +12,11 @@ from functions.location import *
 
 # ------------------------------- Restaurant Data Preprocessing ------------------------------
 
-def clean_openinghours(observation):
-
+def clean_openinghours(observation: str):
     """Cleans the schedule of a given restaurant into a readable dictionary.
-        Parameters:
+    Parameters:
         - observation (str): Opening hours of the restaurant.
-        Returns:
+     Returns:
         - opening_hours_dict (dict): Dictionary with the opening hours of the restaurant. """
     
     if observation == 'Not Available':
@@ -45,11 +44,11 @@ def clean_openinghours(observation):
         return opening_hours_dict
 
 
-def preprocess_address(address):
+def preprocess_address(address: str):
     """Preprocesses the address of a restaurant.
-        Parameters:
+    Parameters:
         - address (str): Address of the restaurant.
-        Returns:
+    Returns:
         - address (str): Preprocessed address of the restaurant. """
     #Add a whitespace after every comma in the address column
     address = address.replace(',', ',')
@@ -67,27 +66,21 @@ def preprocess_address(address):
     return address
 
 
-def find_coordinates(address):
+def find_coordinates(address: str):
     """Find latitude and longitude coordinates from address using Bing Maps API
-        Parameters:
+    Parameters:
         - address (str): Address of the restaurant.
-        Returns:
+    Returns:
         - latitude (float): Latitude of the restaurant.
         - longitude (float): Longitude of the restaurant. """
-    
-
-    #api_key = 'AoqezzGOUEoJevKSMBGmvvseepc9ryhMu2YQkccOhaCKLXUG2snUIPxGkDNsRvYP'
 
     #Define the API endpoint and parameters
-    #base_url = 'http://dev.virtualearth.net/REST/v1/Locations'
     params = {
         'q': address,
-        #'key': api_key,
         'key': local_settings.COORDINATES_API,
     }
 
     #Make the API request
-    #response = requests.get(base_url, params=params)
     response = requests.get(local_settings.COORDINATES_BASE_URL, params=params)
 
     #Check if the request was successful
@@ -113,12 +106,12 @@ def find_coordinates(address):
     return latitude, longitude
 
 
-def find_random_time(time_string, start=True):
+def find_random_time(time_string:str, start=True):
     """Finds a random time within a given time range.
-        Parameters:
+    Parameters:
         - time_string (str): Time range.
         - start (bool): Whether the random time should be the start or end of the time range.
-        Returns: 
+    Returns: 
         - random_time_str (str): Random time within the provided time range."""
 
     start_time_str, end_time_str = time_string.split(" - ")
@@ -130,8 +123,6 @@ def find_random_time(time_string, start=True):
     start_time = datetime.datetime.strptime(start_time_str.strip(), time_format)
     end_time = datetime.datetime.strptime(end_time_str.strip(), time_format)
 
-
-
     if start == True:
         #Ensure the random time is at least 1 hour earlier than closing hour
         min_time = start_time 
@@ -141,8 +132,7 @@ def find_random_time(time_string, start=True):
         min_time = start_time 
         max_time = end_time - timedelta(minutes= 15)
 
-
-        #Calculate the time difference in minutes
+    #Calculate the time difference in minutes
     time_diff_minutes = (max_time - min_time).total_seconds() / 60
 
     #Calculate the number of quarter-hour intervals within the time range
@@ -160,12 +150,12 @@ def find_random_time(time_string, start=True):
     return random_time_str
 
 
-def promotion_generator(schedule, prob):
+def promotion_generator(schedule: dict, prob:float):
     """Generates a promotion schedule for a restaurant.
-        Parameters:
+    Parameters:
         - schedule (dict): Restaurant Schedule.
         - prob (float): Probability of a restaurant having a promotion.
-        Returns:
+    Returns:
         - promotion_schedules (dict): Information about the restaurant's promotional offers.
         """
 
@@ -181,7 +171,6 @@ def promotion_generator(schedule, prob):
     promotion_types = ['Happy Hour', '10% off', '20% off','30% off', 'Free dessert', 'Free drink']
 
     if random.random() < prob:
-
         try:
             # Choose a random day of the week
             day_of_week = random.choice(days_of_week)
@@ -189,8 +178,6 @@ def promotion_generator(schedule, prob):
             promotion_type = random.choice(promotion_types)
 
             schedule_time = schedule[day_of_week].split(',')
-
-
 
             # Define the promotion schedule
             if promotion_type == 'Happy Hour' or  promotion_type == '20% off' or promotion_type == '30% off':
@@ -220,9 +207,9 @@ def promotion_generator(schedule, prob):
 
 def clean_chef_names(name):
     """Cleans the name of a chef.
-        Parameters:
+    Parameters:
         - name (str): Name of the chef.
-        Returns:
+    Returns:
         - cleaned_name (str): Cleaned name of the chef. """
     
     if name == 'Not Applicable':
@@ -245,12 +232,13 @@ def clean_chef_names(name):
         return cleaned_name.strip()
     
 
-def get_chef_name(name):
-    """Preprocesses the name of a chef.
-        Parameters:
+def get_chef_name(name:str):
+    """Separates the names of the chefs.
+    Parameters:
         - name (str): Name of the chef.
-        Returns:
-        - name (str or list): Preprocessed name of the chef. """
+    Returns:
+        - name (str or list): Name of the chefs separated. """
+    #Spearate the names of the chefs by ' e ' or ', '
     name = re.split(r' e |, ', name)
     if len(name) == 1:
         name = clean_chef_names(str(name[0]))
@@ -259,7 +247,14 @@ def get_chef_name(name):
     return name
 
 
-def preprocess_chefs(index, chef_list):
+def preprocess_chefs(index:int, chef_list:list):
+    """Preprocesses the names of the chefs.
+    Parameters:
+        - index (int): Index of the chef in the list.
+        - chef_list (list): List of chefs.
+    Returns:
+        - chef_list (str or list): Preprocessed name of the chef."""
+    #If the chef_list is a list and the index is within the list length
     if isinstance(chef_list, list) and len(chef_list) > index:
         return chef_list[index]
     else:
@@ -269,12 +264,13 @@ def preprocess_chefs(index, chef_list):
             return 'Not Applicable'
              
 
-def standardize_location(location):
+def standardize_location(location: str):
     """Standardizes a location string.
     Parameters:
         - location (str): Location of the restaurant.
     Returns:
-        - location (str): Standardized location of the restaurant."""
+        - location (str): Standardized location of 
+        the restaurant."""
 
     
     #Handle different spellings of the same location
@@ -283,7 +279,7 @@ def standardize_location(location):
     if location.lower() in location_mapping.keys():
         location = location_mapping[location.lower()]
 
-    #remove abbreviations
+    #Remove abbreviations
     location = re.sub(r's\.', 'São', location, flags=re.IGNORECASE)
     location = re.sub(r'sta\.', 'Santa', location, flags=re.IGNORECASE)
     location = re.sub(r'q\.ta', 'Quinta', location, flags=re.IGNORECASE)
@@ -295,26 +291,30 @@ def standardize_location(location):
     return standardize_text(location, keep_accents=True)
 
 
-def generate_current_occupation(observation):
+def generate_current_occupation(observation: dict):
     """Generates a random number of people currently at the restaurant 
     from a Normal Distribution.
-        Parameters:
+    Parameters:
         - observation (dict): Restaurant information.
-        Returns:
+    Returns:
         - current_capacity (int): Number of people currently at the restaurant. """
     
-
+    #If there is a maximum party size defined
     if np.isnan(observation['maxPartySize']) == False:
         max_party_size = observation['maxPartySize']
+    #If it is nan
     else:
         max_party_size = 50
 
+    #Check if the restaurant is open
     is_open = check_if_open(observation['schedule'])
 
+    #If closed or not availbale set current capacity to 0
     if is_open == 'Closed':
         current_capacity = 0
     elif is_open == 'Not Available':
         current_capacity = 0
+    #Otherwise generate a random number of people currently at the restaurant through a normal distribution
     else:
         party_size_distribution = np.random.normal(int(max_party_size/2), 
                                                    int(max_party_size/4), 100000)

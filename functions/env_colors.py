@@ -37,8 +37,8 @@ class TerminalTextColor:
     - Import this class to access text color constants.
     - Use the constants like `TerminalTextColor.RED` or `TerminalTextColor.BLUE` to change text color in terminal output. To back to the default color use `TerminalTextColor.RESET`.
     """
-    RESET = "\033[0m"  # Reset to default color
-    RED = "\033[91m"    # Red color
-    GREEN = "\033[92m"  # Green color
-    YELLOW = "\033[93m" # Yellow color
-    BLUE = "\033[94m"   # Blue color
+    RESET = "\033[0m"  
+    RED = "\033[91m"   
+    GREEN = "\033[92m"  
+    YELLOW = "\033[93m" 
+    BLUE = "\033[94m" 

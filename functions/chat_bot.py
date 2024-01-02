@@ -7,9 +7,6 @@ import random
 from openai import OpenAI
 from functions.utils import local_settings
 
-# [i]                                                                                            #
-# [i] OpenAI API                                                                                 #
-# [i]                                                                                            #
 
 class GPT_Helper:
     def __init__(self,
@@ -41,15 +38,10 @@ class GPT_Helper:
         self.messages.append(
             {
                 "role": "assistant",
-                "content": completion.choices[0].message.content
-            }
+                "content": completion.choices[0].message.content}
         )
 
         return completion.choices[0].message.content
-
-# [i]                                                                                            #
-# [i] FilomenaChatBot                                                                              #
-# [i]                                                                                            #
 
 class FilomenaChatBot:
     """
