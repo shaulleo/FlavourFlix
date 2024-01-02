@@ -10,7 +10,6 @@ from functions.streamlitfunc  import *
 import time
 from streamlit_extras.switch_page_button import switch_page 
 
-st.set_page_config(page_title='Login', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
 
 header_image = "ext_images/logo1.jpeg"  
 c1, c2, c3 = st.columns([1, 1, 1], gap = 'small')

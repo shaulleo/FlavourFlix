@@ -5,8 +5,14 @@ from streamlit_extras.switch_page_button import switch_page
 from functions.utils import *
 from streamlit_extras.stylable_container import stylable_container
 
+st.set_page_config(page_title='Profile', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="auto")
 
-st.set_page_config( page_icon="ext_images\page_icon.png", layout="wide")
+header_image = "ext_images/logo1.jpeg"  
+c1, c2, c3 = st.columns([1, 1, 1], gap = 'small')
+with c2:
+    st.image(header_image, width=400)
+st.divider()    
+st.markdown('<br>', unsafe_allow_html=True)
 
 with open('personality_classification_model.pkl', 'rb') as f:
     model = pickle.load(f)

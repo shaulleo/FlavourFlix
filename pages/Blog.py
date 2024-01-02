@@ -10,9 +10,9 @@ import json
 
 
 st.set_page_config(page_title='Blog', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
-c1, c2, c3 = st.columns([1, 1, 1], gap = 'small')
+c1, c2, c3 = st.columns([1, 1, 1], gap = 'large')
 with c2:
-    st.image('ext_images/logo1.jpeg', width=400)
+    st.image('ext_images/logo1.jpeg', width=450)
 
 
 with open('data/blog_posts.json', 'r',  encoding='utf-8') as file:
@@ -103,6 +103,8 @@ for i, (col, post) in enumerate(zip(cols, posts)):
             st.markdown(f"<p style='text-align: justify; color: grey; font-size: 70%; line-height: 1.2; padding: 1.5px 25px 3px 2px;'> ...{text}... </p>", unsafe_allow_html=True)
             st.write('')
             st.button('Continue Reading', key=f'button_{post["title"]}', on_click=click_read, args=[i])
+
+st.button('Visit out Website', key='button_website')
 st.divider()
 for i in range(5):
     if st.session_state[f'read_{i}']:

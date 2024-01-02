@@ -7,6 +7,14 @@ from streamlit_extras.switch_page_button import switch_page
 from functions.utils import *
 from streamlit_extras.stylable_container import stylable_container
 
+st.set_page_config(page_title='Profile', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
+
+header_image = "ext_images/logo1.jpeg"  
+c1, c2, c3 = st.columns([1, 1, 1], gap = 'small')
+with c2:
+    st.image(header_image, width=400)
+st.divider()    
+st.markdown('<br>', unsafe_allow_html=True)
 
 if 'save' not in st.session_state:
     st.session_state['save'] = None
@@ -16,7 +24,6 @@ if 'run' not in st.session_state:
     st.session_state['run'] = 1
 if 'user_data' not in st.session_state:
     st.session_state['user_data'] = None
-
 
 
 def click_save(user_data):
@@ -49,9 +56,9 @@ def gather_client_data():
         nationality = st.text_input('**What is your nationality?**', key=f'nationality_{st.session_state["run"]}')
     #district = st.selectbox("Where are you based in?",['Aveiro', 'Beja', 'Braga', 'Bragança', 'Castelo Branco', 'Coimbra', 'Évora', 'Faro', 'Guarda', 'Leiria', 'Lisboa', 'Portalegre', 'Porto', 'Santarém', 'Setúbal', 'Viana do Castelo', 'Vila Real', 'Viseu', 'Açores', 'Madeira'], key=f'district_{st.session_state["run"]}')
     with col2:
-        last_name = st.text_input("Last Name", key=f'last_name_{st.session_state["run"]}')
-        dob = st.date_input("When were you born?", min_value= date.fromisoformat('1899-12-31'), max_value = date.fromisoformat('2005-12-31'), format="YYYY/MM/DD", value=date.fromisoformat('2005-01-01'), key=f'dob_{st.session_state["run"]}')
-        district = st.selectbox("**Where are you based in?**",['Aveiro', 'Beja', 'Braga', 'Bragança', 'Castelo Branco', 'Coimbra', 'Évora', 'Faro', 'Guarda', 'Leiria', 'Lisboa', 'Portalegre', 'Porto', 'Santarém', 'Setúbal', 'Viana do Castelo', 'Vila Real', 'Viseu', 'Açores', 'Madeira'], key=f'district_{st.session_state["run"]}')
+        last_name = st.text_input("**Last Name**", key=f'last_name_{st.session_state["run"]}')
+        dob = st.date_input("**When were you born?**", min_value= date.fromisoformat('1899-12-31'), max_value = date.fromisoformat('2005-12-31'), format="YYYY/MM/DD", value=date.fromisoformat('2005-01-01'), key=f'dob_{st.session_state["run"]}')
+        district = st.selectbox("**Where are you based in?**",['   ','Aveiro', 'Beja', 'Braga', 'Bragança', 'Castelo Branco', 'Coimbra', 'Évora', 'Faro', 'Guarda', 'Leiria', 'Lisboa', 'Portalegre', 'Porto', 'Santarém', 'Setúbal', 'Viana do Castelo', 'Vila Real', 'Viseu', 'Açores', 'Madeira'], key=f'district_{st.session_state["run"]}')
     
     st.divider()
     st.markdown('### Lifestyle and General Preferences')
@@ -62,7 +69,7 @@ def gather_client_data():
         drinks_alcohol = st.checkbox('Do you drink alcohol?', key=f'drinks_alcohol_{st.session_state["run"]}')
         smoker = st.checkbox('Are you a smoker?', key=f'smoker_{st.session_state["run"]}')
     with col4:
-        preferred_payment = st.selectbox("**How do you prefer to pay?**", ['MBWay', 'Cash', 'Credit Card', 'Apple Pay', 'Visa Electron',
+        preferred_payment = st.selectbox("**How do you prefer to pay?**", ['   ','MBWay', 'Cash', 'Credit Card', 'Apple Pay', 'Visa Electron',
         'Visa', 'Mastercard', 'Paypal', 'American Express', 'Maestro Card'], key=f'preferred_payment_{st.session_state["run"]}')
         normal_price_range = st.number_input("**What is the average price (in Euros) you believe is fair per meal per person?**", min_value=0, max_value=100, value=15, key=f'normal_price_range_{st.session_state["run"]}')
     lunch_hour = st.slider("**Lunch Hour**", min_value=11, max_value=15,value=(11, 15), key=f'lunch_hour_{st.session_state["run"]}')
@@ -77,11 +84,11 @@ def gather_client_data():
     
     st.divider()
     st.markdown('### Restaurant Preferences')
-    restaurant_style = st.selectbox("**What Restaurant Style do you prefer?**", [ 'Festivities', 'Chill Out', 'Buffet', 'Family', 'Modern',
+    restaurant_style = st.selectbox("**What Restaurant Style do you prefer?**", ['   ','Festivities', 'Chill Out', 'Buffet', 'Family', 'Modern',
        'Fine Dining', 'Groups', 'Central Location', 'Friends',
        'Not Available', 'Brunch', 'Casual', 'Homemade', 'Meetings',
        'View', 'Café', 'Breakfast', 'Street Food', 'Healthy', 'Ethnic'], key=f'restaurant_style_{st.session_state["run"]}')
-    cuisine_type = st.selectbox("**Cuisine Type**", ['International', 'Japanese', 'Indian', 'Portuguese', 'Italian',
+    cuisine_type = st.selectbox("**Cuisine Type**", ['   ','International', 'Japanese', 'Indian', 'Portuguese', 'Italian',
        'Pizzeria', 'Mediterranean', 'Fusion', 'Nepalese', 'European',
        'Seafood', 'Vegan', 'Traditional', 'Steakhouse', 'Greek',
        'Vegetarian', 'Varied', 'Grilled', 'Thai', 'Mexican', 'Asian',
@@ -121,8 +128,8 @@ def save_user_data(user_data):
     client_data = pd.read_csv('data/clientData.csv', sep=',')
     client_data = pd.concat([client_data, pd.DataFrame([user_data])], ignore_index=True)
     client_data.drop_duplicates(subset=['email', 'username'], keep = 'last', inplace=True)
-    if not any(x =='   ' for x in user_data.values()):
-        client_data.to_csv('data/clientData.csv', index=False)
+    if not any(x =='   ' for x in user_data.values()) and not (user_data['first_name'] == '' and user_data['last_name'] == ''):
+        client_data.to_csv('data/clientDataClean.csv', index=False)
         with st.spinner('Saving your data...'):
             time.sleep(3)
             st.success('Data Saved!', icon='🚀')
