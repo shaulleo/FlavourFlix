@@ -31,12 +31,12 @@ local_settings = Settings()
 # --------------------------------- 2. Utility Functions --------------------------------
 
 #Standardizes user input when searching freely for a restaurant
-def standardize_text(user_input_text, keep_accents=False):
+def standardize_text(user_input_text: str, keep_accents: bool=False):
     """Standardizes a user input string for better matches.
-        Parameters:
+    Parameters:
         - user_input_text (str): User input.
         - keep_accents (bool): If True, accents are not removed from the string.
-        Returns:
+    Returns:
         - user_input_text (str): Standardized user input.
     """
     if isinstance(user_input_text, str):
@@ -63,16 +63,15 @@ def standardize_text(user_input_text, keep_accents=False):
 
 
 #Checks if the restaurant is currently open
-def check_if_open(restaurant_schedule, date=None, time=None):
-
+def check_if_open(restaurant_schedule:dict, date:str=None, time:str=None):
     """Checks if a given restaurant is open at the current time.
-        Parameters:
+    Parameters:
         - restaurant_schedule (dict): Opening hours of the restaurant.
         - date (str): Date to check if the restaurant is open. If None, the current date is used.
-        Returns:
-        - open (str): 'Open' if the restaurant is open, 'Closed' otherwise. """
-    
-
+    Returns:
+        - open (str): 'Open' if the restaurant is open, 'Closed' otherwise.
+    """
+    #If no date is provided, use the current date
     if date is None:
         current_date = datetime.date.today()
     else:
@@ -81,6 +80,7 @@ def check_if_open(restaurant_schedule, date=None, time=None):
         else:
             current_date = date
 
+    #If no time is provided, use the current time
     if time is None:
         # Get the current time and format it accordingly.
         current_time = datetime.datetime.now().strftime("%H:%M")
@@ -93,18 +93,26 @@ def check_if_open(restaurant_schedule, date=None, time=None):
 
     day_of_week = current_date.strftime("%A")
 
-    def check_schedule(schedule):
+    def check_schedule(schedule:str):
+        """Checks if the restaurant is open at the current time.
+        Parameters:
+            - schedule (str): Schedule to check.
+        Returns:
+            - open (bool): True if the restaurant is open, False otherwise.
+        """
+        #Extract the opening and closing hours from the schedule
         opening_hours = schedule[:5]
         opening_hours = datetime.datetime.strptime(opening_hours, "%H:%M").time()
         closing_hours = schedule[-5:]
+        #If the restaurant closes at midnight, change the closing time to 23:59
         if closing_hours == '24:00':
             closing_hours = '23:59'
         closing_hours = datetime.datetime.strptime(closing_hours, "%H:%M").time()
+        #Check if the restaurant is open
         if  (opening_hours <= current_time) & (current_time <= closing_hours):
             return True
         else:
             return False
-
 
     if type(restaurant_schedule) == str:
         if restaurant_schedule == 'Not Available':
@@ -116,7 +124,6 @@ def check_if_open(restaurant_schedule, date=None, time=None):
     else: 
         return 'Not Available'
     
-
     if restaurant_schedule == 'Not Available':
         return 'Not Available'
     elif restaurant_schedule[day_of_week] == 'Closed':
@@ -135,36 +142,23 @@ def check_if_open(restaurant_schedule, date=None, time=None):
     return 'Closed'
 
 
-#Wrapper to Call the OpenAI API and get answers from the GPT-3 Model
-class GPTWrapper:
-    def __init__(self, openai_api_key):
-        self.openai_api_key = openai_api_key
+# #Wrapper to Call the OpenAI API and get answers from the GPT-3 Model
+# class GPTWrapper:
+#     def __init__(self, openai_api_key):
+#         self.openai_api_key = openai_api_key
 
-        self.client = openai.OpenAI(api_key = self.openai_api_key)
+#         self.client = openai.OpenAI(api_key = self.openai_api_key)
 
-    def get_completion(self, prompt, model="gpt-3.5-turbo"):
-        messages = [{"role": "user", "content": prompt}]
+#     def get_completion(self, prompt, model="gpt-3.5-turbo"):
+#         messages = [{"role": "user", "content": prompt}]
 
-        completion = self.client.chat.completions.create(
-            model = model, 
-            messages= messages,
-            temperature=0)
+#         completion = self.client.chat.completions.create(
+#             model = model, 
+#             messages= messages,
+#             temperature=0)
         
-        return completion.choices[0].message.content
+#         return completion.choices[0].message.content
     
-#Wrapper to call our Personality Classifier to incorporate within the app
-class ClassifierWrapper:
-    def __init__(self, model, features, class_labels):
-        self.model = model
-        self.features = features
-        self.class_labels = class_labels
 
-    def predict(self, x_observation: list) -> str:
-        result = self.model.predict([x_observation])
-        return self.class_labels[int(result[0])]
-
-    def prediction_needs(self, verbosity=True):
-        if verbosity : return f"You need to provide the values of {self.features} to get a prediction."
-        else : return self.features
 
 

@@ -17,13 +17,13 @@ import streamlit as st
 
 class Distance:
     """Class Distance: Defines an object representing the distance between two points.
-    - Attributes:
+    Attributes:
         - km (float): Distance in kilometers.
         - meters (float): Distance in meters.
         - miles (float): Distance in miles.
         - minutes (int): Travel time in minutes.
         - hours (str): Travel time in hours and minutes.
-    - Methods:
+    Methods:
         - __init__(self, km=None, meters=None, miles = None, minutes=None, hours=None): Constructor of the class.
         - __str__(self): Description method of the class.
         
@@ -63,12 +63,12 @@ class Distance:
 
 class Location:
     """Class Location: Defines an object representing a location.
-    - Attributes:
+    Attributes:
         - latitude (float): Latitude of the location.
         - longitude (float): Longitude of the location.
         - region (str): Region of the location.
         - city (str): City of the location.
-    - Methods:
+    Methods:
         - __init__(self, latitude=None, longitude=None, region=None, city=None): Constructor of the class.
         - getLocation(self): Gets the current location of the user.
         - getDirections(self, end_latitude, end_longitude, travel_modes): Gets the distance between the 
@@ -88,9 +88,9 @@ class Location:
         """ 
         Gets the current location of the user. 
         Parameters:
-        - None
+            - None
         Returns:
-        - None 
+            - None 
         """
         options = Options()
         options.add_argument("--use--fake-ui-for-media-stream")
@@ -113,11 +113,11 @@ class Location:
 
         """ Gets the distance between the location object and a given point.
         Parameters:
-        - end_latitude (float): Latitude of the end point.
-        - end_longitude (float): Longitude of the end point.
-        - travel_modes (str or list): Travel modes to be used in the calculation. can be either "walking", "driving" or "transit".
+            - end_latitude (float): Latitude of the end point.
+            - end_longitude (float): Longitude of the end point.
+            - travel_modes (str or list): Travel modes to be used in the calculation. can be either "walking", "driving" or "transit".
         Returns:
-        - all_results (dict): Dictionary containing the distance and travel time between the two points for each travel mode.
+            - all_results (dict): Dictionary containing the distance and travel time between the two points for each travel mode.
         """
 
         if self.latitude is None or self.longitude is None:
