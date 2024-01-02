@@ -7,12 +7,12 @@ def get_identification():
         if username in client_data['username'].values:
             first_name = client_data[client_data['username'] == username]['first_name'].values[0]
         else:
-            first_name = None
+            first_name = 'Not Provided'
         return f'Username: {username} | First Name: {first_name}'
     else:
         return f'No Identification Provided'
     
-    
+
 
 prompts_list = [{
     "name": "FlavourFlix Restaurant Assistant - Filomena",
