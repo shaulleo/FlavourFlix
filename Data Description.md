@@ -22,13 +22,13 @@
 | preferred_payment      | User's preferred payment type |string/dict     |
 | restaurant_style       | User's preferred restaurant style |string       |
 | cuisine_type           | User's preferred cuisine type |string           |
-| lunch_hour             | User's typical lunch time period                 |
-| dinner_hour            | User's typical dinner time period                |
+| lunch_hour             | User's typical lunch time period       |          |
+| dinner_hour            | User's typical dinner time period       |         |
 | normal_price_range     | Average price in € the user is willing to pay | int  |
 | smoker_n               | Whether the user is a smoker or not |string     |
 
 
-**Description**: .csv file used to 
+**Description**: .csv file used to ... <br>
 **Usage**:
 
 
