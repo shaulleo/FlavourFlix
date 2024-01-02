@@ -1,82 +1,91 @@
 
 """
-ChatBot class
+ChatBot classes
 """
 
 import random
+from openai import OpenAI
+from functions.utils import local_settings
 
+# [i]                                                                                            #
+# [i] OpenAI API                                                                                 #
+# [i]                                                                                            #
 
-# [i] Static ChatBot                                                                               -
+class GPT_Helper:
+    def __init__(self,
+        OPENAI_API_KEY: str,
+        system_behavior: str="",
+        model="gpt-3.5-turbo",
+    ):
+        self.client = OpenAI(api_key=OPENAI_API_KEY)
+        self.messages = []
+        self.model = model
 
-class ChatBotStatic:
+        if system_behavior:
+            self.messages.append({
+                "role": "system",
+                "content": system_behavior
+            })
+
+    # [i] get completion from the model             #
+    def get_completion(self, prompt, temperature=0):
+
+        self.messages.append({"role": "user", "content": prompt})
+
+        completion = self.client.chat.completions.create(
+            model=self.model,
+            messages=self.messages,
+            temperature=temperature,
+        )
+
+        self.messages.append(
+            {
+                "role": "assistant",
+                "content": completion.choices[0].message.content
+            }
+        )
+
+        return completion.choices[0].message.content
+
+# [i]                                                                                            #
+# [i] FilomenaChatBot                                                                              #
+# [i]                                                                                            #
+
+class FilomenaChatBot:
     """
-    ChatBot class
+    Generate a response by using LLMs.
     """
 
-    def __init__(self):
-        self.memory = []
+    def __init__(self, system_behavior: str):
+        self.__system_behavior = system_behavior
 
-    def generate_response(self, message: str):
-        """
-        Returns a static response
-        """
-        return "How can I help you?"
-
-
-# [i] Static ChatBot                                                                               -
-
-class ChatBotRandom:
-    """
-    ChatBotRandom class provides a simple chatbot that generates random responses.
-    """
-
-    def __init__(self):
-        self.memory = []
-
-    def generate_response(self, message: str):
-        """
-        Generates a random response for incoming messages.
-
-        Returns:
-            str: A randomly selected response from a list of greeting messages.
-
-        """
-        return random.choice(
-            [
-                "Hello there! How can I assist you today?",
-                "Hi, human! Is there anything I can help you with?",
-                "Do you need help?",
-            ]
+        self.engine = GPT_Helper(
+            OPENAI_API_KEY=local_settings.OPENAI_API_KEY,
+            system_behavior=system_behavior
         )
 
 
-class ChatBot:
-    """
-    Generate a response by using LLMs.
-    """
-
-    def __init__(self):
-        self.memory = []
-
     def generate_response(self, message: str):
-        """
-        Generate a response by using LLMs.
-        """
-        return self.model.get_completion(message)
-    
+        return self.engine.get_completion(message)
 
-    
-class ChatBot:
-    """
-    Generate a response by using LLMs.
-    """
-    def __init__(self, model_manager):
-        self.memory = []
-        #my_GPT = GPTWrapper(local_settings.OPENAI_API_KEY)
-        self.model = model_manager
+    def __str__(self):
+        shift = "   "
+        class_name = str(type(self)).split('.')[-1].replace("'>", "")
 
-    def generate_response(self, message: str):
-        """
-        Generate a response by using LLMs.
-        """
-        return self.model.get_completion(message)
+        return f"🤖 {class_name}."
+
+    def reset(self):
+        ...
+
+    @property
+    def memory(self):
+        return self.engine.messages
+
+    @property
+    def system_behavior(self):
+        return self.__system_config
+
+    @system_behavior.setter
+    def system_behavior(self, system_config : str):
+        self.__system_behavior = system_config
+
