@@ -10,15 +10,21 @@ from streamlit_extras.switch_page_button import switch_page
 st.set_page_config(page_title='Chat with Filomena', page_icon="ext_images\page_icon.png", layout="wide", initial_sidebar_state= "auto")
                                                                                 
 
+
+
 def initialize() -> None:
     """
     Initialize the app
     """
-    # with st.expander("Bot Configuration"):
-    #     st.session_state.system_behavior = st.text_area(
-    #         label="Prompt",
-    #         value=prompts_list[0]["prompt"]
-    #     )
+  
+
+    header_image = "ext_images/logo1.jpeg"  
+    c1, c2, c3 = st.columns([1, 1, 1], gap = 'large')
+    with c2:
+        st.image(header_image, width=400)
+    st.divider()    
+
+
     st.session_state.system_behavior = prompts_list[0]["prompt"]
 
     st.title("Ask Filomena 🍲")
