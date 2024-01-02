@@ -14,14 +14,14 @@
 | nationality            | User's Nationality |string                    |
 | city                   | User's District in Portugal |string            |
 | travel_car             | Whether the user prefers to travel by car |bool |
-| drinks_alcohol         | Whether the user drinks alcohol |bool           |
-| dietary_restrictions   | Possible Dietary restrictions |string           |
-| allergies              | Possible allergies |string                      |
-| favourite_food         | User's favourite meal |string                   |
-| dislike_food           | User's most unliked meal |string                |
+| drinks_alcohol         | Whether the user drinks alcohol |bool          |
+| dietary_restrictions   | Possible Dietary restrictions |string          |
+| allergies              | Possible allergies |string                     |
+| favourite_food         | User's favourite meal |string                  |
+| dislike_food           | User's most unliked meal |string               |
 | preferred_payment      | User's preferred payment type |string/dict     |
-| restaurant_style       | User's preferred restaurant style |string       |
-| cuisine_type           | User's preferred cuisine type |string           |
+| restaurant_style       | User's preferred restaurant style |string      |
+| cuisine_type           | User's preferred cuisine type |string          |
 | lunch_hour             | User's typical lunch time period       |          |
 | dinner_hour            | User's typical dinner time period       |         |
 | normal_price_range     | Average price in € the user is willing to pay | int  |
