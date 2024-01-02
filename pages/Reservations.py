@@ -41,7 +41,7 @@ def display_reservation_card(reservation):
         col1, col2 = st.columns([0.3, 0.7])
         with col1:
             rest_image = restaurants[restaurants['name'] == reservation[1]["res_name"]]['photo'].values[0]
-            st.image(rest_image, width=200)
+            st.image(rest_image, width=300)
         with col2:
             st.markdown(f'**Restaurant**: {reservation[1]["res_name"]}')
             st.markdown(f'**Guest Name**: {reservation[1]["guest_name"]}')
