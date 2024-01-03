@@ -3,14 +3,16 @@ from langchain.document_loaders import PyPDFLoader
 from langchain.memory import ConversationBufferMemory
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
 from langchain.chat_models import ChatOpenAI
 from functions.utils import *
 from openai import OpenAI
+import csv
+from langchain.docstore.document import Document 
 from prompt_templates import *
-
+from langchain_community.document_loaders import TextLoader
 
 
 class GPT_Helper:
@@ -68,7 +70,7 @@ def prep_question(query, chatbot_message):
 
 class Filomena():
     def __init__(self, ):
-        self.llm = ChatOpenAI(temperature=0.3, api_key=local_settings.OPENAI_API_KEY)
+        self.llm = ChatOpenAI(temperature=0, api_key=local_settings.OPENAI_API_KEY)
         self.memory = ConversationBufferMemory(memory_key="chat_history",  input_key="question")
         self.prompt = PromptTemplate(
             input_variables=["chat_history", "question", "context"], 
@@ -79,17 +81,49 @@ class Filomena():
     def load_documents(self, file_paths, type='pdf'):
         docs = []
 
-        # if type == 'pdf':
-        for file_path in file_paths:
+        if type == 'pdf':
+            for file_path in file_paths:
                 loader = PyPDFLoader(file_path)
                 docs.extend(loader.load())
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500,chunk_overlap=200)
+            splits = text_splitter.split_documents(docs)
+            return splits
 
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500,chunk_overlap=200)
-        splits = text_splitter.split_documents(docs)
+            # embeddings = OpenAIEmbeddings()
+            # vectordb = FAISS.from_documents(splits, embeddings)
+            # self.vectordb = vectordb
+        # elif type == 'txt':
+        #     for file_path in file_paths:
+        #         loader = TextLoader(file_path)
+        #         docs.extend(loader.load())
+            
+    def load_restaurant_data(self, path):
+        # Define the columns we want to embed vs which ones we want in metadata
+        columns_to_embed = ["Description","Features"]
+        columns_to_metadata = ["Product Name","Price", "Rating","Description", "Features"]
 
+        docs = []
+        with open(path, newline="", encoding='utf-8') as csvfile:
+            csv_reader = csv.DictReader(csvfile)
+            for i, row in enumerate(csv_reader):
+                to_metadata = {col: row[col] for col in columns_to_metadata if col in row}
+                values_to_embed = {k: row[k] for k in columns_to_embed if k in row}
+                to_embed = "\n".join(f"{k.strip()}: {v.strip()}" for k, v in values_to_embed.items())
+                newDoc = Document(page_content=to_embed, metadata=to_metadata)
+                docs.append(newDoc)
+        # Lets split the document using Chracter splitting. 
+        splitter = CharacterTextSplitter(separator = "\n",
+                                        chunk_size=500, 
+                                        chunk_overlap=0,
+                                        length_function=len)
+        splits = splitter.split_documents(docs)
+        return splits
+    
+    def create_embeddings(self, docs):
         embeddings = OpenAIEmbeddings()
-        vectordb = FAISS.from_documents(splits, embeddings)
+        vectordb = FAISS.from_documents(docs, embeddings)
         self.vectordb = vectordb
+
 
     def generate_response(self, query, identified=False):
         
@@ -100,9 +134,10 @@ class Filomena():
                 query = prep_question(query, self.messages[-2]['content'])
             except:
                 query = query
+                #max_marginal_relevance_search(query, k=2)
 
         response = self.agent_chain(
-                    {"input_documents": self.vectordb.max_marginal_relevance_search(query, k=3),
+                    {"input_documents": self.vectordb.similarity_search(query, k=3),
                         "question": f'{query}',},
                     return_only_outputs=True)
 
@@ -114,5 +149,13 @@ class Filomena():
         self.messages = []
 
         
+    def intialize_filomena(self, files):
+        docs1 = self.load_documents(files, 'pdf')
+        docs2 = self.load_restaurant_data('data\preprocessed_restaurant_data.csv')
+        docs = docs1 + docs2
+        self.create_embeddings(docs)
+        self.generate_response("[Instruction: Identification] Hello", identified=True)
+        self.messages = self.messages[-1:]
+
     
     

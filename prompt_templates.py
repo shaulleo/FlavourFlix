@@ -129,9 +129,8 @@ Context:
 {context} 
 Chat History:
 {chat_history}
-Human: 
+Human Question: 
 {question}
-Chatbot:
 """
 
 
