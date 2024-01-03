@@ -116,6 +116,5 @@ class Filomena():
 
 # agent_chain = load_qa_chain(llm, chain_type="stuff", memory=memory, prompt=prompt)
 
-st.title("FlavourFlix Restaurant Assistant - Filomena")
 
 
