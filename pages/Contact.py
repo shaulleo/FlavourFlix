@@ -62,7 +62,7 @@ def feedback_page():
 
 
 #If user is logged in
-if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
+if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state):
     #Show the feedback page as normal
     pages_logged_in()
     feedback_page()

@@ -14,11 +14,7 @@ filtered_df = data.copy()
 
 st.set_page_config(page_title="FlavourFlix", page_icon="ext_images/page_icon.png",  layout='wide', initial_sidebar_state = 'collapsed')
 
-header_image = "ext_images/logo1.jpeg"  
-c1, c2, c3 = st.columns([1, 1, 1], gap = 'large')
-with c2:
-    st.image(header_image, width=400)
-st.divider()    
+display_header() 
 
 
 def show_kpis():
@@ -246,3 +242,7 @@ else:
         with st.spinner('Redirecting you to the Login page...'):
             time.sleep(3)
         switch_page('log in')
+
+
+filomena_pic =  "https://cdn.discordapp.com/attachments/1150843302644547768/1190661589347602492/1000_F_378272550_xN8H7ZVudgCYWzfuZxRxVS5uFKjzsoMg.jpg?ex=65a29d04&is=65902804&hm=4a84c24f579a1d8ac5493b28f47b50c1dc7aaabc2832cb090bd7e4e95b2ab786&"
+user_pic =   "https://miro.medium.com/v2/resize:fit:1100/format:webp/1*_ARzR7F_fff_KI14yMKBzw.png"                                 

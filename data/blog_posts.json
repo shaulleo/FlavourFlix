@@ -1,37 +1,38 @@
-[{"title": "Global Gastronomic Journey with FlavourFlix",
-    "image": "https://as2.ftcdn.net/v2/jpg/03/78/27/25/1000_F_378272550_xN8H7ZVudgCYWzfuZxRxVS5uFKjzsoMg.jpg", 
-    "author": "Maria Clara",
-    "date": "January 15, 2023",
-    "full_text": "Greetings, fellow food enthusiasts!Today, join me on an exhilarating journey as we embark on a Global Gastronomic Adventure with FlavourFlix. Prepare your taste buds for a whirlwind tour of diverse culinary delights, all made possible by the fantastic features of FlavourFlix. FlavourFlix, the ultimate restaurant-recommendation platform, has revolutionized the way we discover, taste, and repeat our favorite dining experiences. Imagine exploring the vibrant streets of Tokyo for the best ramen or savoring authentic pasta in the heart of Rome—all at the click of a button. The FlavourFlix search engine opens doors to a world of possibilities. Craving sushi in São Paulo or tapas in Barcelona? Simply input your preferences, and let FlavourFlix guide you to the perfect spot. It's like having a personal food concierge at your fingertips. But this journey is more than just a geographical exploration; it's a celebration of diverse flavors and cultural richness. FlavourFlix doesn't just recommend restaurants; it curates experiences. From street food stalls to Michelin-starred establishments, the platform caters to every palate and budget. Now, let's talk about the heart of FlavourFlix—the Food Personality questionnaire. It's not just about finding a place to eat; it's about discovering your culinary soulmate. Are you a Comfort Food Lover, a Conscious Eater, a Fine Dining Connoisseur, a Low-Cost Foodie, or perhaps, an Adventurer willing to try anything once? FlavourFlix knows, and it tailors its recommendations to suit your unique tastes. In my recent exploration, FlavourFlix led me to a tucked-away ramen joint in New York City. As a self-proclaimed Adventurer, I was thrilled to try something new, and the experience exceeded my expectations. The fusion of flavors and the cozy ambiance made it a memorable evening. But it's not just about the recommendations; it's about the journey. FlavourFlix provides a seamless and personalized experience from start to finish. The app learns from your choices, refines its suggestions, and continuously surprises you with delightful options. As I wrap up my global gastronomic journey with FlavourFlix, I can't help but appreciate the beauty of discovering new flavors and connecting with different cultures through food. The platform not only satisfies your hunger but also feeds your curiosity and adventurous spirit. So, fellow foodies, if you haven't embarked on your FlavourFlix adventure yet, what are you waiting for? Discover. Taste. Repeat. The world of culinary delights is just a click away. Stay tuned for more exciting FlavourFlix chronicles as we delve into the various facets of this culinary wonderland. Until next time, happy eating! Stay tuned for the next blog post: \"Tailored Tastes: Unveiling Your Food Personality with FlavourFlix\" by Fernando Santos on January 20, 2023.",
-    "corpus": {
-        "greeting": "Greetings, fellow food enthusiasts! Today, join me on an exhilarating journey as we embark on a Global Gastronomic Adventure with FlavourFlix. Prepare your taste buds for a whirlwind tour of diverse culinary delights, all made possible by the fantastic features of FlavourFlix.",
-        "platformDescription": {
+[{  "title": "Global Gastronomic Adventure with FlavourFlix",
+  "image": "https://as2.ftcdn.net/v2/jpg/03/78/27/25/1000_F_378272550_xN8H7ZVudgCYWzfuZxRxVS5uFKjzsoMg.jpg",
+  "author": "Maria Clara",
+  "date": "January 15, 2023",
+  "full_text": "Greetings, fellow food enthusiasts! Today, join me on an exhilarating journey as we embark on a Global Gastronomic Adventure with FlavourFlix. Prepare your taste buds for a whirlwind tour of diverse culinary delights, all made possible by the fantastic features of FlavourFlix. FlavourFlix, the ultimate restaurant-recommendation platform, has revolutionized the way we discover, taste, and repeat our favorite dining experiences. Imagine exploring the vibrant streets of Albufeira for the best ramen or savoring authentic pasta in the heart of Loures—all at the click of a button. The FlavourFlix search engine opens doors to a world of possibilities. Craving sushi in Almada or tapas in Barreiro? Simply input your preferences, and let FlavourFlix guide you to the perfect spot. It's like having a personal food concierge at your fingertips. But this journey is more than just a geographical exploration; it's a celebration of diverse flavours and cultural richness. FlavourFlix doesn't just recommend restaurants; it curates experiences. From street food stalls to Michelin-starred establishments, the platform caters to every palate and budget. Now, let's talk about the heart of FlavourFlix—the Food Personality questionnaire. It's not just about finding a place to eat; it's about discovering your culinary soulmate. Are you a Comfort Food Lover, a Conscious Eater, a Fine Dining Connoisseur, a Low-Cost Foodie, or perhaps, an Adventurer willing to try anything once? FlavourFlix knows, and it tailors its recommendations to suit your unique tastes. In my recent exploration, FlavourFlix led me to a tucked-away ramen joint in Aveiro. As a self-proclaimed Adventurer, I was thrilled to try something new, and the experience exceeded my expectations. The fusion of flavors and the cozy ambiance made it a memorable evening. But it's not just about the recommendations; it's about the journey. FlavourFlix provides a seamless and personalized experience from start to finish. The app learns from your choices, refines its suggestions, and continuously surprises you with delightful options. As I wrap up my global gastronomic journey with FlavourFlix, I can't help but appreciate the beauty of discovering new flavors and connecting with different cultures through food. The platform not only satisfies your hunger but also feeds your curiosity and adventurous spirit. So, fellow foodies, if you haven't embarked on your FlavourFlix adventure yet, what are you waiting for? Discover. Taste. Repeat. The world of culinary delights is just a click away. Stay tuned for more exciting FlavourFlix chronicles as we delve into the various facets of this culinary wonderland. Until next time, happy eating!",
+  "corpus": {
+      "greeting": "Greetings, fellow food enthusiasts! Today, join me on an exhilarating journey as we embark on a Global Gastronomic Adventure with FlavourFlix. Prepare your taste buds for a whirlwind tour of diverse culinary delights, all made possible by the fantastic features of FlavourFlix.",
+      "platformDescription": {
           "title": "FlavourFlix - Revolutionizing Culinary Discovery",
-          "description": "FlavourFlix, the ultimate restaurant-recommendation platform, has revolutionized the way we discover, taste, and repeat our favorite dining experiences. Imagine exploring the vibrant streets of Tokyo for the best ramen or savoring authentic pasta in the heart of Rome—all at the click of a button."
-        },
-        "searchEngine": {
-          "description": "The FlavourFlix search engine opens doors to a world of possibilities. Craving sushi in São Paulo or tapas in Barcelona? Simply input your preferences, and let FlavourFlix guide you to the perfect spot. It's like having a personal food concierge at your fingertips."
-        },
-        "culinaryCelebration": {
-          "description": "But this journey is more than just a geographical exploration; it's a celebration of diverse flavors and cultural richness. FlavourFlix doesn't just recommend restaurants; it curates experiences. From street food stalls to Michelin-starred establishments, the platform caters to every palate and budget."
-        },
-        "foodPersonality": {
-          "description": "Now, let's talk about the heart of FlavourFlix—the Food Personality questionnaire. It's not just about finding a place to eat; it's about discovering your culinary soulmate. Are you a Comfort Food Lover, a Conscious Eater, a Fine Dining Connoisseur, a Low-Cost Foodie, or perhaps, an Adventurer willing to try anything once? FlavourFlix knows, and it tailors its recommendations to suit your unique tastes."
-        },
-        "personalExperience": {
-          "description": "In my recent exploration, FlavourFlix led me to a tucked-away ramen joint in New York City. As a self-proclaimed Adventurer, I was thrilled to try something new, and the experience exceeded my expectations. The fusion of flavors and the cozy ambiance made it a memorable evening."
-        },
-        "seamlessExperience": {
-          "description": "But it's not just about the recommendations; it's about the journey. FlavourFlix provides a seamless and personalized experience from start to finish. The app learns from your choices, refines its suggestions, and continuously surprises you with delightful options."
-        },
-        "culinaryDiscoveryConclusion": {
-          "description": "As I wrap up my global gastronomic journey with FlavourFlix, I can't help but appreciate the beauty of discovering new flavors and connecting with different cultures through food. The platform not only satisfies your hunger but also feeds your curiosity and adventurous spirit."
-        },
-        "invitation": "So, fellow foodies, if you haven't embarked on your FlavourFlix adventure yet, what are you waiting for? Discover. Taste. Repeat. The world of culinary delights is just a click away.",
-        "upcoming": "Stay tuned for more exciting FlavourFlix chronicles as we delve into the various facets of this culinary wonderland. Until next time, happy eating!",
-        "finalBlogPost": "Stay tuned for the next blog post: \"Tailored Tastes: Unveiling Your Food Personality with FlavourFlix\" by Vitor Santos on January 20, 2023."
-      }
+          "description": "FlavourFlix, the ultimate restaurant-recommendation platform, has revolutionized the way we discover, taste, and repeat our favorite dining experiences. Imagine exploring the vibrant streets of Albufeira for the best ramen or savoring authentic pasta in the heart of Loures—all at the click of a button."
       },
+      "searchEngine": {
+          "description": "The FlavourFlix search engine opens doors to a world of possibilities. Craving sushi in Almada or tapas in Barreiro? Simply input your preferences, and let FlavourFlix guide you to the perfect spot. It's like having a personal food concierge at your fingertips."
+      },
+      "culinaryCelebration": {
+          "description": "But this journey is more than just a geographical exploration; it's a celebration of diverse flavors and cultural richness. FlavourFlix doesn't just recommend restaurants; it curates experiences. From street food stalls to Michelin-starred establishments, the platform caters to every palate and budget."
+      },
+      "foodPersonality": {
+          "description": "Now, let's talk about the heart of FlavourFlix—the Food Personality questionnaire. It's not just about finding a place to eat; it's about discovering your culinary soulmate. Are you a Comfort Food Lover, a Conscious Eater, a Fine Dining Connoisseur, a Low-Cost Foodie, or perhaps, an Adventurer willing to try anything once? FlavourFlix knows, and it tailors its recommendations to suit your unique tastes."
+      },
+      "personalExperience": {
+          "description": "In my recent exploration, FlavourFlix led me to a tucked-away ramen joint in Aveiro. As a self-proclaimed Adventurer, I was thrilled to try something new, and the experience exceeded my expectations. The fusion of flavors and the cozy ambiance made it a memorable evening."
+      },
+      "seamlessExperience": {
+          "description": "But it's not just about the recommendations; it's about the journey. FlavourFlix provides a seamless and personalized experience from start to finish. The app learns from your choices, refines its suggestions, and continuously surprises you with delightful options."
+      },
+      "culinaryDiscoveryConclusion": {
+          "description": "As I wrap up my global gastronomic journey with FlavourFlix, I can't help but appreciate the beauty of discovering new flavors and connecting with different cultures through food. The platform not only satisfies your hunger but also feeds your curiosity and adventurous spirit."
+      },
+      "invitation": "So, fellow foodies, if you haven't embarked on your FlavourFlix adventure yet, what are you waiting for? Discover. Taste. Repeat. The world of culinary delights is just a click away.",
+      "upcoming": "Stay tuned for more exciting FlavourFlix chronicles as we delve into the various facets of this culinary wonderland. Until next time, happy eating!",
+      "finalBlogPost": "Stay tuned for the next blog post: \"Tailored Tastes: Unveiling Your Food Personality with FlavourFlix\" by Vitor Santos on January 20, 2023."
+  }
+}
+,
   {
     "title": "Tailored Tastes: Unveiling Your Food Personality with FlavourFlix",
     "author": "Vitor Santos",

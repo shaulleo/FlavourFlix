@@ -119,6 +119,7 @@ def show_menu(restaurant, menu_col1, menu_col2):
                             st.markdown(f"- {dish}: {price} €")
             else:
                 not_available = True
+            st.caption('Note that the menu may not be up to date. The menus were automatically translated with Google Translator and may not be entirely accurate. Please contact the restaurant for more information.')
         if not_available:
             st.markdown('Sorry! It seems that the restaurant did not make their menu available yet... :disappointed:')
 
