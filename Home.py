@@ -14,11 +14,7 @@ filtered_df = data.copy()
 
 st.set_page_config(page_title="FlavourFlix", page_icon="ext_images/page_icon.png",  layout='wide', initial_sidebar_state = 'collapsed')
 
-header_image = "ext_images/logo1.jpeg"  
-c1, c2, c3 = st.columns([1, 1, 1], gap = 'large')
-with c2:
-    st.image(header_image, width=400)
-st.divider()    
+display_header() 
 
 
 def show_kpis():
