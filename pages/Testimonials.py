@@ -32,8 +32,6 @@ def add_newlines(text, line_length=50):
     return '\n'.join(lines)
 
 
-icons = os.listdir('user_icons')[:-2]
-
 def show_testimonial(num=0):
     testimonial = data[num]
     with stylable_container(
