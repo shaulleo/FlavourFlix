@@ -2,45 +2,39 @@ from functions.streamlitfunc import *
 from functions.utils import *
 import time
 import streamlit as st
-from functions.chat_bot import *
+# from functions.chat_bot import *
+from functions.Filomenav2 import *
 from functions.utils import local_settings
-from prompts_list import prompts_list
+# from prompts_list import prompts_list
 from streamlit_extras.switch_page_button import switch_page 
 
 st.set_page_config(page_title='Chat with Filomena', page_icon="ext_images\page_icon.png", layout="wide", initial_sidebar_state= "auto")
                                                                                 
-
-
 
 def initialize() -> None:
     """
     Initialize the app
     """
   
-
-    header_image = "ext_images/logo1.jpeg"  
-    c1, c2, c3 = st.columns([1, 1, 1], gap = 'large')
-    with c2:
-        st.image(header_image, width=400)
-    st.divider()    
+    display_header()
 
 
-    st.session_state.system_behavior = prompts_list[0]["prompt"]
+    #st.session_state.system_behavior = prompts_list[0]["prompt"]
 
     st.title("Ask Filomena 🍲")
     st.write("Ask me anything about portuguese food and restaurants and I'll do my best to answer you! 🇵🇹")
     st.write("Note that the answers are not always 100% accurate, but I'm learning!")
 
     if "chatbot" not in st.session_state:
-        st.session_state.chatbot = FilomenaChatBot(
-            system_behavior=st.session_state.system_behavior)
+        st.session_state.chatbot = Filomena()
+    
+    files = ['data\CP-23Group4 Project Proposal.pdf', 'data\Food Personalities.pdf']
+    st.session_state.chatbot.load_documents(files, 'pdf')
 
     with st.sidebar:
         st.markdown(
             f"ChatBot in use: <font color='cyan'>{st.session_state.chatbot.__str__()}</font>", unsafe_allow_html=True
         )
-
-
 
 
 def display_history_messages():
@@ -57,20 +51,15 @@ def display_history_messages():
             st.markdown(message["content"])
         
 
-
-
 def display_user_msg(message: str):
     """
     Display user message in chat message container.
     """
-    # st.session_state.chatbot.memory.append(
-    #     {"role": "user", "content": message}
-    # )
+
     with st.chat_message("user", avatar="https://miro.medium.com/v2/resize:fit:1100/format:webp/1*_ARzR7F_fff_KI14yMKBzw.png"):
         st.markdown(message)
 
-
-                                                                         
+                                                           
 
 def display_assistant_msg(message: str, animated=True):
     """
@@ -96,57 +85,29 @@ def display_assistant_msg(message: str, animated=True):
             st.markdown(message)
 
 
+
 if __name__ == "__main__":
 
-    initialize()
+    if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
+        pages_logged_in()
+        initialize()
 
+        # [i] Display History #
+        display_history_messages()
 
-    # [i] Display History #
-    display_history_messages()
-    if prompt := st.chat_input("Type your request..."):
+        if prompt := st.chat_input("Type your request..."):
 
-        # [*] Request & Response #
-        display_user_msg(message=prompt)
-        assistant_response = st.session_state.chatbot.generate_response(
-            message=prompt)
-        display_assistant_msg(message=assistant_response)
+            # [*] Request & Response #
+            display_user_msg(message=prompt)
+            assistant_response = st.session_state.chatbot.get_completion(
+                message=prompt)
+            display_assistant_msg(message=assistant_response)
 
-    # [i] Sidebar #
-    
-
-
-
-
-
-# if __name__ == "__main__":
-
-#     if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
-#         pages_logged_in()
-#         header_image = "ext_images/logo1.jpeg"  
-#         c1, c2, c3 = st.columns([1, 1, 1], gap = 'small')
-#         with c2:
-#             st.image(header_image, width=400)
-#         st.divider()    
-#         st.markdown('<br>', unsafe_allow_html=True)
-#         initialize()
-
-#         # [i] Display History #
-#         display_history_messages()
-
-#         if prompt := st.chat_input("Type your request..."):
-
-#             # [*] Request & Response #
-#             display_user_msg(message=prompt)
-#             assistant_response = st.session_state.chatbot.generate_response(
-#                 message=prompt
-#             )
-#             display_assistant_msg(message=assistant_response)
-
-#     else:
-#         pages_logged_off()
-#         st.error('Ups! Something went wrong. Please try login again.', icon='🚨')
-#         st.session_state['authentication_status'] = False
-#         st.write('You need to be logged in to access this feature.')
-#         with st.spinner('Redirecting you to the Login page...'):
-#             time.sleep(3)
-#         switch_page('log in')
+    else:
+        pages_logged_off()
+        st.error('Ups! Something went wrong. Please try login again.', icon='🚨')
+        st.session_state['authentication_status'] = False
+        st.write('You need to be logged in to access this feature.')
+        with st.spinner('Redirecting you to the Login page...'):
+            time.sleep(3)
+        switch_page('log in')
