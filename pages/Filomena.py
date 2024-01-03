@@ -2,39 +2,36 @@ from functions.streamlitfunc import *
 from functions.utils import *
 import time
 import streamlit as st
-# from functions.chat_bot import *
-from functions.Filomenav2 import *
+from functions.chat_bot import *
 from functions.utils import local_settings
-# from prompts_list import prompts_list
 from streamlit_extras.switch_page_button import switch_page 
 
 st.set_page_config(page_title='Chat with Filomena', page_icon="ext_images\page_icon.png", layout="wide", initial_sidebar_state= "auto")
+
+display_header()
                                                                                 
+
 
 def initialize() -> None:
     """
     Initialize the app
     """
   
-    display_header()
-
-
-    #st.session_state.system_behavior = prompts_list[0]["prompt"]
-
     st.title("Ask Filomena 🍲")
     st.write("Ask me anything about portuguese food and restaurants and I'll do my best to answer you! 🇵🇹")
     st.write("Note that the answers are not always 100% accurate, but I'm learning!")
 
-    if "chatbot" not in st.session_state:
-        st.session_state.chatbot = Filomena()
-    
     files = ['data\CP-23Group4 Project Proposal.pdf', 'data\Food Personalities.pdf']
-    st.session_state.chatbot.load_documents(files, 'pdf')
+    if "chatbot" not in st.session_state or st.session_state.chatbot is None:
+        fil = Filomena()
+        fil.load_documents(files, 'pdf')
+        fil.generate_response("[Instruction: Identification] Hello", identified=True)
+        st.session_state.chatbot = fil
 
-    with st.sidebar:
-        st.markdown(
-            f"ChatBot in use: <font color='cyan'>{st.session_state.chatbot.__str__()}</font>", unsafe_allow_html=True
-        )
+
+    
+
+
 
 
 def display_history_messages():
@@ -42,14 +39,15 @@ def display_history_messages():
     Display chat messages from history on app rerun.
     """
     # Display chat messages from history on app rerun
-    for message in st.session_state.chatbot.memory:
-        if message["role"] == "user":
-            avatar = 'https://miro.medium.com/v2/resize:fit:1100/format:webp/1*_ARzR7F_fff_KI14yMKBzw.png'
-        else:
-            avatar = avatar="https://cdn.discordapp.com/attachments/1150843302644547768/1190661589347602492/1000_F_378272550_xN8H7ZVudgCYWzfuZxRxVS5uFKjzsoMg.jpg?ex=65a29d04&is=65902804&hm=4a84c24f579a1d8ac5493b28f47b50c1dc7aaabc2832cb090bd7e4e95b2ab786&"
-        with st.chat_message(message["role"], avatar=avatar):
-            st.markdown(message["content"])
-        
+    if st.session_state.chatbot.messages != []:
+        for message in st.session_state.chatbot.messages:
+            if message["role"] == "user":
+                avatar = 'https://miro.medium.com/v2/resize:fit:1100/format:webp/1*_ARzR7F_fff_KI14yMKBzw.png'
+            else:
+                avatar = avatar="https://cdn.discordapp.com/attachments/1150843302644547768/1190661589347602492/1000_F_378272550_xN8H7ZVudgCYWzfuZxRxVS5uFKjzsoMg.jpg?ex=65a29d04&is=65902804&hm=4a84c24f579a1d8ac5493b28f47b50c1dc7aaabc2832cb090bd7e4e95b2ab786&"
+            with st.chat_message(message["role"], avatar=avatar):
+                st.markdown(message["content"])
+            
 
 def display_user_msg(message: str):
     """
@@ -95,12 +93,11 @@ if __name__ == "__main__":
         # [i] Display History #
         display_history_messages()
 
-        if prompt := st.chat_input("Type your request..."):
+        if prompt := st.chat_input("Talk with Filomena..."):
 
             # [*] Request & Response #
             display_user_msg(message=prompt)
-            assistant_response = st.session_state.chatbot.get_completion(
-                message=prompt)
+            assistant_response = st.session_state.chatbot.generate_response(query=prompt)
             display_assistant_msg(message=assistant_response)
 
     else:

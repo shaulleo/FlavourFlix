@@ -1,11 +1,17 @@
-
-"""
-ChatBot classes
-"""
-
-import random
+from langchain.chat_models import ChatOpenAI
+from langchain.document_loaders import PyPDFLoader
+from langchain.memory import ConversationBufferMemory
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from prompts_list import *
+from langchain.chains.question_answering import load_qa_chain
+from langchain.prompts import PromptTemplate
+from langchain.chat_models import ChatOpenAI
+from functions.utils import *
 from openai import OpenAI
-from functions.utils import local_settings
+from prompt_templates import *
+
 
 
 class GPT_Helper:
@@ -24,8 +30,10 @@ class GPT_Helper:
                 "content": system_behavior
             })
 
-    # [i] get completion from the model             #
-    def get_completion(self, prompt, temperature=0):
+    # [i] get completion from the model             
+    def get_completion(self, prompt, temperature=0.3):
+
+        self.messages = []
 
         self.messages.append({"role": "user", "content": prompt})
 
@@ -42,42 +50,70 @@ class GPT_Helper:
         )
 
         return completion.choices[0].message.content
-
-class FilomenaChatBot:
-    """
-    Generate a response by using LLMs.
-    """
-
-    def __init__(self, system_behavior: str):
-        self.__system_behavior = system_behavior
-
-        self.engine = GPT_Helper(
-            OPENAI_API_KEY=local_settings.OPENAI_API_KEY,
-            system_behavior=system_behavior
-        )
+    
 
 
-    def generate_response(self, message: str):
-        return self.engine.get_completion(message)
+query_helper =  GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, system_behavior=prompt_templates['Query Helper System'])
 
-    def __str__(self):
-        shift = "   "
-        class_name = str(type(self)).split('.')[-1].replace("'>", "")
 
-        return f"🤖 {class_name}."
+def prep_question(query, chatbot_message):
+    prompt = f"""
+            The User Message is:{query}
+            The ChatBot Message is:{chatbot_message}
+            """
 
+    query_formatted = query_helper.get_completion(prompt)
+    return query_formatted
+
+
+
+class Filomena():
+    def __init__(self, ):
+        self.llm = ChatOpenAI(temperature=0.3, api_key=local_settings.OPENAI_API_KEY)
+        self.memory = ConversationBufferMemory(memory_key="chat_history",  input_key="question")
+        self.prompt = PromptTemplate(
+            input_variables=["chat_history", "question", "context"], 
+            template= prompt_templates['Filomena Template'])
+        self.agent_chain = load_qa_chain(self.llm, chain_type="stuff", memory=self.memory, prompt=self.prompt)
+        self.messages = []
+
+    def load_documents(self, file_paths, type='pdf'):
+        docs = []
+
+        # if type == 'pdf':
+        for file_path in file_paths:
+                loader = PyPDFLoader(file_path)
+                docs.extend(loader.load())
+
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500,chunk_overlap=200)
+        splits = text_splitter.split_documents(docs)
+
+        embeddings = OpenAIEmbeddings()
+        vectordb = FAISS.from_documents(splits, embeddings)
+        self.vectordb = vectordb
+
+    def generate_response(self, query, identified=False):
+        
+        self.messages.append({"role": "user", "content": query})
+
+        if not identified:
+            try:
+                query = prep_question(query, self.messages[-2]['content'])
+            except:
+                query = query
+
+        response = self.agent_chain(
+                    {"input_documents": self.vectordb.max_marginal_relevance_search(query, k=3),
+                        "question": f'{query}',},
+                    return_only_outputs=True)
+
+        self.messages.append({"role": "assistant","content": response['output_text']})
+
+        return response['output_text']
+    
     def reset(self):
-        ...
+        self.messages = []
 
-    @property
-    def memory(self):
-        return self.engine.messages
-
-    @property
-    def system_behavior(self):
-        return self.__system_config
-
-    @system_behavior.setter
-    def system_behavior(self, system_config : str):
-        self.__system_behavior = system_config
-
+        
+    
+    
