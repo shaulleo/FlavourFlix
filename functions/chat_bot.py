@@ -18,6 +18,7 @@ from functions.preprocessement import *
 from langchain.agents import tool
 from langchain.agents import load_tools, initialize_agent
 from langchain.agents import AgentType
+import pickle
 
 
 
@@ -240,8 +241,8 @@ class RestaurantDescriptionBot():
 # ---------------------------- FILOMENA ----------------------------#
     
 personality_finder = QuestionAnsweringBot()
-personality_finder.initialize_qa(files=[''])
-personality_description = personality_finder.generate_response("What are FlavourFlix' personality types? Describe them.")
+personality_finder.initialize_qa(files=['text_data\Product.pdf'])
+
 
 
 class Filomena():
@@ -279,17 +280,32 @@ class Filomena():
             response = self.restaurant_descriptor_agent.generate_response(query)
         elif instruction_name == '[INSTRUCTION: What is my personality]':
             if ('personality' in st.session_state and st.session_state['personality'] != None):
-                response = f"""You are a {st.session_state['personality']}."""
+                personality_description = personality_finder.generate_response("Describe the personality type " + st.session_state['personality'])
+                response = f"""You are a {st.session_state['personality']}. {personality_description}"""
+            elif personality_type != 'Not Available':
+                personality_description = personality_finder.generate_response("Describe the personality type " + st.session_state['personality'])
+                response = f"""You are a {personality_type}. {personality_description}"""
             else:
-                personality_finder = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, system_behavior = prompt_templates['Personality Finder'])
-                personality_finder.get_completion(f"""INSTRUCTION: Consider the variable 'personality' and its possible values. \ 
-                                                  If the value is different from 'Not Available', state that the user is a 'PERSONALITY' and explain the 
-                                                  personality in question based on 'PERSONALITY DESCRIPTION'. \
-                                                  Otherwise, state that you do not yet have access to the user's personality and that they\
-                                                   should take the personality questionnaire available in the app. 
-                                                  'PERSONALITY': {personality_type}
-                                                    'PERSONALITY DESCRIPTION': {personality_description} 
-                                                """ )
+                personality_finder = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, system_behavior = prompt_templates['Personality Finder']['system_config'])
+                response = personality_finder.get_completion(prompt_templates['Personality Finder']['questionnaire_retrieval'])
+                if response.find("<<<CLASSIFICATION_ON>>>") >= 0:
+                    CLASSIFICATION = True
+        elif instruction_name == '[INSTRUCTION: Determine the Personality]':
+            response = personality_finder.generate_response(prompt_templates['Personality Finder']['obtain_personality'])
+            st.session_state['personality'] = response
+            if CLASSIFICATION:
+                with open('models/iris_classifier.pkl', 'rb') as f:
+                    classifier = pickle.load(f)
+                params = eval(response)
+                personality_type = classifier.predict(**params)
+                personality_description = personality_finder.generate_response("Describe the personality type " + st.session_state['personality'])
+                response = f"""You are a {personality_type}. {personality_description}"""
+            
+
+
+
+            
+
             
         else:
             response = 'Sorry, I am not yet capable of performing this task or instruction. Can I help you with anything else?'

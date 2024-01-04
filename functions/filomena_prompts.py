@@ -136,6 +136,7 @@ Your responses should be friendly, casual, yet professional.
 INSTRUCTION:
 You will receive a chat history between the ChatBot and the user, and a final query from the user. \
 Your job is to answer the user's question based on the provided context, the user question, and the chat history. \
+If you cannot answer the question, you should return a message saying that you cannot answer the question.
 
 Context:
 {context} 
@@ -169,6 +170,11 @@ instructions = {
                                                           Your role involves deciphering which personality type the user has based on \
                                                             the user's answers to the personality questionnaire.""",
                                                           'when to use': """When the user asks about their FlavourFlix personality type."""},
+                '[INSTRUCTION: Determine the Personality]': 
+                {'instruction description': f"""CONTEXT: You are Filomena, a virtual assistant talking with a FlavourFlix user. \
+                                                          Your role involves deciphering which personality type the user has based on \
+                                                            the user's answers to the personality questionnaire. """,
+                                                          'when to use': """When the user responds to a questionnaire about their dining preferences to find their personality type."""},
                                         }
 
 
@@ -188,12 +194,54 @@ You will receive an 'Original prompt'
 and you must output 'Restaurant Name'. \n
 """
 
-personality_finder_template = """Context: You are FlavourFlix' virtual assistant. You are tasked with finding the personality type of the user.
+personality_finder_system = """Context: You are FlavourFlix' virtual assistant. You are tasked with finding the personality type of the user.
                 You will receive a 'Chat History' and a 'Query'. You must output the personality type of the user if possible. \n   """
 
+questionnaire =  {"Willingness to Try Exotic Foods":"I am open to trying unfamiliar and exotic dishes.", 
+             "Importance of Food Presentation":"The presentation and plating of my meal is very important.",
+             "Value for Money in Meals":"I prioritize getting good value for price when choosing a meal.",
+             "Preference for Gourmet Restaurants":"I prefer dining at high-end gourmet restaurants.",
+             "Interest in Nutritional Content": "I pay a lot of attention to the nutritional content and health benefits of my meals.",
+             "Frequency of Eating Home-Cooked Meals": "I often opt for home-cooked meals over dining out.",
+             "Desire for New Culinary Experiences": "It is important to me to consistently explore new culinary experiences.",
+             "Preference for Organic or Diet-Specific Foods": "I often incorporate organic or diet-specific foods (e.g., vegan, keto) in my meals.",
+             "Enjoyment of Traditional or Familiar Foods": "I mostly enjoy eating traditional and/or familiar dishes.",
+             "Willingness to Spend on High-Quality Ingredients": "I am willing to spend extra if it means getting high-quality ingredients.",}
+
+personality_questionnaire_retrieval = f"""INSTRUCTIONS:
+Present the following `questions` to the user, whose values will serve as input for a classification model:
+{questionnaire}
+
+The answers should be on a scale from 1 to 5, where 1 is "Strongly Disagree" and 5 is "Strongly Agree".
+You also must add an final annotation <<<CLASSIFICATION_ON>>>
+Get the values provided and generate a dictionary with the identifier of the question as the key and the value with the number provided by the user. 
+
+Example of your request message to the user (for simplicity, shown with only 3 questions but you should ask all 10):
+<message>
+Yes, I can find your personality. To do that, I need you two answer the following questions, on a scale from 1 to 5, where \
+     1 is "Strongly Disagree" and 5 is "Strongly Agree". 
+a) "I am open to trying unfamiliar and exotic dishes."
+b) "The presentation and plating of my meal is very important."
+c) "The presentation and plating of my meal is very important."
+
+<<<CLASSIFICATION_ON>>>
+</message>
+"""
+
+obtain_personality =  f"""Extract the answer values from the following text and generate a dictionary with the question identifier \ 
+                            (key of QUESTIONS) and the respective user answer.
+
+                            TEXT: {st.session_state.chatbot.personality_finder.messages[-1]['content']}
+
+                            QUESTIONS: {questionnaire}
+
+                            OUTPUT FORMAT: {"question_identifier": "user_answer"}
+                            """
 
 prompt_templates = {'Instructions': instructions,
                      'Instruction Identification': instruction_identifier, 
                      'Preparing Questions': {'question_answer': prepare_question_qa_template, 
                                              'restaurant_description': prepare_restaurant_question_template},
-                    'Personality Finder': personality_finder_template}
+                    'Personality Finder': {'system_config': personality_finder_system,
+                                            'questionnaire_retrieval': personality_questionnaire_retrieval},
+                                            'obtain_personality': obtain_personality}
