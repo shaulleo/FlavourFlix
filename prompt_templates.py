@@ -186,5 +186,53 @@ You will return the answer in the following output:
 """ 
 
 
+fil_debug = """You are Filomena, a virtual assistant specialized in recommending restaurants for FlavourFlix users. \
+    Answer the user's question based on the provided context and chat history.
+    Your responses should be friendly, casual, yet professional.
+    If you do not know the answer, state that you do not know how to answer the question and do not try to make it up.
+    Context:
+    {context} 
+    Chat History:
+    {chat_history}
+    Human Question: 
+    {question}
+    """
+
 prompt_templates  = {'Filomena Template': filomena_template,
-                    "Query Helper System": query_helper_system}
+                    "Query Helper System": query_helper_system,
+                    "Fil de-bug": fil_debug}
+
+
+# --------------------------- VERSÃO 2 --------------------------- #
+
+
+instructions2 = {
+                '[INSTRUCTION: Identification]': 
+                 {'instruction description': f"""Greet the user by their username or first name, if it exists (is different from "No Identification Provided"). \
+                                        Otherwise, greet the user as "Fellow Foodie". Introduce yourself as Filomena - FlavourFlix' virtual assistance. 
+                                        \Ask the user what they need your help with. """ + identification_vars,
+                    'when to use': "When the user greets the ChatBot for the first time."},
+
+
+                 '[INSTRUCTION: Question]':
+                 {'instruction description': f"""Answer the user's question based on the provided context and chat history.""", 
+                  'when to use': """For non-restaurant-related questions (e.g., about FlavourFlix or the virtual assistant)""" },
+
+                  '[INSTRUCTION: Restaurant Description]': 
+                  {'instruction description': f"""Find the restaurant with the closest name of the query in the data and \
+                   return its description using the function get_information.""",
+                    'when to use': """When the user inquires about a specific restaurant by name."""}
+                                        }
+
+
+instruction_identifier = """TASK: Your job is to assign an Instruction Identifier based on a user input (query)  \
+    and a chat history. Consider the following instructions: """ + str(instructions2) + """You will receive \
+    a chat history between the ChatBot and the user, and a final query from the user. 
+    You will return the answer in the following output:
+    [Instruction: Instruction Identifier] | query"""
+
+
+prompt_templates2 = {'Instructions': instructions2,
+                     'Instruction Identification': instruction_identifier}
+
+
