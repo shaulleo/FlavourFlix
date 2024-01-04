@@ -22,7 +22,6 @@ def initialize() -> None:
     """
     Initialize the app
     """
-
     files = []
     for file in os.listdir('text_data'):
         file = f'text_data/{file}'

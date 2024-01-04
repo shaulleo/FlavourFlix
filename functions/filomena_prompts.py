@@ -228,15 +228,15 @@ c) "The presentation and plating of my meal is very important."
 </message>
 """
 
-obtain_personality =  f"""Extract the answer values from the following text and generate a dictionary with the question identifier \ 
-                            (key of QUESTIONS) and the respective user answer.
+# obtain_personality =  f"""Extract the answer values from the following text and generate a dictionary with the question identifier \ 
+#                             (key of QUESTIONS) and the respective user answer.
 
-                            TEXT: {st.session_state.chatbot.personality_finder.messages[-1]['content']}
+#                             TEXT: {st.session_state.chatbot.personality_finder.messages[-1]['content']}
 
-                            QUESTIONS: {questionnaire}
+#                             QUESTIONS: {questionnaire}
 
-                            OUTPUT FORMAT: {"question_identifier": "user_answer"}
-                            """
+#                             OUTPUT FORMAT: {"question_identifier": "user_answer"}
+#                             """
 
 prompt_templates = {'Instructions': instructions,
                      'Instruction Identification': instruction_identifier, 
@@ -244,4 +244,4 @@ prompt_templates = {'Instructions': instructions,
                                              'restaurant_description': prepare_restaurant_question_template},
                     'Personality Finder': {'system_config': personality_finder_system,
                                             'questionnaire_retrieval': personality_questionnaire_retrieval},
-                                            'obtain_personality': obtain_personality}
+                                           }

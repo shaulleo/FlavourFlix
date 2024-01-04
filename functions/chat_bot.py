@@ -10,6 +10,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
 from langchain.chat_models import ChatOpenAI
+from langchain import hub
+from langchain.agents import AgentExecutor, create_structured_chat_agent
 from functions.utils import *
 from openai import OpenAI
 from langdetect import detect
@@ -236,6 +238,15 @@ class RestaurantDescriptionBot():
         return response['output']
 
 
+class RestaurantRecommendationBot():
+    def __init__(self):
+        self.llm = ChatOpenAI(temperature=0.3, api_key=local_settings.OPENAI_API_KEY, model='gpt-3.5-turbo')
+        self.tools = [get_recommendation]
+        self.hub_prompt = hub.pull("hwchase17/structured-chat-agent")
+        self.agent = create_structured_chat_agent(self.llm, self.tools, self.hub_prompt)
+        agent_executor = AgentExecutor(agent= self.agent, tools=self.tools, verbose=False, handle_parsing_errors=True)
+
+
 
 
 # ---------------------------- FILOMENA ----------------------------#
@@ -291,7 +302,16 @@ class Filomena():
                 if response.find("<<<CLASSIFICATION_ON>>>") >= 0:
                     CLASSIFICATION = True
         elif instruction_name == '[INSTRUCTION: Determine the Personality]':
-            response = personality_finder.generate_response(prompt_templates['Personality Finder']['obtain_personality'])
+            obtain_personality =  f"""Extract the answer values from the following text and generate a dictionary with the question identifier \ 
+                            (key of QUESTIONS) and the respective user answer.
+
+                            TEXT: {personality_finder.messages[-1]['content']}
+
+                            QUESTIONS: {questionnaire}
+
+                            OUTPUT FORMAT: {"question_identifier": "user_answer"}
+                            """
+            response = personality_finder.generate_response(obtain_personality)
             st.session_state['personality'] = response
             if CLASSIFICATION:
                 with open('models/iris_classifier.pkl', 'rb') as f:
@@ -299,14 +319,7 @@ class Filomena():
                 params = eval(response)
                 personality_type = classifier.predict(**params)
                 personality_description = personality_finder.generate_response("Describe the personality type " + st.session_state['personality'])
-                response = f"""You are a {personality_type}. {personality_description}"""
-            
-
-
-
-            
-
-            
+                response = f"""You are a {personality_type}. {personality_description}"""            
         else:
             response = 'Sorry, I am not yet capable of performing this task or instruction. Can I help you with anything else?'
         return response
