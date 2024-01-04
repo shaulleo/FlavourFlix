@@ -1,6 +1,7 @@
 from functions.streamlitfunc import *
 from functions.utils import *
 import time
+import os
 import streamlit as st
 from functions.chat_bot import *
 from functions.utils import local_settings
@@ -14,31 +15,38 @@ filomena_pic =  "https://cdn.discordapp.com/attachments/1150843302644547768/1190
 user_pic =   "https://miro.medium.com/v2/resize:fit:1100/format:webp/1*_ARzR7F_fff_KI14yMKBzw.png"                                 
 
 
+if "chatbot" not in st.session_state:
+    st.session_state.chatbot = None
+
 def initialize() -> None:
     """
     Initialize the app
     """
 
-    files = ['data\CP-23Group4 Project Proposal.pdf', 'data\Food Personalities.pdf']
+    files = []
+    for file in os.listdir('text_data'):
+        file = f'text_data/{file}'
+        files.append(file)
     if "chatbot" not in st.session_state or st.session_state.chatbot is None:
         fil = Filomena()
-        fil.intialize_filomena(files)      
+        fil.initialize(files=files)    
         st.session_state.chatbot = fil
+   
 
 
 def display_history_messages():
     """
     Display chat messages from history on app rerun.
     """
+
     # Display chat messages from history on app rerun
-    if st.session_state.chatbot.messages != []:
-        for message in st.session_state.chatbot.messages:
-            if message["role"] == "user":
-                avatar = user_pic
-            else:
-                avatar = avatar=filomena_pic
-            with st.chat_message(message["role"], avatar=avatar):
-                st.markdown(message["content"])
+    for message in st.session_state.chatbot.messages:
+        if message["role"] == "user":
+            avatar = user_pic
+        else:
+            avatar = avatar=filomena_pic
+        with st.chat_message(message["role"], avatar=avatar):
+            st.markdown(message["content"])
             
 
 def display_user_msg(message: str):
@@ -87,7 +95,7 @@ if __name__ == "__main__":
         with colb:
             st.title("Talk with Filomena 🍲")
             st.write("Ask me anything about FlavourFlix, food personalities, or even restaurant recommendations and I'll do my best to answer you! 🇵🇹")
-            st.caption("Note that the answers are not always 100% accurate, but I'm learning!")
+            st.caption("Note that the answers are not always 100% accurate, but I'm learning! Use the promp templates in the sidebar to maximize my potential." )
 
         st.write('')
 
@@ -98,6 +106,7 @@ if __name__ == "__main__":
             display_user_msg(message=prompt)
             assistant_response = st.session_state.chatbot.generate_response(query=prompt)
             display_assistant_msg(message=assistant_response)
+
 
     else:
         pages_logged_off()

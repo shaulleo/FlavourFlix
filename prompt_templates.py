@@ -211,23 +211,22 @@ instructions2 = {
                  {'instruction description': f"""Greet the user by their username or first name, if it exists (is different from "No Identification Provided"). \
                                         Otherwise, greet the user as "Fellow Foodie". Introduce yourself as Filomena - FlavourFlix' virtual assistance. 
                                         \Ask the user what they need your help with. """ + identification_vars,
-                    'when to use': 'Should be used when the user greets the ChatBot for the first time.'},
+                    'when to use': "When the user greets the ChatBot for the first time."},
 
 
                  '[INSTRUCTION: Question]':
                  {'instruction description': f"""Answer the user's question based on the provided context and chat history.""", 
-                  'when to use': """The user asks a question which is not related to restaurant recommendations or restaurant descriptions 
-                  (e.g: a question about FlavourFlix, the project or about Filomena).""" },
+                  'when to use': """For non-restaurant-related questions (e.g., about FlavourFlix or the virtual assistant)""" },
 
                   '[INSTRUCTION: Restaurant Description]': 
                   {'instruction description': f"""Find the restaurant with the closest name of the query in the data and \
                    return its description using the function get_information.""",
-                    'when to use': """The user asks a question about a specific restaurant, stating its name."""}
+                    'when to use': """When the user inquires about a specific restaurant by name."""}
                                         }
 
 
 instruction_identifier = """TASK: Your job is to assign an Instruction Identifier based on a user input (query)  \
-    and a chat history. Consider the following instructions: """ + instructions2 + """You will receive \
+    and a chat history. Consider the following instructions: """ + str(instructions2) + """You will receive \
     a chat history between the ChatBot and the user, and a final query from the user. 
     You will return the answer in the following output:
     [Instruction: Instruction Identifier] | query"""
