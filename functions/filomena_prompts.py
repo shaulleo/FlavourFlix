@@ -2,6 +2,7 @@ import streamlit as st
 from functions.utils import *
 from sklearn.metrics.pairwise import cosine_similarity 
 import spacy
+import re
 # !python -m spacy download en_core_web_md
 
 
@@ -66,9 +67,6 @@ def get_data_match(data, word, col_to_match):
 
     return max(similarities, key=similarities.get)
     
-def get_recommendation():
-    pass
-
 
 def filter_schedule(restaurants, dinner_hour = None, lunch_hour = None):
     def contains_time_interval(schedule):
@@ -115,13 +113,24 @@ def get_personality(username):
         return personality_questionnaire[personality_questionnaire['username'] == username]['personality'].values[0]
     else:
         return 'Not Available'
+    
+
 
 
 # ------------------------ Relevant Variables ------------------------#
 
 identification_vars = get_identification_and_user()
 profile_vars = get_profile()
-personality_type = get_personality(st.session_state['username'])
+pattern = r"Username:\s*([^\s|]+)"
+matches = re.search(pattern, identification_vars)
+
+if type(matches) != type(None):
+    username = matches.group(1)
+    personality_type = get_personality(username)
+else:
+    username = 'Not Available'
+    personality_type = 'Not Available'
+
 
 # ------------------------ Prompt Templates ------------------------#
 
@@ -228,15 +237,7 @@ c) "The presentation and plating of my meal is very important."
 </message>
 """
 
-# obtain_personality =  f"""Extract the answer values from the following text and generate a dictionary with the question identifier \ 
-#                             (key of QUESTIONS) and the respective user answer.
 
-#                             TEXT: {st.session_state.chatbot.personality_finder.messages[-1]['content']}
-
-#                             QUESTIONS: {questionnaire}
-
-#                             OUTPUT FORMAT: {"question_identifier": "user_answer"}
-#                             """
 
 prompt_templates = {'Instructions': instructions,
                      'Instruction Identification': instruction_identifier, 

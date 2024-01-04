@@ -290,10 +290,7 @@ class Filomena():
         elif instruction_name == '[INSTRUCTION: Restaurant Description]':
             response = self.restaurant_descriptor_agent.generate_response(query)
         elif instruction_name == '[INSTRUCTION: What is my personality]':
-            if ('personality' in st.session_state and st.session_state['personality'] != None):
-                personality_description = personality_finder.generate_response("Describe the personality type " + st.session_state['personality'])
-                response = f"""You are a {st.session_state['personality']}. {personality_description}"""
-            elif personality_type != 'Not Available':
+            if personality_type != 'Not Available':
                 personality_description = personality_finder.generate_response("Describe the personality type " + st.session_state['personality'])
                 response = f"""You are a {personality_type}. {personality_description}"""
             else:
@@ -318,7 +315,7 @@ class Filomena():
                     classifier = pickle.load(f)
                 params = eval(response)
                 personality_type = classifier.predict(**params)
-                personality_description = personality_finder.generate_response("Describe the personality type " + st.session_state['personality'])
+                personality_description = personality_finder.generate_response("Describe the personality type " + personality_type)
                 response = f"""You are a {personality_type}. {personality_description}"""            
         else:
             response = 'Sorry, I am not yet capable of performing this task or instruction. Can I help you with anything else?'
