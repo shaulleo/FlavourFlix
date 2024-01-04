@@ -1,4 +1,4 @@
-from prompt_templates import *
+from functions.filomena_prompts import *
 from functions.utils import *
 from openai import OpenAI
 from langchain.chat_models import ChatOpenAI
@@ -12,84 +12,17 @@ from langchain.prompts import PromptTemplate
 from langchain.chat_models import ChatOpenAI
 from functions.utils import *
 from openai import OpenAI
-import spacy
+from langdetect import detect
+from functions.location import *
+from functions.preprocessement import *
 from langchain.agents import tool
-from sklearn.metrics.pairwise import cosine_similarity 
 from langchain.agents import load_tools, initialize_agent
 from langchain.agents import AgentType
-
-# !python -m spacy download en_core_web_md
-
-
-# ----------------------------- PROMPT TEMPLATES ----------------------------- # (vai para outro folder)
-
-
-question_answer_template = """
-TASK:
-You are Filomena, a virtual assistant specialized in recommending restaurants for FlavourFlix users. \
-Your role involves answering any question provided by the user about FlavourFlix and all of its functionalities, as well as 
-help the user navigate the platform by answering any doubt. \
-Your responses should be friendly, casual, yet professional. 
-
-INSTRUCTION:
-You will receive a chat history between the ChatBot and the user, and a final query from the user. \
-Your job is to answer the user's question based on the provided context, the user question, and the chat history. \
-
-Context:
-{context} 
-Chat History:
-{chat_history}
-User: 
-{question}
-Chatbot:
-"""
+import pickle
 
 
 
-instructions2 = {
-                '[INSTRUCTION: Identification]': 
-                 {'instruction description': """CONTEXT: You are Filomena, a virtual assistant talking with a FlavourFlix user. \
-                        Assume a friendly, casual and professional tone. Greet the user. """,
-                    'when to use': "When the user greets the ChatBot and the content of the last message from the assistant is empty."},
-
-
-                 '[INSTRUCTION: Question]':
-                 {'instruction description': question_answer_template, 
-                  'when to use': """For non-restaurant-related questions (e.g., about FlavourFlix or the virtual assistant)""" },
-
-                  '[INSTRUCTION: Restaurant Description]': 
-                  {'instruction description': f"""Find the restaurant with the closest name of the query in the data and \
-                   return its description using the function get_information.""",
-                    'when to use': """When the user inquires about a specific restaurant by name. CAUTION: 
-                    "The Adventurer", "Fine Dining Connoiser", "Comfort Food Lover", "Low Cost Foodie" and "Conscious Eater" are not restaurant names."""}
-                                        }
-
-
-instruction_identifier = """CONTEXT: You are a bot which identifies the instruction to be performed by a different virtual assistant. """
-
-
-
-prepare_question_qa_template = """
-Context: You are preprocessing general questions to be answered by the virtual assistance of the restaurant-recommendation plaform FlavourFlix. 
-You are preprocessing the questions such that the virtual assistant has an easier time answering them. You will receive an 'Original prompt' 
-and you must output a 'Refined prompt'. """
-
-prepare_restaurant_question_template = """
-Context: You are preprocessing restaurants-driven questions to be answered by the virtual assistance of the restaurant-recommendation plaform FlavourFlix.
-You are preprocessing the questions such that the virtual assistant can accurately find the restaurant the original prompt mentions.
-You will receive an 'Original prompt'
-and you must output 'Restaurant Name'. \n
-"""
-
-
-
-prompt_templates2 = {'Instructions': instructions2,
-                     'Instruction Identification': instruction_identifier, 
-                     'Preparing Questions': {'question_answer': prepare_question_qa_template, 
-                                             'restaurant_description': prepare_restaurant_question_template}}
-
-
-#  ----------------------------- AGENT TOOLS AND OTHER FUNCTIONS ----------------------------- #
+#  ----------------------------- AGENT TOOLS ----------------------------- #
 
 @tool
 def get_restaurant_info(restaurant_name):
@@ -105,16 +38,72 @@ def get_restaurant_info(restaurant_name):
     return result
 
 
-def get_data_match(data, word, col_to_match):
-    nlp = spacy.load("en_core_web_md")
+@tool
+def get_recommendation(nationality=None, city=None, travel_car=None,  favourite_food=None,  restaurant_style=None,
+                       cuisine_type=None, lunch_hour=None, dinner_hour=None,
+                       normal_price_range=None):
+    """Recommends restaurants based on the user's preferences and requirements."""
+    restaurant_data = pd.read_csv('data/preprocessed_restaurant_data.csv')
+    filtered_data = restaurant_data.copy()
 
-    word_embedding = nlp(word).vector
-    similarities = {}
-    for token in list(data[col_to_match].unique()):
-        token_embedding = nlp(token).vector
-        similarities[token] = cosine_similarity([word_embedding], [token_embedding])[0][0]
+    conditions = []
 
-    return max(similarities, key=similarities.get)
+    #Location filters such that the restaurant is near the user and the place the user wants to go
+    if city:
+        city_match = get_data_match(restaurant_data, city, 'city')
+        filtered_data = filtered_data[filtered_data['city'] == city_match]
+        latitude, longitude = find_coordinates(city_match)
+        if latitude is not None and longitude is not None:
+            desired_location = Location(latitude, longitude)
+            filtered_data = nearYou(desired_location, filtered_data)
+            if travel_car:
+                filtered_data['minutes_away'] = filtered_data.apply(lambda row: desired_location.getDirections(row['latitude'], row['longitude'], ['driving'])['driving'].minutes, axis=1)
+                filtered_data = filtered_data[filtered_data['minutes_away'] <= 35]
+            else:
+                filtered_data['minutes_away'] = filtered_data.apply(lambda row: desired_location.getDirections(row['latitude'], row['longitude'], ['walking'])['walking'].minutes, axis=1)
+                filtered_data = filtered_data[filtered_data['minutes_away'] <= 59]
+
+    #Time filters such that the restaurant is open at the time the user wants to go
+    if lunch_hour:
+        filtered_data = filter_schedule(filtered_data, dinner_hour, lunch_hour)
+    if dinner_hour:
+        filtered_data = filter_schedule(filtered_data, dinner_hour, lunch_hour)
+    
+    #Additional filters
+    if nationality and len(filtered_data) != 0:
+        nationality_match = get_data_match(restaurant_data, nationality, 'cuisine')
+        conditions.append(restaurant_data['cuisine'] == nationality_match)
+    
+    if restaurant_style:
+        restaurant_style_match = get_data_match(restaurant_data, restaurant_style, 'style')
+        conditions.append(restaurant_data['style'] == restaurant_style_match)
+    
+    if cuisine_type:
+        cuisine_type_match = get_data_match(restaurant_data, cuisine_type, 'cuisine')
+        conditions.append(restaurant_data['cuisine'] == cuisine_type_match)
+
+    if normal_price_range:
+        conditions.append(restaurant_data['averagePrice'] <= normal_price_range+4)
+
+    if favourite_food:
+        if detect(favourite_food) == 'en':
+            conditions.append(restaurant_data['menu_en'].str.contains(favourite_food))
+        else:
+            conditions.append(restaurant_data['menu_pre_proc'].str.contains(favourite_food))
+    
+
+    # Combine conditions with logical OR
+    if conditions and len(filtered_data) != 0:
+        filtered_data = restaurant_data[pd.concat(conditions, axis=1).any(axis=1)]
+    else:
+        filtered_data = restaurant_data 
+
+    # Ranking - sort by ratings or other criteria
+    restaurant_data = restaurant_data.sort_values(by='ratingValue', ascending=False)
+
+    # Return top recommendations
+    return restaurant_data.head(5) 
+
 
 # ----------------------------- AGENTS ----------------------------- #
 
@@ -156,7 +145,7 @@ class GPT_Helper:
 
     def get_instruction(self, query, chat_history):
         prompt = """TASK: Your job is to assign an Instruction Identifier based on the user input (query)  \
-                        and a chat history. The Instruction Identifiers and their descriptions are:  """ + str(instructions2) + f"""OUTPUT:
+                        and a chat history. The Instruction Identifiers and their descriptions are:  """ + str(instructions) + f"""OUTPUT:
     You will return the answer in the following format:
     [Instruction: Instruction Identifier] | query
     USER QUERY: {query}
@@ -175,7 +164,7 @@ class QuestionAnsweringBot():
         self.llm = ChatOpenAI(temperature=0, api_key=local_settings.OPENAI_API_KEY)
         self.memory = ConversationBufferMemory(memory_key="chat_history",  input_key="question")
         self.prompt = PromptTemplate(
-            input_variables=["chat_history", "question", "context"], template= instructions2['[INSTRUCTION: Question]']['instruction description'])
+            input_variables=["chat_history", "question", "context"], template= instructions['[INSTRUCTION: Question]']['instruction description'])
         self.agent_chain = load_qa_chain(self.llm, chain_type="stuff", memory=self.memory, prompt=self.prompt)
         self.messages = []
     
@@ -195,7 +184,7 @@ class QuestionAnsweringBot():
 
     def prepare_question(self, query):
         question_preparer = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, 
-                                       system_behavior = prompt_templates2['Preparing Questions']['question_answer'])  
+                                       system_behavior = prompt_templates['Preparing Questions']['question_answer'])  
         query = f"""Task: Refine the 'Original prompt' to ensure it is clear, relevant. Start by making the prompt concise and clear, rephrasing any vague 
                 or complex sentences. Then, identify the core question or remove unnecessary details to improve relevance.
                 Original prompt': {query} 
@@ -230,7 +219,7 @@ class RestaurantDescriptionBot():
     def prepare_question(self, query):
         restaurant_data = pd.read_csv('data\preprocessed_restaurant_data.csv')
         question_preparer = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, 
-                                       system_behavior = prompt_templates2['Preparing Questions']['restaurant_description'])  
+                                       system_behavior = prompt_templates['Preparing Questions']['restaurant_description'])  
         query = f"""Task: Obtain the restaurant name from the 'Original prompt'.
                 Original prompt': {query}
                 Output: 'Restaurant Name'
@@ -250,18 +239,23 @@ class RestaurantDescriptionBot():
 
 
 # ---------------------------- FILOMENA ----------------------------#
+    
+personality_finder = QuestionAnsweringBot()
+personality_finder.initialize_qa(files=['text_data\Product.pdf'])
+
+
 
 class Filomena():
     def __init__(self, ):
         self.core_messages = []
-        self.core_piece = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, system_behavior = prompt_templates2['Instruction Identification'])
+        self.core_piece = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, system_behavior = prompt_templates['Instruction Identification'])
         self.llm = ChatOpenAI(temperature=0, api_key=local_settings.OPENAI_API_KEY)
         self.messages = []
         self.question_agent = QuestionAnsweringBot()
         self.restaurant_descriptor_agent = RestaurantDescriptionBot()
 
     def greet(self):
-        greeter = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, system_behavior = instructions2['[INSTRUCTION: Identification]']['instruction description'])
+        greeter = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, system_behavior = instructions['[INSTRUCTION: Identification]']['instruction description'])
         
         response = greeter.get_completion(f""" INSTRUCTION: Greet the user by their username or first name, if it exists (is different from "No Identification Provided"). \
                                         Otherwise, greet the user as "Fellow Foodie". Introduce yourself as Filomena - FlavourFlix' virtual assistance. 
@@ -284,6 +278,35 @@ class Filomena():
             response = self.question_agent.generate_response(query)
         elif instruction_name == '[INSTRUCTION: Restaurant Description]':
             response = self.restaurant_descriptor_agent.generate_response(query)
+        elif instruction_name == '[INSTRUCTION: What is my personality]':
+            if ('personality' in st.session_state and st.session_state['personality'] != None):
+                personality_description = personality_finder.generate_response("Describe the personality type " + st.session_state['personality'])
+                response = f"""You are a {st.session_state['personality']}. {personality_description}"""
+            elif personality_type != 'Not Available':
+                personality_description = personality_finder.generate_response("Describe the personality type " + st.session_state['personality'])
+                response = f"""You are a {personality_type}. {personality_description}"""
+            else:
+                personality_finder = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, system_behavior = prompt_templates['Personality Finder']['system_config'])
+                response = personality_finder.get_completion(prompt_templates['Personality Finder']['questionnaire_retrieval'])
+                if response.find("<<<CLASSIFICATION_ON>>>") >= 0:
+                    CLASSIFICATION = True
+        elif instruction_name == '[INSTRUCTION: Determine the Personality]':
+            response = personality_finder.generate_response(prompt_templates['Personality Finder']['obtain_personality'])
+            st.session_state['personality'] = response
+            if CLASSIFICATION:
+                with open('models/iris_classifier.pkl', 'rb') as f:
+                    classifier = pickle.load(f)
+                params = eval(response)
+                personality_type = classifier.predict(**params)
+                personality_description = personality_finder.generate_response("Describe the personality type " + st.session_state['personality'])
+                response = f"""You are a {personality_type}. {personality_description}"""
+            
+
+
+
+            
+
+            
         else:
             response = 'Sorry, I am not yet capable of performing this task or instruction. Can I help you with anything else?'
         return response

@@ -16,7 +16,7 @@ with open('personality_classification_model.pkl', 'rb') as f:
 #Define the personalities and their descriptions
 food_personalities = {
     "The Adventurer": {
-        "description": "You’re the culinary trailblazer, seeking out the uncharted territories of taste. Your palate is your compass, guiding you to vibrant markets and hidden eateries where exotic flavors await. From feasting on spicy Thai street food to sampling bizarre delicacies like fried insects in a bustling Asian market, you revel in the thrill of discovering new gastronomic adventures. Your motto? “Life’s too short for the same old menu!”",
+        "description": "You're the culinary trailblazer, seeking out the uncharted territories of taste. Your palate is your compass, guiding you to vibrant markets and hidden eateries where exotic flavors await. From feasting on spicy Thai street food to sampling bizarre delicacies like fried insects in a bustling Asian market, you revel in the thrill of discovering new gastronomic adventures. Your motto? “Life’s too short for the same old menu!”",
         "image": "ext_images/personalities/the_adventurer.png"},
     "Fine Dining Connoisseur": {
         "description": "For you, a meal is a canvas, and every dish is a masterpiece. The symphony of flavors, the elegance of presentation, and the meticulous selection of ingredients are what elevate a dining experience to an art form. You appreciate the subtle dance between textures and savor the nuances in every bite. The ambiance of a Michelin-starred restaurant is your sanctuary, where each course is a meticulously crafted ode to gastronomy.",
