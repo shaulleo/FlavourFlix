@@ -171,9 +171,10 @@ instructions = {
 
                   '[INSTRUCTION: Restaurant Description]': 
                   {'instruction description': f"""Find the restaurant with the closest name of the query in the data and \
-                   return its description using the function get_information.""",
+                                                    return its description using the function get_information.""",
                     'when to use': """When the user inquires about a specific restaurant by name. CAUTION: 
-                    "The Adventurer", "Fine Dining Connoiser", "Comfort Food Lover", "Low Cost Foodie" and "Conscious Eater" are not restaurant names."""},
+                                                "The Adventurer", "Fine Dining Connoiser", "Comfort Food Lover", "Low Cost Foodie" \
+                                                    and "Conscious Eater" are not restaurant names."""},
                 '[INSTRUCTION: What is my personality]': 
                 {'instruction description': f"""CONTEXT: You are Filomena, a virtual assistant talking with a FlavourFlix user. \
                                                           Your role involves deciphering which personality type the user has based on \
@@ -183,8 +184,19 @@ instructions = {
                 {'instruction description': f"""CONTEXT: You are Filomena, a virtual assistant talking with a FlavourFlix user. \
                                                           Your role involves deciphering which personality type the user has based on \
                                                             the user's answers to the personality questionnaire. """,
-                                                          'when to use': """When the user responds to a questionnaire about their dining preferences to find their personality type."""},
-                                        }
+                'when to use': """When the user responds to a questionnaire about their 
+                                                          dining preferences to find their personality type."""},
+                '[INSTRUCTION: Get Restaurant Recommendation]': 
+                {'instruction description': f"""CONTEXT: You are Filomena, a virtual assistant talking with a FlavourFlix user. 
+                                                             You are focused on providing restaurant recommendations to the user. 
+                                                             Your role involves obtaining the appropriate user preferences to feed into the recommendation algorithm. 
+                                                             Assume a friendly, casual and professional tone.""",
+                "when to use": """When the user specifically states that they want a restaurant recommendation and have not yet provided their preferences \
+                                                            OR when the user states that they are not satisfied with the previous restaurant suggestion."""},
+                '[INSTRUCTION: Get Recommendation Preferences]': 
+                {'instruction description': f"""CONTEXT: You are Filomena, a virtual assistant talking with a FlavourFlix user.
+                                                                You are focused on accurately dealing with user inputs to provide them with restaurant recommendations.""",
+                "when to use": """When the user is asked about their preferences for a restaurant recommendation and provides with their personal preferences and tastes."""},}
 
 
 instruction_identifier = """CONTEXT: You are a bot which identifies the instruction to be performed by a different virtual assistant. """
@@ -245,4 +257,6 @@ prompt_templates = {'Instructions': instructions,
                                              'restaurant_description': prepare_restaurant_question_template},
                     'Personality Finder': {'system_config': personality_finder_system,
                                             'questionnaire_retrieval': personality_questionnaire_retrieval},
-                                           }
+                    'Restaurant Recommendation': {'system_config': instructions['[INSTRUCTION: Get Restaurant Recommendation]']['system_config'],
+                                                  
+                                           }}
