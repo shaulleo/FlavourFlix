@@ -12,7 +12,6 @@ from openai import OpenAI
 import csv
 from langchain.docstore.document import Document 
 from prompt_templates import *
-from langchain_community.document_loaders import TextLoader
 
 
 class GPT_Helper:
@@ -31,28 +30,22 @@ class GPT_Helper:
                 "content": system_behavior
             })
 
-    # [i] get completion from the model             
+           
     def get_completion(self, prompt, temperature=0.3):
-
         self.messages = []
-
         self.messages.append({"role": "user", "content": prompt})
-
         completion = self.client.chat.completions.create(
             model=self.model,
             messages=self.messages,
             temperature=temperature,
         )
-
         self.messages.append(
             {
                 "role": "assistant",
                 "content": completion.choices[0].message.content}
         )
-
         return completion.choices[0].message.content
     
-
 
 query_helper =  GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, system_behavior=prompt_templates['Query Helper System'])
 
@@ -74,7 +67,7 @@ class Filomena():
         self.memory = ConversationBufferMemory(memory_key="chat_history",  input_key="question")
         self.prompt = PromptTemplate(
             input_variables=["chat_history", "question", "context"], 
-            template= prompt_templates['Filomena Template'])
+            template= prompt_templates['Fil de-bug'])
         self.agent_chain = load_qa_chain(self.llm, chain_type="stuff", memory=self.memory, prompt=self.prompt)
         self.messages = []
 
@@ -99,8 +92,16 @@ class Filomena():
             
     def load_restaurant_data(self, path):
         # Define the columns we want to embed vs which ones we want in metadata
-        columns_to_embed = ["Description","Features"]
-        columns_to_metadata = ["Product Name","Price", "Rating","Description", "Features"]
+        columns_to_embed = ['menu_pre_proc', 'menu_en', 'menu_pt',  'location', 'city',  'style', 'description','cuisine', 'chefName1',
+       'chefName2', 'chefName3', 'promotions']
+        columns_to_metadata = ['url', 'name', 'address', 'photo', 'averagePrice', 'chefName1',
+       'chefName2', 'chefName3', 'cuisine', 'michelin', 'description',
+       'isBookable', 'maxPartySize', 'schedule', 'promotions', 'phone',
+       'photo.1', 'ratingValue', 'reviewCount', 'style', 'latitude',
+       'longitude', 'location', 'city', 'ambienceRatingSummary',
+       'foodRatingSummary', 'serviceRatingSummary', 'paymentAcceptedSummary',
+       'outdoor_area', 'current_occupation', 'menu_pre_proc', 'menu_en',
+       'menu_pt']
 
         docs = []
         with open(path, newline="", encoding='utf-8') as csvfile:
@@ -119,9 +120,10 @@ class Filomena():
         splits = splitter.split_documents(docs)
         return splits
     
-    def create_embeddings(self, docs):
+    
+    def create_embeddings(self, splits):
         embeddings = OpenAIEmbeddings()
-        vectordb = FAISS.from_documents(docs, embeddings)
+        vectordb = FAISS.from_documents(splits, embeddings)
         self.vectordb = vectordb
 
 
@@ -129,17 +131,17 @@ class Filomena():
         
         self.messages.append({"role": "user", "content": query})
 
-        if not identified:
-            try:
-                query = prep_question(query, self.messages[-2]['content'])
-            except:
-                query = query
-                #max_marginal_relevance_search(query, k=2)
+        # if not identified:
+        #     try:
+        #         query = prep_question(query, self.messages[-2]['content'])
+        #     except:
+        #         query = query
+        #         #max_marginal_relevance_search(query, k=2)
 
         response = self.agent_chain(
                     {"input_documents": self.vectordb.similarity_search(query, k=3),
                         "question": f'{query}',},
-                    return_only_outputs=True)
+                    return_only_outputs=False)
 
         self.messages.append({"role": "assistant","content": response['output_text']})
 

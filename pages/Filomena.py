@@ -22,10 +22,7 @@ def initialize() -> None:
     files = ['data\CP-23Group4 Project Proposal.pdf', 'data\Food Personalities.pdf']
     if "chatbot" not in st.session_state or st.session_state.chatbot is None:
         fil = Filomena()
-        fil.intialize_filomena(files)
-        # fil.load_documents(files, 'pdf')
-        # fil.generate_response("[Instruction: Identification] Hello", identified=True)
-        
+        fil.intialize_filomena(files)      
         st.session_state.chatbot = fil
 
 
