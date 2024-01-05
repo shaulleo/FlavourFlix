@@ -97,7 +97,10 @@ After ensuring all of these elements are satisfied, the project is set up.
 
 ## Usage
 
-This project can be used to ...
+This project can be used to:
+1. Get Restaurant Recommendations: Users can discover new dining experiences recommended by Filomena, our Smart Virtual Assistant. These recommendations are based on the user's 'Food Personality,' which is determined through a questionnaire.
+2. Search for Restaurants: Users are provided with a search engine that can filter restaurants by location, cuisine, price range, and specific food elements.
+3. Gain Interesting Insights: Users can utilize the Analytics Dashboard to gain interesting insights into local restaurants, including the number of establishments, prevalent cuisine types, and average pricing, based on general data and the user's location.
 
 
 _For examples on how to, namely, effectively use the Filomena page please refer to the [Use Cases](https://example.com) and [Prompt Templates](https://example.com)_
