@@ -17,9 +17,8 @@ class Settings(BaseSettings):
     """ Loard Environment Variables """
     OPENAI_API_KEY: str = Field(validation_alias = "OPENAI_API_KEY")
     DATA_PATH: str = Field(validation_alias = "DATA_PATH")
-    COORDINATES_API: str = Field(validation_alias = "COORDINATES_API")
-    COORDINATES_BASE_URL: str = Field(validation_alias = "COORDINATES_BASE_URL")
-    GET_CURRENT_LOCATION_KEY: str = Field(validation_alias = "GET_CURRENT_LOCATION_KEY")
+    BING_MAPS_API_KEY: str = Field(validation_alias = "BING_MAPS_API_KEY")
+    MAPS_BASE_URL: str = Field(validation_alias = "MAPS_BASE_URL")
     DETA_KEY: str = Field(validation_alias = "DETA_KEY")
 
 _ = load_dotenv(find_dotenv())

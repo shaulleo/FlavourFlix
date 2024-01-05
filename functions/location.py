@@ -82,7 +82,7 @@ class Location:
         self.longitude = longitude
         self.region = region
         self.city = city
-        self.__api_key = local_settings.GET_CURRENT_LOCATION_KEY
+        self.__api_key = local_settings.BING_MAPS_API_KEY
 
     def getLocation(self):
         """ 
