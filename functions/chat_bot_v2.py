@@ -37,7 +37,7 @@ def get_restaurant_info(restaurant_name: str):
         about the restaurant.
     """
     restaurant_data = pd.read_csv('data/preprocessed_restaurant_data.csv')
-    restaurant_data = restaurant_data[restaurant_data['name'] == restaurant_name]
+    restaurant_data = restaurant_data[restaurant_data['name'] == restaurant_name].head(1)
     result = f"""Name: {restaurant_data["name"].values[0]} \n /
     Cuisine Type: {restaurant_data["cuisine"].values[0]} \n /
     Average Price: {restaurant_data["averagePrice"].values[0]} \n /
@@ -50,6 +50,9 @@ def get_restaurant_info(restaurant_name: str):
 def reduce_memory(memory: list):
     new_memory = [memory[0]]
     new_memory.extend(memory[-3:])
+    if len(str(new_memory)) > 3500:
+        new_memory = [memory[0]]
+        new_memory.extend(memory[-1:])
     return new_memory
 
 # ----------------------------- AGENTS ----------------------------- #
@@ -80,7 +83,7 @@ class GPT_Helper:
             - completion (str): The LLM's answer to the 
             prompt."""
         
-        if len((self.messages)) < 5:
+        if len((self.messages)) <= 5:
             self.messages.append({"role": "user", "content": prompt})
             completion = self.client.chat.completions.create(
                 model=self.model,
@@ -126,7 +129,7 @@ class QuestionAnsweringBot():
         self.messages = []
     
     def load_documents(self, files: list):
-        """Prepares and loads the documents to be used by the 
+        """Prepares, embedds, and loads the documents to be used by the 
         agent in a Vector Database.
         Parameters:
             - files (list): A list of file paths.
@@ -182,7 +185,7 @@ class QuestionAnsweringBot():
 
 
         query_prepared = self.prepare_question(query)
-        if len(query_prepared) < 3000:
+        if len((self.messages)) <= 5:
             response = self.agent_chain( 
                 {"input_documents": self.vectordb.max_marginal_relevance_search(query_prepared ,k=3),
                     "question": f'{query_prepared}', }, return_only_outputs=True)
@@ -195,8 +198,8 @@ class QuestionAnsweringBot():
 
 class RestaurantDescriptionBot():
     def __init__(self):
-        self.llm = ChatOpenAI(temperature=0.0, api_key=local_settings.OPENAI_API_KEY, model='gpt-3.5-turbo')
-        self.agent= initialize_agent( [get_restaurant_info],
+        self.llm = ChatOpenAI(temperature=0.3, api_key=local_settings.OPENAI_API_KEY, model='gpt-3.5-turbo')
+        self.agent= initialize_agent([get_restaurant_info],
             self.llm,
             agent= AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION,
             handle_parsing_errors=True,
@@ -242,7 +245,7 @@ class Filomena():
                               api_key=local_settings.OPENAI_API_KEY)
         self.messages = []
         self.question_agent = QuestionAnsweringBot()
-        # self.restaurant_descriptor_agent = RestaurantDescriptionBot()
+        self.restaurant_descriptor_agent = RestaurantDescriptionBot()
         # self.restaurant_recommendation_agent = RestaurantRecommendationBot()
 
     def greet(self):
@@ -259,6 +262,13 @@ class Filomena():
         return response
     
     def perform_instruction(self, query, chat_history):
+        """Performs the instruction given by the user.
+        Parameters:
+            - query (str): The user's query.
+            - chat_history (list): The chat history.
+        Returns:
+            - response (str): The answer to the user's query.
+        """
         to_perform = self.core_piece.get_instruction(query, chat_history)
         pattern = r'\[INSTRUCTION: [^\]]+\]'
         match = re.search(pattern, to_perform)
@@ -271,6 +281,8 @@ class Filomena():
             response = self.greet()
         elif instruction_name == '[INSTRUCTION: Question]':
             response = self.question_agent.generate_response(query)
+        elif instruction_name == '[INSTRUCTION: Restaurant Description]':
+            response = self.restaurant_descriptor_agent.generate_response(query)
         else:
             response = 'Sorry, I am not yet capable of performing this task or instruction. Can I help you with anything else?'
 
@@ -279,15 +291,33 @@ class Filomena():
         return response
 
     def initialize(self, files):
+        """Initializes the main agent (Filomena) by initializing all sub-agents.
+        Additionally, it first greets the user.
+        Parameters:
+            - files (list): A list of file paths to load the Question-Answer agent.
+        Returns:
+            - None
+        """
         self.question_agent.initialize_qa(files=files)
         self.greet()
 
 
     def generate_response(self, query):
-        self.messages.append({"role": "user", "content": query})
-        response = self.perform_instruction(query, self.messages)
-        self.messages.append({"role": "assistant", "content": response})
-        return response
+        """Generates the response to the user's question based on
+        the correct instruction.
+        Parameters:
+            - query (str): The question to be answered.
+        Returns:
+            - response (str): Filomena's answer to the user's question.
+        """
+        if len((self.messages)) <= 5:
+            self.messages.append({"role": "user", "content": query})
+            response = self.perform_instruction(query, self.messages)
+            self.messages.append({"role": "assistant", "content": response})
+            return response
+        else:
+            self.messages = reduce_memory(self.messages)
+            return self.generate_response(query)
     
     def reset(self):
         self.messages = []

@@ -2,6 +2,9 @@ import streamlit as st
 from functions.utils import *
 from sklearn.metrics.pairwise import cosine_similarity 
 import spacy
+import numpy as np
+import pandas as pd
+import unidecode
 import re
 # !python -m spacy download en_core_web_md
 
@@ -56,17 +59,46 @@ def get_profile():
     else:
         return 'User Information Not Available'
     
-def get_data_match(data, word, col_to_match):
+
+def get_data_match(data, word, col_to_match, method='dot'):
     nlp = spacy.load("en_core_web_md")
+    data_match = data[data[col_to_match].str.contains(word)].head(1)
+    if len(data_match) == 0:
+        word_clean = unidecode(word)
+        word_clean = word_clean.lower()
+        similarities = {}
+        for possible_match in list(data[col_to_match].unique()):
+            possible_match_clean = unidecode(possible_match)
+            possible_match_clean = possible_match_clean.lower()
+            if word_clean in possible_match_clean:
+                data_match = data[data[col_to_match] == possible_match].head(1)
+                if len(data_match) == 0:
+                    continue
+                else:
+                    data_match = data_match[col_to_match].values[0]
+                    return data_match
+            else:
+                word_embedding = nlp(word_clean).vector
+                if ' - ' in possible_match and ' - ' not in word:
+                    possible_match_clean = possible_match_clean.split(' - ')[0]
+                    possible_match_embedding = nlp(possible_match_clean).vector
+                else:
+                    possible_match_embedding = nlp(possible_match).vector
+                if method == 'dot':
+                    dot_product = np.dot(word_embedding, possible_match_embedding)
+                    similarities[possible_match] = dot_product
+                elif method == 'cosine':
+                    cosine_score = cosine_similarity([word_embedding], [possible_match_embedding])[0][0]
+                    similarities[possible_match] = cosine_score
+                else:
+                    print('Method not recognized')
+                    return None
+        else:
+            data_match = data_match[col_to_match].values[0]
+        
+        data_match = max(similarities, key=similarities.get)
+    return data_match   
 
-    word_embedding = nlp(word).vector
-    similarities = {}
-    for token in list(data[col_to_match].unique()):
-        token_embedding = nlp(token).vector
-        similarities[token] = cosine_similarity([word_embedding], [token_embedding])[0][0]
-
-    return max(similarities, key=similarities.get)
-    
 
 def filter_schedule(restaurants, dinner_hour = None, lunch_hour = None):
     def contains_time_interval(schedule):
