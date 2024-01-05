@@ -1,4 +1,4 @@
-from functions.filomena_prompts import *
+from functions.filomena_utils import *
 from functions.utils import *
 from openai import OpenAI
 from langchain.chat_models import ChatOpenAI
@@ -29,7 +29,7 @@ import pickle
 @tool
 def get_restaurant_info(restaurant_name):
     """Gathers all the restaurant information from the FlavourFlix restaurant database, based on the name of the restaurant."""
-    restaurant_data = pd.read_csv('data\preprocessed_restaurant_data.csv')
+    restaurant_data = pd.read_csv('data/preprocessed_restaurant_data.csv')
     restaurant_data = restaurant_data[restaurant_data['name'] == restaurant_name]
     result = f"""Name: {restaurant_data["name"].values[0]} \n /
     Cuisine Type: {restaurant_data["cuisine"].values[0]} \n /
@@ -244,8 +244,45 @@ class RestaurantRecommendationBot():
         self.tools = [get_recommendation]
         self.hub_prompt = hub.pull("hwchase17/structured-chat-agent")
         self.agent = create_structured_chat_agent(self.llm, self.tools, self.hub_prompt)
-        agent_executor = AgentExecutor(agent= self.agent, tools=self.tools, verbose=False, handle_parsing_errors=True)
+        self.agent_executor = AgentExecutor(agent= self.agent, tools=self.tools, verbose=False, handle_parsing_errors=True)
+        self.output_processor = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, 
+                                       system_behavior = prompt_templates['Restaurant Recommendation']['system_config'])
 
+    def generate_recommendation(self, query):
+        inputs = self.format_inputs(query)
+        prompt = f"""Task: Generate a restaurant recommendation based on the following user inputs {inputs}"""
+        response = self.agent_executor.invoke({"input": query})
+        return response['output']
+    
+    def ask_for_inputs(self):
+        prompt = f"""TASK: Ask the user to provide with their preferences and requirements for the restaurant recommendation. 
+        Select three or four of the following options to ask the user to provide with:
+        - the cuisine type they are desiring,
+        - the nationality of the cuisine they are desiring,
+        - the restaurant style they prefer, 
+        - food that they are looking to eat, 
+        - allergies, 
+        - dietary restrictions, 
+        - the price range they are willing to pay per person and per meal,
+        - location they want to eat in (city),
+        - whether they want to go by car
+        - the time of the day they want to go to the restaurant.
+        """
+        response = self.output_processor.get_completion(prompt)
+        return response
+    
+    def format_inputs(self, query):
+        prompt = f"""TASK: Format and synthetize the provided `user inputs` into a dictionary, whose `keys` can be the following:
+        KEYS: [nationality, city, travel_car,  favourite_food,  restaurant_style,
+                       cuisine_type, lunch_hour, dinner_hour, normal_price_range]
+        If you are not able to extract the information from the user input, you can assign the value 'None' to the respective key.
+
+        USER INPUTS: {query}
+
+        OUTPUT FORMAT: {"key": "value"}
+        """
+        response = self.output_processor.get_completion(query)
+        return response
 
 
 
@@ -264,6 +301,7 @@ class Filomena():
         self.messages = []
         self.question_agent = QuestionAnsweringBot()
         self.restaurant_descriptor_agent = RestaurantDescriptionBot()
+        self.restaurant_recommendation_agent = RestaurantRecommendationBot()
 
     def greet(self):
         greeter = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, system_behavior = instructions['[INSTRUCTION: Identification]']['instruction description'])
@@ -290,10 +328,7 @@ class Filomena():
         elif instruction_name == '[INSTRUCTION: Restaurant Description]':
             response = self.restaurant_descriptor_agent.generate_response(query)
         elif instruction_name == '[INSTRUCTION: What is my personality]':
-            if ('personality' in st.session_state and st.session_state['personality'] != None):
-                personality_description = personality_finder.generate_response("Describe the personality type " + st.session_state['personality'])
-                response = f"""You are a {st.session_state['personality']}. {personality_description}"""
-            elif personality_type != 'Not Available':
+            if personality_type != 'Not Available':
                 personality_description = personality_finder.generate_response("Describe the personality type " + st.session_state['personality'])
                 response = f"""You are a {personality_type}. {personality_description}"""
             else:
@@ -318,8 +353,12 @@ class Filomena():
                     classifier = pickle.load(f)
                 params = eval(response)
                 personality_type = classifier.predict(**params)
-                personality_description = personality_finder.generate_response("Describe the personality type " + st.session_state['personality'])
+                personality_description = personality_finder.generate_response("Describe the personality type " + personality_type)
                 response = f"""You are a {personality_type}. {personality_description}"""            
+        elif instruction_name == '[INSTRUCTION: Restaurant Recommendation]':
+            response = self.restaurant_recommendation_agent.ask_for_inputs()
+        elif instruction_name == '[INSTRUCTION: Get Input for Restaurant Recommendation]':
+            response = self.restaurant_recommendation_agent.generate_recommendation(query)
         else:
             response = 'Sorry, I am not yet capable of performing this task or instruction. Can I help you with anything else?'
         return response

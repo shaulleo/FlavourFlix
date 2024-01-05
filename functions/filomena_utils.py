@@ -2,6 +2,7 @@ import streamlit as st
 from functions.utils import *
 from sklearn.metrics.pairwise import cosine_similarity 
 import spacy
+import re
 # !python -m spacy download en_core_web_md
 
 
@@ -66,9 +67,6 @@ def get_data_match(data, word, col_to_match):
 
     return max(similarities, key=similarities.get)
     
-def get_recommendation():
-    pass
-
 
 def filter_schedule(restaurants, dinner_hour = None, lunch_hour = None):
     def contains_time_interval(schedule):
@@ -115,13 +113,24 @@ def get_personality(username):
         return personality_questionnaire[personality_questionnaire['username'] == username]['personality'].values[0]
     else:
         return 'Not Available'
+    
+
 
 
 # ------------------------ Relevant Variables ------------------------#
 
 identification_vars = get_identification_and_user()
 profile_vars = get_profile()
-personality_type = get_personality(st.session_state['username'])
+pattern = r"Username:\s*([^\s|]+)"
+matches = re.search(pattern, identification_vars)
+
+if type(matches) != type(None):
+    username = matches.group(1)
+    personality_type = get_personality(username)
+else:
+    username = 'Not Available'
+    personality_type = 'Not Available'
+
 
 # ------------------------ Prompt Templates ------------------------#
 
@@ -162,9 +171,10 @@ instructions = {
 
                   '[INSTRUCTION: Restaurant Description]': 
                   {'instruction description': f"""Find the restaurant with the closest name of the query in the data and \
-                   return its description using the function get_information.""",
+                                                    return its description using the function get_information.""",
                     'when to use': """When the user inquires about a specific restaurant by name. CAUTION: 
-                    "The Adventurer", "Fine Dining Connoiser", "Comfort Food Lover", "Low Cost Foodie" and "Conscious Eater" are not restaurant names."""},
+                                                "The Adventurer", "Fine Dining Connoiser", "Comfort Food Lover", "Low Cost Foodie" \
+                                                    and "Conscious Eater" are not restaurant names."""},
                 '[INSTRUCTION: What is my personality]': 
                 {'instruction description': f"""CONTEXT: You are Filomena, a virtual assistant talking with a FlavourFlix user. \
                                                           Your role involves deciphering which personality type the user has based on \
@@ -174,8 +184,19 @@ instructions = {
                 {'instruction description': f"""CONTEXT: You are Filomena, a virtual assistant talking with a FlavourFlix user. \
                                                           Your role involves deciphering which personality type the user has based on \
                                                             the user's answers to the personality questionnaire. """,
-                                                          'when to use': """When the user responds to a questionnaire about their dining preferences to find their personality type."""},
-                                        }
+                'when to use': """When the user responds to a questionnaire about their 
+                                                          dining preferences to find their personality type."""},
+                '[INSTRUCTION: Get Restaurant Recommendation]': 
+                {'instruction description': f"""CONTEXT: You are Filomena, a virtual assistant talking with a FlavourFlix user. 
+                                                             You are focused on providing restaurant recommendations to the user. 
+                                                             Your role involves obtaining the appropriate user preferences to feed into the recommendation algorithm. 
+                                                             Assume a friendly, casual and professional tone.""",
+                "when to use": """When the user specifically states that they want a restaurant recommendation and have not yet provided their preferences \
+                                                            OR when the user states that they are not satisfied with the previous restaurant suggestion."""},
+                '[INSTRUCTION: Get Recommendation Preferences]': 
+                {'instruction description': f"""CONTEXT: You are Filomena, a virtual assistant talking with a FlavourFlix user.
+                                                                You are focused on accurately dealing with user inputs to provide them with restaurant recommendations.""",
+                "when to use": """When the user is asked about their preferences for a restaurant recommendation and provides with their personal preferences and tastes."""},}
 
 
 instruction_identifier = """CONTEXT: You are a bot which identifies the instruction to be performed by a different virtual assistant. """
@@ -228,15 +249,7 @@ c) "The presentation and plating of my meal is very important."
 </message>
 """
 
-# obtain_personality =  f"""Extract the answer values from the following text and generate a dictionary with the question identifier \ 
-#                             (key of QUESTIONS) and the respective user answer.
 
-#                             TEXT: {st.session_state.chatbot.personality_finder.messages[-1]['content']}
-
-#                             QUESTIONS: {questionnaire}
-
-#                             OUTPUT FORMAT: {"question_identifier": "user_answer"}
-#                             """
 
 prompt_templates = {'Instructions': instructions,
                      'Instruction Identification': instruction_identifier, 
@@ -244,4 +257,6 @@ prompt_templates = {'Instructions': instructions,
                                              'restaurant_description': prepare_restaurant_question_template},
                     'Personality Finder': {'system_config': personality_finder_system,
                                             'questionnaire_retrieval': personality_questionnaire_retrieval},
-                                           }
+                    'Restaurant Recommendation': {'system_config': instructions['[INSTRUCTION: Get Restaurant Recommendation]']['system_config'],
+                                                  
+                                           }}
