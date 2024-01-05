@@ -46,8 +46,13 @@ def get_restaurant_info(restaurant_name: str):
     Restaurant Schedule: {restaurant_data["schedule"].values[0]}"""
     return result
 
-# ----------------------------- AGENTS ----------------------------- #
 
+def reduce_memory(memory: list):
+    new_memory = [memory[0]]
+    new_memory.extend(memory[-3:])
+    return new_memory
+
+# ----------------------------- AGENTS ----------------------------- #
 
 class GPT_Helper:
     def __init__(self,
@@ -75,18 +80,22 @@ class GPT_Helper:
             - completion (str): The LLM's answer to the 
             prompt."""
         
-        self.messages.append({"role": "user", "content": prompt})
-        completion = self.client.chat.completions.create(
-            model=self.model,
-            messages=self.messages,
-            temperature=temperature,
-        )
-        self.messages.append(
-            {
-                "role": "assistant",
-                "content": completion.choices[0].message.content}
-        )
-        return completion.choices[0].message.content
+        if len((self.messages)) < 5:
+            self.messages.append({"role": "user", "content": prompt})
+            completion = self.client.chat.completions.create(
+                model=self.model,
+                messages=self.messages,
+                temperature=temperature,
+            )
+            self.messages.append(
+                {
+                    "role": "assistant",
+                    "content": completion.choices[0].message.content}
+            )
+            return completion.choices[0].message.content
+        else:
+            self.messages = reduce_memory(self.messages)
+            return self.get_completion(prompt, temperature=temperature)
     
 
     def get_instruction(self, query: str, chat_history: list):
@@ -109,7 +118,7 @@ class GPT_Helper:
 
 class QuestionAnsweringBot():
     def __init__(self):
-        self.llm = ChatOpenAI(temperature=0, api_key=local_settings.OPENAI_API_KEY)
+        self.llm = ChatOpenAI(temperature=0.3, api_key=local_settings.OPENAI_API_KEY)
         self.memory = ConversationBufferMemory(memory_key="chat_history",  input_key="question")
         self.prompt = PromptTemplate(
             input_variables=["chat_history", "question", "context"], template= qa_bot_prompts['qa_answerer'])
@@ -167,15 +176,61 @@ class QuestionAnsweringBot():
         Returns:
             - response (str): The answer to the user's question.
         """
+        # retriever = 
+        # retriever.get_relevant_documents(question)
+        #self.vectordb.similarity_search(query_prepared, k=1),
+
 
         query_prepared = self.prepare_question(query)
-        response = self.agent_chain(
-            {
-                "input_documents": self.vectordb.similarity_search(query_prepared, k=1),
-                "question": f'{query_prepared}',
-            }, return_only_outputs=True,)
+        if len(query_prepared) < 3000:
+            response = self.agent_chain( 
+                {"input_documents": self.vectordb.max_marginal_relevance_search(query_prepared ,k=3),
+                    "question": f'{query_prepared}', }, return_only_outputs=True)
+            
+            return response['output_text']
+        else:
+            self.messages = reduce_memory(self.messages)
+            return self.generate_response(query)
         
-        return response['output_text']
+
+class RestaurantDescriptionBot():
+    def __init__(self):
+        self.llm = ChatOpenAI(temperature=0.0, api_key=local_settings.OPENAI_API_KEY, model='gpt-3.5-turbo')
+        self.agent= initialize_agent( [get_restaurant_info],
+            self.llm,
+            agent= AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION,
+            handle_parsing_errors=True,
+            verbose = False)
+        
+    def prepare_question(self, query:str):
+        """Prepares the question to be answered by the agent.
+        Parameters:
+            - query (str): The question to be answered.
+        Returns:
+            - query_prepared (str): The question to be answered,
+            after being prepared by the agent."""
+        restaurant_data = pd.read_csv('data\preprocessed_restaurant_data.csv')
+        question_preparer = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, 
+                                       system_behavior = restaurant_desc_bot_prompts['question_preparer']['system_configuration'])  
+        query = restaurant_desc_bot_prompts['question_preparer']['system_configuration'] + f""" `QUERY`: {query} `RESTAURANT NAME`: """
+                
+        restaurant_name = question_preparer.get_completion(query)
+        restaurant_name = get_data_match(restaurant_data, restaurant_name, 'name')
+        query_prepared = f"""Tell me about the restaurant '{restaurant_name}'."""
+        return query_prepared
+        
+        
+    def generate_response(self, query):
+        """Generates the response to the user's question based on
+        documents within the Vector Database.
+        Parameters:
+            - query (str): The question to be answered.
+        Returns:
+            - response (str): The answer to the user's question."""
+        query_prepared = self.prepare_question(query)
+        response = self.agent(query_prepared)
+        return response['output']
+
 
 # ----------------------------- Filomena ----------------------------- #
 
@@ -191,9 +246,15 @@ class Filomena():
         # self.restaurant_recommendation_agent = RestaurantRecommendationBot()
 
     def greet(self):
+        """Greets the user.
+        Parameters:
+            - None
+        Returns:
+            - response (str): The greeting to the user.
+        """
         greeter = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, system_behavior = greeter_prompts['system_configuration'])
         
-        response = greeter.get_completion(greeter_prompts['task'])
+        response = greeter.get_completion(greeter_prompts['task'], temperature=0.9)
         self.messages.extend(greeter.messages[-1:])
         return response
     
@@ -212,6 +273,9 @@ class Filomena():
             response = self.question_agent.generate_response(query)
         else:
             response = 'Sorry, I am not yet capable of performing this task or instruction. Can I help you with anything else?'
+
+        if '`ASSISTANT`:' in response:
+            response = response.replace('`ASSISTANT`:', '')
         return response
 
     def initialize(self, files):
@@ -227,4 +291,4 @@ class Filomena():
     
     def reset(self):
         self.messages = []
-          
+    
