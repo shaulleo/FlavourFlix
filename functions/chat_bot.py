@@ -207,8 +207,6 @@ class QuestionAnsweringBot():
         return response['output_text']
 
 
-
-
 class RestaurantDescriptionBot():
     def __init__(self):
         self.llm = ChatOpenAI(temperature=0.3, api_key=local_settings.OPENAI_API_KEY, model='gpt-3.5-turbo')
