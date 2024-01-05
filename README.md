@@ -26,39 +26,26 @@ This repository contains the complete project designed for the curricular unit "
   <img src="ext_images\readme_files\home page pic.png" alt="Home Page Pic" width="500">
 </p>
 
--- Project Description
+#### Description and Motivation
 
--- Features
+FlavourFlix represents the result of the Capstone Project undertaken as part of the bachelor’s degree in data science. 
+It is intended, in this project, to incorporate a diversified set of data science tools and techniques, concerning namely web scraping, data retrieval and generation, machine learning, text mining, natural language processing, API integration, and large language models.
 
+The idea behind FlavourFlix was to integrate the social network elements present in food and restauration-related platforms such as TheFork and Zomato combined with the recommendation capabilities that distinguish Netflix and YouTube, for example, by ultimately enabling an end-user to obtain customized restaurant recommendations.
 
+#### Features
 
+With this in mind, a broad spectrum of features were implemented. To name a few, in the app, users can discover the closest restaurants, search restaurants based on specified criteria, and receive customized restaurant suggestions based on their personal information and tastes, through Filomena, the FlavourFlix AI assistant. Users can also uncover their "Food Personality" and simulate reservations with a restaurant.
 
 
 <div align="center">
-  <div style="display: flex; justify-content: center;">
-    <figure style="margin-right: 5px; margin-left: 5px;">
-      <video width="200" controls>
-        <source src="ext_images\readme_files\personality.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <figcaption>Personality Feature</figcaption>
-    </figure>
-    <figure style="margin-right: 5px;">
-      <video width="200" controls>
-        <source src="ext_images\readme_files\restaurant card.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <figcaption>Restaurant Feature</figcaption>
-    </figure>
-      <figure>
-      <video width="200" controls>
-        <source src="ext_images\readme_files\search.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <figcaption>Search Feature</figcaption>
-    </figure>
-  </div>
+  <img src="ext_images/readme_files/restaurant card.jpg" alt="Restaurant Card" style="width: 30%;">
+  <img src="ext_images/readme_files/search.jpg" alt="Search Page" style="width: 30%;">
+  <img src="ext_images\readme_files\filomena.jpg" alt="Talk with Filomena" style="width: 30%;">
+  <img src="ext_images\readme_files\personality.png" alt="Food Personality" style="width: 30%;">
+    <img src="ext_images\readme_files\reservations.png" alt="Reservations" style="width: 34%;">
 </div>
+
 
 
 ## Built With
@@ -78,7 +65,6 @@ This project aims to showcase our abilities in integrating multiple technologies
 ## Getting Started
 
 To set up this project locally, fork the repository and following these steps.
-
 
 ### Prerequisites and Project Set up
 
@@ -111,9 +97,10 @@ After ensuring all of these elements are satisfied, the project is set up.
 
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+This project can be used to ...
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+
+_For examples on how to, namely, effectively use the Filomena page please refer to the [Use Cases](https://example.com) and [Prompt Templates](https://example.com)_
 
 
 ## Authors
