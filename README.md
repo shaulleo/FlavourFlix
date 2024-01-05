@@ -6,13 +6,13 @@
 
   <h2 align="center">FlavourFlix - Capstone Project</h2>
 
-  <p align="center">
+  <h4 align="center">
     Discover. Taste. Repeat
     <br/>
     <br/>
     <a href="https://flavourflixx.wixsite.com/flavour-flix">FlavourFlix website</a>
 
-  </p>
+  </h4>
 </p>
 
 
@@ -85,22 +85,36 @@ DETA_KEY = 'Your DETA key'
 ```
 This procedure ensures the file is inacessible to others and that the API keys do not inccur in additional costs.
 
-> Note: It is especially important to ensure that the variables in the __.env__ file are named as demonstrated in the code above. This specific name aligns with the Settings class in the util.py file, which is a specialization of the BaseSettings from the pydantic-settings package.
+> __Note__: It is especially important to ensure that the variables in the __.env__ file are named as demonstrated in the code above. This specific name aligns with the Settings class in the util.py file, which is a specialization of the BaseSettings from the pydantic-settings package.
 
-It is also necessary to install in the project environment the packages within the requirements files. The type of requirements depend on your computer. Use:
+It is recommended to create a separate environment designated for this project to avoid conflicts between packages and dependencies. It is also necessary to install in the project environment the packages within the requirements files. The type of requirements depend on your computer.
 
-> __requirements.txt__: If you are using Windows. <br>
-__requirementsb.txt__: If you are using a Mac.
+```
+requirements.txt: If you are using Windows.
+
+requirementsb.txt: If you are using a Mac. 
+```
 
 After ensuring all of these elements are satisfied, the project is set up.
 
 
 ## Usage
 
-This project can be used to:
-1. Get Restaurant Recommendations: Users can discover new dining experiences recommended by Filomena, our Smart Virtual Assistant. These recommendations are based on the user's 'Food Personality,' which is determined through a questionnaire.
-2. Search for Restaurants: Users are provided with a search engine that can filter restaurants by location, cuisine, price range, and specific food elements.
-3. Gain Interesting Insights: Users can utilize the Analytics Dashboard to gain interesting insights into local restaurants, including the number of establishments, prevalent cuisine types, and average pricing, based on general data and the user's location.
+All features were implemented such that someone can use this project project for the following tasks:
+
+1. __Get Restaurant Recommendations__: Users can discover new dining experiences recommended by Filomena, the smart Virtual Assistant. These recommendations are based on conversation with the user about their preferences, or given their food personality. 
+
+2. __Search for Restaurants__: Users are also provided with a search engine that can filter restaurants by their location, cuisine, style, price range, and specific food elements.
+
+3. __Gain Interesting Insights__: Users can utilize the Analytics Dashboard to gain interesting insights into local restaurants, including the number of establishments, prevalent cuisine types, and average pricing, based on general data and the user's location.
+
+4. __Have some fun with the Questionnaire__: Users can determine their food personality by filling in a simple questionnaire referring to their dining tendencies and preferences.
+
+5. __Simulate Reservations__: Reservations can be simulated through the app, whereas it is only possible to proceed with it if the fields of the reservation align with the restaurant's schedules and table capacity.
+
+6. __Read Blog Entries and Testimonials__: The webapp and website are populated with blog entries about FlavourFlix and culinary experiences.
+
+7. __Learn with Filomena__: Filomena not only provides with recommendations, but is also able to determine the user's food personality if prompted, as answer questions about FlavourFlix and the gastronomic culture of Portugal.
 
 
 _For examples on how to, namely, effectively use the Filomena page please refer to the [Use Cases](https://example.com) and [Prompt Templates](https://example.com)_
