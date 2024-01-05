@@ -1,6 +1,8 @@
 # Data Description
 
-## Table 1: clientData
+## Tables
+
+### Table 1: clientData
 
 
 | Variable Name          | Description                     | Data type |
@@ -33,7 +35,7 @@ _Description_: this .csv file is used to collect and store user preference data 
 
 <br>
 
-## Table 2: og_restaurant_data
+### Table 2: og_restaurant_data
 
 |  Variable Name | Description       | Data Type |
 |------------|------------|-------|
@@ -74,7 +76,7 @@ _Description:_ this .csv file is related to restaurant data, focusing on various
 
 <br> 
 
-## Table 3: preprocessed_restaurant_data
+### Table 3: preprocessed_restaurant_data
 
 |  Variable Name | Description  | Data Type |
 |------------|------------|-------|
@@ -117,7 +119,7 @@ _Description:_ this .csv file contains the preprocessed information from the 'og
 <br>
 
 
-## Table 4: menus_with_translations
+### Table 4: menus_with_translations
 
 |  Variable Name | Description  | Data Type |
 |------------|------------|-------|
@@ -129,7 +131,7 @@ _Description:_ this .csv file contains the preprocessed information from the 'og
 _Description:_ this .csv file contains information about resraurant menus along with their translations.
 
 
-## Table 5: feedback
+### Table 5: feedback
 
 | Product ID | Name       | Price |
 |------------|------------|-------|
@@ -143,7 +145,7 @@ _Description:_ this .csv file comprises customer feedback information.
 
 <br>
 
-## Table 6: reservations
+### Table 6: reservations
 
 | Product ID | Name       | Price |
 |------------|------------|-------|
@@ -160,7 +162,7 @@ _Description:_ this .csv file contains the details of the reservations made.
 <br>
 
 
-## Table 7: blog_posts
+### Table 7: blog_posts
 
 
 |Variable Name|	Description	|Data Type
@@ -176,7 +178,7 @@ _Description:_ this .json file comprises a collection of blog posts related to F
 
 <br> 
 
-## Table 8: testimonials
+### Table 8: testimonials
 
 | Product ID | Name       | Price |
 |------------|------------|-------|
@@ -190,7 +192,7 @@ _Description:_ this .json file comprises a collection of customer testimonials f
 
 <br> 
 
-## Table 9: portuguese_locations
+### Table 9: portuguese_locations
 
 | Product ID | Name       | Price |
 |------------|------------|-------|
@@ -204,3 +206,250 @@ location2	|Additional location information |	object
 location3	|Further location details	|object
 
 _Description:_ this .csv file contains detailed information about various restaurants, primarily focused on their geographical locations.
+
+
+<br>
+
+## Text Data
+
+### Text File 1: Blog Posts
+
+- PDF file with the Blog Posts present in FlavourFlix used within the vector database of the ChatBot for document retrieval. Highlights blog content, author names and roles, blog post date and title. Generated using ChatGPT and was prior corrected by the group.
+
+### Text File 2: Company
+
+- PDF file explaining the FlavourFlix company, project, background, mission, values and so on. Was used within the vector database of the ChatBot for document retrieval. Generated using ChatGPT and was prior corrected by the group.
+
+### Text File 3: FlavourFlix FAQ
+
+- PDF file with Frequently Asked Questions (FAQ's) and respective answers. Used within the vector database of the ChatBot for document retrieval. Generated using ChatGPT and was prior corrected by the group.
+
+### Text File 4: Problem Identification and Resolution Protocol within the FlavourFlix website
+
+- PDF file explaining possible problems a user may face when experimenting with FlavourFlix' products and ways of resolution. Used within the vector database of the ChatBot for document retrieval. Generated using ChatGPT and was prior corrected by the group.
+
+### Text File 5: Product
+
+- PDF file explaining the products FlavourFlix offers, such as the Analytics Dashboard, the virtual assistant Filomena and so on. Was used within the vector database of the ChatBot for document retrieval. Generated using ChatGPT and was prior corrected by the group.
+
+### Text File 6: Traditional Portuguese Dishes
+
+- PDF file describing the portuguese gastronomic culture, such as recipes, traditions and ingredients. Obtained by compiling and clening the information retrieved from documents on the internet about this matter. Was used within the vector database of the ChatBot for document retrieval.
+
+
+## Images
+
+### FlavourFlix Logo
+![Alt text](ext_images\logo1.jpeg "FlavourFlix Logo")
+
+### FlavourFlix Page Icon
+Used on the page tabs.
+![Alt text](ext_images\page_icon.png "FlavourFlix Page Icon")
+
+### FlavourFlix Home Page Image
+![Alt text](ext_images\pnas.1913308116fig01.jpeg "FlavourFlix Page Icon")
+
+### Comfort Food Lover Illustration
+Generated using Adobe Firefly <br>
+
+![Alt text](ext_images\personalities\comfort_food_lover.png "Comfort Food Lover Illustration")
+
+### Conscious Eater Illustration
+Generated using Adobe Firefly <br>
+
+
+![Alt text](ext_images\personalities\conscious_eater.png "Conscious Eater Illustration")
+
+### Fine Dining Connoisseur Illustration
+Generated using Adobe Firefly <br>
+
+
+![Alt text](ext_images\personalities\fine_dining_connoisseur.png "Fine Dining Connoisseur Illustration")
+
+
+### Low Cost Foodie Illustration
+Generated using Adobe Firefly <br>
+
+
+![Alt text](ext_images\personalities\low_cost_foodie.jpeg "Low Cost Foodie Illustration")
+
+### The Adventurer Illustration
+Generated using Adobe Firefly <br>
+
+
+![Alt text](ext_images\personalities\the_adventurer.png "The Adventurer Illustration")
+
+
+ 
+### Testimonial Picture 1 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_f1.jpg "Testimonial Picture 1")
+
+
+ 
+### Testimonial Picture 2 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_f2.jpg "Testimonial Picture 2")
+
+
+ 
+### Testimonial Picture 3 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_f3.jpg "Testimonial Picture 3")
+
+
+ 
+### Testimonial Picture 4 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_f4.jpg "Testimonial Picture 4")
+
+
+ 
+### Testimonial Picture 5 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_f5.jpg "Testimonial Picture 5")
+
+
+ 
+### Testimonial Picture 6 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_f6.jpg "Testimonial Picture 6")
+
+
+ 
+### Testimonial Picture 7 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_f7.jpg "Testimonial Picture 7")
+
+
+ 
+### Testimonial Picture 8 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_f8.jpg "Testimonial Picture 8")
+
+
+ 
+### Testimonial Picture 9 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_f80.jpg "Testimonial Picture 9")
+
+
+ 
+### Testimonial Picture 10 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_f9.jpg "Testimonial Picture 10")
+
+
+ 
+### Testimonial Picture 11 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_f91.jpg "Testimonial Picture 11")
+
+
+ 
+### Testimonial Picture 12 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_f92.jpg "Testimonial Picture 12")
+
+
+ 
+### Testimonial Picture 13 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_m1.jpg "Testimonial Picture 13")
+
+
+ 
+### Testimonial Picture 14 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_m2.jpg "Testimonial Picture 14")
+
+
+ 
+### Testimonial Picture 15 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_m3.jpg "Testimonial Picture 15")
+
+
+ 
+### Testimonial Picture 16 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_m4.jpg "Testimonial Picture 16")
+
+
+ 
+### Testimonial Picture 17 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_m5.jpg "Testimonial Picture 17")
+
+
+ 
+### Testimonial Picture 18 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_m6.jpg "Testimonial Picture 18")
+
+
+ 
+### Testimonial Picture 19 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_m7.jpg "Testimonial Picture 19")
+
+
+ 
+### Testimonial Picture 20 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_m8.jpg "Testimonial Picture 20")
+
+
+ 
+### Testimonial Picture 21 <br>
+
+Generated using DALLE-e <br>
+
+![Alt text](ext_images/testimonials_img/img_m9.jpg "Testimonial Picture 21")
+
+
+
+
+
+
+

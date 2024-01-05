@@ -132,6 +132,7 @@ for i in range(5):
     if st.session_state[f'read_{i}']:
         display(posts[i])
         st.divider()
+st.caption("We would like to thank our friend Francisco for guiding the aesthetics of our blog. ")
 
             
 

@@ -77,11 +77,11 @@ def find_coordinates(address: str):
     #Define the API endpoint and parameters
     params = {
         'q': address,
-        'key': local_settings.COORDINATES_API,
+        'key': local_settings.BING_MAPS_API_KEY,
     }
 
     #Make the API request
-    response = requests.get(local_settings.COORDINATES_BASE_URL, params=params)
+    response = requests.get(local_settings.MAPS_BASE_URL, params=params)
 
     #Check if the request was successful
     if response.status_code == 200:
