@@ -167,7 +167,7 @@ instructions = {
 
                  '[INSTRUCTION: Question]':
                  {'instruction description': question_answer_template, 
-                  'when to use': """For non-restaurant-related questions (e.g., about FlavourFlix or the virtual assistant)""" },
+                  'when to use': """For non-restaurant-related questions (e.g., about FlavourFlix, the virtual assistant or portuguese gastronomic culture).""" },
 
                   '[INSTRUCTION: Restaurant Description]': 
                   {'instruction description': f"""Find the restaurant with the closest name of the query in the data and \
