@@ -21,6 +21,7 @@ from langchain.agents import tool
 from langchain.agents import load_tools, initialize_agent
 from langchain.agents import AgentType
 import pickle
+from unidecode import unidecode 
 
 
 #  ----------------------------- AGENT TOOLS ----------------------------- #
@@ -212,7 +213,7 @@ class RestaurantDescriptionBot():
         Returns:
             - query_prepared (str): The question to be answered,
             after being prepared by the agent."""
-        restaurant_data = pd.read_csv('data\preprocessed_restaurant_data.csv')
+        restaurant_data = pd.read_csv('data/preprocessed_restaurant_data.csv')
         question_preparer = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, 
                                        system_behavior = restaurant_desc_bot_prompts['question_preparer']['system_configuration'])  
         query = restaurant_desc_bot_prompts['question_preparer']['system_configuration'] + f""" `QUERY`: {query} `RESTAURANT NAME`: """

@@ -4,7 +4,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import spacy
 import numpy as np
 import pandas as pd
-import unidecode
+from unidecode import unidecode
 import re
 # !python -m spacy download en_core_web_md
 
@@ -93,10 +93,13 @@ def get_data_match(data, word, col_to_match, method='dot'):
                 else:
                     print('Method not recognized')
                     return None
-        else:
-            data_match = data_match[col_to_match].values[0]
+                
+                data_match = max(similarities, key=similarities.get)
+                
+    else:
+        data_match = data_match[col_to_match].values[0]
         
-        data_match = max(similarities, key=similarities.get)
+        
     return data_match   
 
 
