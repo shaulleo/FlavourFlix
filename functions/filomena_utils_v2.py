@@ -93,13 +93,9 @@ def get_data_match(data, word, col_to_match, method='dot'):
                 else:
                     print('Method not recognized')
                     return None
-                
                 data_match = max(similarities, key=similarities.get)
-                
     else:
         data_match = data_match[col_to_match].values[0]
-        
-        
     return data_match   
 
 
@@ -179,7 +175,13 @@ instructions = {
                 '[INSTRUCTION: Restaurant Description]': 
                  {'description': f"""The assistant should provide with a description of the restaurant in the `query`.""",
                   'when to use': """The user inquires about a specific restaurant, providing atleast the name of the restaurant. CAUTION: "The Adventurer", "Fine Dining Connoiser", "Comfort Food Lover", "Low Cost Foodie" and "Conscious Eater" are not restaurant names. CAUTION2: Do not confuse people names with restaurant names: e.g. "Madalena Frango" is not a restaurant. She is one of the founders of FlavourFlix.. CAUTION3: Do not confuse names of dishes with names of restaurants."""},
-                                 }
+
+                '[INSTRUCTION: Prepare Restaurant Recommendation]':
+                {'description': f"""The assistant should ask the user for the information necessary to generate a restaurant recommendation.""",
+                                'when to use': """The user asks the assistant for a restaurant recommendation."""},
+                '[INSTRUCTION: Deliver Restaurant Recommendation]':
+                {'description': f"""The assistant should deliver a restaurant recommendation.""",
+                                'when to use': """The user provides with the information about their personality type or preferences to generate a restaurant recommendation."""},}
 
 
 #Prompts para a identificação de instruções (peça central da Filomena)
@@ -207,5 +209,35 @@ Your job is to answer the user's question based on the provided `CONTEXT`, the `
 
 restaurant_desc_bot_prompts = {'question_preparer': {'system_configuration': """INSTRUCTION: You are a Bot that preprocess questions `QUESTIONS` about restaurants to be answered by a virtual assistant. You are preprocessing the questions such that the virtual assistant can accurately find the restaurant mentioned in the `QUESTION`. You will receive a `QUESTION` and you must output a `REFINED QUESTION`.""",
                             'task': """TASK: Extract the restaurant name (`RESTAURANT NAME`) mentioned in the question `QUESTION`. OUTPUT: `RESTAURANT NAME`. """},}
+
+
+restaurant_recommender_prompts = {
+                                'input_retriever': {'system_configuration': f"""INSTRUCTION: You are Filomena, a virtual assistant talking with a FlavourFlix user. You are focused on providing restaurant recommendations to the user, by extracting appropriately from them their preferences to feed into the recommendation algorithm. Assume a friendly, casual and professional tone.""",
+                                                    'task_ask': f"""TASK: Ask the user to indicate the location of the restaurant that should be recommended. Also, in order to finetune the restaurant recommendations, ask the user to indicate their food personality type (if it not available in `PERSONALITY`) or, alternatively, to provide with three or four of the following options:
+        - location (str):  The city the user wants to eat in.
+        - nationality (str): Nationality of the food the user wants to eat.
+        - cuisine_type (str): The type of cuisine the user wants to eat.
+        - restaurant_style (str): The style of the restaurant the user wants to eat at.
+        - price_range (float): The price value in euros the user is willing to pay per meal per person.
+        - dinner_hour (str): The timeslot the user wants to have dinner in the format "HH:MM - HH:MM".
+        - lunch_hour (str): The timeslot the user wants to have lunch in the format "HH:MM - HH:MM".
+        - favourite_food (str): The specific dish or meal the user wants to eat.
+        - preference (str): The user's preference. Can only be one of the following:
+                - [averageRating, averagePrice, averageRatingSummary, ambienceRatingSummary, serviceRatingSummary, foodRatingSummary].
+
+        The personality type can be one of the following:
+        - The Adventurer
+        - Fine Dining Connoisseur
+        - Comfort Food Lover
+        - Low Cost Foodie
+        - Conscious Eater
+
+        `PERSONALITY`: {personality_type}	    
+        """,
+        'task_format': f"""TASK: Format and synthetize the provided `USER INPUTS` into a dictionary with the described `KEY - VALUEFORMAT`:
+        `KEYS`: [personality: str, nationality - str, location - str, favourite_food - str, restaurant_style - str, cuisine_type - str, lunch_hour - str (in the format "HH:MM - HH:MM"), 
+        dinner_hour - str (in the format "HH:MM - HH:MM"), price_range - float] If you are not able to extract the information from the user input, you can assign the value 'None' to the respective key.""" },
+                                'restaurant_recommender': {'task': """TASK: Generate a restaurant recommendation based on the `USER INPUTS`"""}
+}
 
 
