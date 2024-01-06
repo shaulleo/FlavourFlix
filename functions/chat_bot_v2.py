@@ -2,7 +2,7 @@ from functions.filomena_utils_v2 import *
 from functions.utils import *
 from openai import OpenAI
 from langchain.chat_models import ChatOpenAI
-from langchain.document_loaders import PyPrec_restaurantsLoader
+from langchain.document_loaders import PyPDFLoader
 from langchain.memory import ConversationBufferMemory
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
@@ -38,7 +38,7 @@ def get_restaurant_info(restaurant_name: str):
         - result (str): A string with all the information 
         about the restaurant.
     """
-    restaurant_restaurant_data = pd.read_csv('restaurant_data/preprocessed_restaurant_restaurant_data.csv')
+    restaurant_restaurant_data = pd.read_csv('data/preprocessed_restaurant_data.csv')
     restaurant_restaurant_data = restaurant_restaurant_data[restaurant_restaurant_data['name'] == restaurant_name].head(1)
     result = f"""Name: {restaurant_restaurant_data["name"].values[0]} \n /
     Cuisine Type: {restaurant_restaurant_data["cuisine"].values[0]} \n /
@@ -58,22 +58,23 @@ def personality_based_recommendation(personality: str, location:str=None):
         - rec_restaurants (DataFrame): A DataFrame with the recommended restaurants.
     """
 
-    restaurant_data = pd.read_csv('restaurant_data/preprocessed_restaurant_restaurant_data.csv')
+    restaurant_data = pd.read_csv('data/preprocessed_restaurant_data.csv')
 
     #If we have access to the location preferece, we will filter the restaurants based on the location and nearby locations
     if location is not None:
         #Find the restaurants in the location
         equal_location = restaurant_data[restaurant_data['location'] == location]
+        rec_restaurants = equal_location
         #Find the restaurants
         latitude, longitude = find_coordinates(location)
-        if latitude is not None and longitude is not None:
-            selected_location = Location(latitude, longitude)
-            filtered_data = nearYou(selected_location, filtered_data)
-            filtered_data['minutes_away_car'] = filtered_data.apply(lambda row: selected_location.getDirections(row['latitude'], row['longitude'], ['driving'])['driving'].minutes, axis=1)
-            near_location = filtered_data[filtered_data['minutes_away_car'] <= 20]
-            rec_restaurants = pd.concat([near_location, equal_location], ignore_index=True)
-        else:
-            rec_restaurants = equal_location
+        # if latitude is not None and longitude is not None:
+        #     selected_location = Location(latitude, longitude)
+        #     restaurant_data = nearYou(selected_location, restaurant_data)
+        #     restaurant_data['minutes_away_car'] = restaurant_data.apply(lambda row: selected_location.getDirections(row['latitude'], row['longitude'], ['driving'])['driving'].minutes, axis=1)
+        #     near_location = restaurant_data[restaurant_data['minutes_away_car'] <= 20]
+        #     rec_restaurants = pd.concat([near_location, equal_location], ignore_index=True)
+        # else:
+        #     rec_restaurants = equal_location
     else:
         rec_restaurants = restaurant_data            
         
@@ -116,7 +117,7 @@ def personality_based_recommendation(personality: str, location:str=None):
 
 def user_preferences_recommendation(location: str=None, nationality: str= None, cuisine_type: str=None,
                                      restaurant_style: str = None, price_range: str=None, dinner_hour: str=None, 
-                                     lunch_hour: str=None, favourite_food: str=None, preference: str='averageRating'):
+                                     lunch_hour: str=None, favourite_food: str=None, preference: str='ratingValue'):
     
     """Gets restaurant recommendations based on the user's preferences.
     Parameters:
@@ -129,28 +130,29 @@ def user_preferences_recommendation(location: str=None, nationality: str= None, 
         - lunch_hour (str): The timeslot the user wants to have lunch in the format "HH:MM - HH:MM".
         - favourite_food (str): The specific dish or meal the user wants to eat.
         - preference (str): The user's preference. Can only be one of the following:
-                - [averageRating, averagePrice, averageRatingSummary, ambienceRatingSummary, serviceRatingSummary, foodRatingSummary].
+                - [ratingValue, averagePrice, ambienceRatingSummary, serviceRatingSummary, foodRatingSummary].
     Returns:
         - rec_restaurants (DataFrame): A DataFrame with the recommended restaurants.
 
     """
     
-    restaurant_data = pd.read_csv('restaurant_data/preprocessed_restaurant_restaurant_data.csv')
+    restaurant_data = pd.read_csv('data/preprocessed_restaurant_data.csv')
 
     #If we have access to the location preferece, we will filter the restaurants based on the location and nearby locations
     if location is not None:
         #Find the restaurants in the location
         equal_location = restaurant_data[restaurant_data['location'] == location]
+        rec_restaurants = equal_location
         #Find the restaurants
         latitude, longitude = find_coordinates(location)
-        if latitude is not None and longitude is not None:
-            selected_location = Location(latitude, longitude)
-            filtered_data = nearYou(selected_location, filtered_data)
-            filtered_data['minutes_away_car'] = filtered_data.apply(lambda row: selected_location.getDirections(row['latitude'], row['longitude'], ['driving'])['driving'].minutes, axis=1)
-            near_location = filtered_data[filtered_data['minutes_away_car'] <= 20]
-            rec_restaurants = pd.concat([near_location, equal_location], ignore_index=True)
-        else:
-            rec_restaurants = equal_location
+        # if latitude is not None and longitude is not None:
+        #     selected_location = Location(latitude, longitude)
+        #     restaurant_data = nearYou(selected_location, restaurant_data)
+        #     restaurant_data['minutes_away_car'] = restaurant_data.apply(lambda row: selected_location.getDirections(row['latitude'], row['longitude'], ['driving'])['driving'].minutes, axis=1)
+        #     near_location = restaurant_data[restaurant_data['minutes_away_car'] <= 20]
+        #     rec_restaurants = pd.concat([near_location, equal_location], ignore_index=True)
+        # else:
+            # rec_restaurants = equal_location
     else:
         rec_restaurants = restaurant_data  
 
@@ -214,7 +216,7 @@ def user_preferences_recommendation(location: str=None, nationality: str= None, 
 @tool
 def get_recommendation(personality: str=None, location: str =None, nationality: str= None, cuisine_type: str=None,
                                      restaurant_style: str = None, price_range: str=None, dinner_hour: str=None, 
-                                     lunch_hour: str=None, favourite_food: str=None, preference: str='averageRating'):
+                                     lunch_hour: str=None, favourite_food: str=None, preference: str='ratingValue'):
     """Gets restaurant recommendations based on the user's personality or 
     personal preferences stated throughout the chat.
     Parameters:
@@ -229,7 +231,7 @@ def get_recommendation(personality: str=None, location: str =None, nationality: 
         - lunch_hour (str): The timeslot the user wants to have lunch in the format "HH:MM - HH:MM".
         - favourite_food (str): The specific dish or meal the user wants to eat.
         - preference (str): The user's preference. Can only be one of the following:
-                - [averageRating, averagePrice, averageRatingSummary, ambienceRatingSummary, serviceRatingSummary, foodRatingSummary]. 
+                - [ratingValue, averagePrice, ambienceRatingSummary, serviceRatingSummary, foodRatingSummary]. 
     Returns:
         - rec_restaurants (DataFrame): A DataFrame with the recommended restaurants.
     """
@@ -343,7 +345,7 @@ class QuestionAnsweringBot():
         """
         docs = []
         for file_path in files:
-                loader = PyPrec_restaurantsLoader(file_path)
+                loader = PyPDFLoader(file_path)
                 docs.extend(loader.load())
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500,chunk_overlap=200)
         splits = text_splitter.split_documents(docs)
@@ -417,7 +419,7 @@ class RestaurantDescriptionBot():
             - query_prepared (str): The question to be answered,
             after being prepared by the agent."""
         
-        restaurant_restaurant_data = pd.read_csv('restaurant_data/preprocessed_restaurant_restaurant_data.csv')
+        restaurant_restaurant_data = pd.read_csv('data/preprocessed_restaurant_data.csv')
 
         question_preparer = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, 
                                        system_behavior = restaurant_desc_bot_prompts['question_preparer']['system_configuration'])  
@@ -482,7 +484,7 @@ class RestaurantRecommendationBot():
         Returns:    
             - response (str): The user's inputs formatted to be used by the agent."""
         
-        prompt = restaurant_recommender_prompts['input_retriever']['task_format'] + f""" USER INPUTS: {query} OUTPUT FORMAT: {"KEY": "VALUE"}"""
+        prompt = restaurant_recommender_prompts['input_retriever']['task_format'] + f""" USER INPUTS: {query} """
         response = self.input_obtainer.get_completion(prompt)
         return response
 

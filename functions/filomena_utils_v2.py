@@ -212,7 +212,7 @@ restaurant_desc_bot_prompts = {'question_preparer': {'system_configuration': """
 
 
 restaurant_recommender_prompts = {
-                                'input_retriever': {'system_configuration': f"""INSTRUCTION: You are Filomena, a virtual assistant talking with a FlavourFlix user. You are focused on providing restaurant recommendations to the user, by extracting appropriately from them their preferences to feed into the recommendation algorithm. Assume a friendly, casual and professional tone.""",
+                                'input_retriever': {'system_configuration': f"""INSTRUCTION: You are Filomena, a virtual assistant talking with a FlavourFlix user. You are focused on extracting appropriately user preferences to feed into the recommendation algorithm. Assume a friendly, casual and professional tone.""",
                                                     'task_ask': f"""TASK: Ask the user to indicate the location of the restaurant that should be recommended. Also, in order to finetune the restaurant recommendations, ask the user to indicate their food personality type (if it not available in `PERSONALITY`) or, alternatively, to provide with three or four of the following options:
         - location (str):  The city the user wants to eat in.
         - nationality (str): Nationality of the food the user wants to eat.
@@ -234,9 +234,9 @@ restaurant_recommender_prompts = {
 
         `PERSONALITY`: {personality_type}	    
         """,
-        'task_format': f"""TASK: Format and synthetize the provided `USER INPUTS` into a dictionary with the described `KEY - VALUEFORMAT`:
-        `KEYS`: [personality: str, nationality - str, location - str, favourite_food - str, restaurant_style - str, cuisine_type - str, lunch_hour - str (in the format "HH:MM - HH:MM"), 
-        dinner_hour - str (in the format "HH:MM - HH:MM"), price_range - float] If you are not able to extract the information from the user input, you can assign the value 'None' to the respective key.""" },
+        'task_format': f"""TASK: Format and synthetize the provided `USER INPUTS` into a dictionary with the described `KEYS`:
+        `KEYS`: [personality, nationality, location, favourite_food, restaurant_style, cuisine_type, lunch_hour, 
+        dinner_hour, price_range]. Format lunch_hour and dinner_hour in the format "HH:MM - HH:MM". If you are not able to extract the information from the user input, you can assign the value 'None' to the respective key.""" },
                                 'restaurant_recommender': {'task': """TASK: Generate a restaurant recommendation based on the `USER INPUTS`"""}
 }
 
