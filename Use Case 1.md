@@ -45,7 +45,7 @@ To maximize Filomena's potential when answering your questions, please refer to 
 - Users have logged in and gained access to the "Chat with Filomena" interface.
 
 ### Main Flow
-1. __User's Call to Adventure__:
+1. __User's Call to Knowledge__:
     
 The FlavourFlix User initiates contact with Filomena when entering the "Chat with Filomena" interface.
 
