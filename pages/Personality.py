@@ -4,7 +4,7 @@ import time
 from streamlit_extras.switch_page_button import switch_page 
 from functions.utils import *
 from streamlit_extras.stylable_container import stylable_container
-from functions.chat_bot_v2 import personality_based_recommendation
+from functions.chat_bot import personality_based_recommendation
 
 st.set_page_config(page_title='Profile', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="auto")
 display_header()
