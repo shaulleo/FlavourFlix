@@ -126,7 +126,12 @@ for i, (col, post) in enumerate(zip(cols, posts)):
             st.button('Continue Reading', key=f'button_{post["title"]}', on_click=click_read, args=[i])
 
 #Display the button to visit the website
-st.button('Visit out Website', key='button_website')
+url = 'https://flavourflixx.wixsite.com/flavour-flix'
+# Markdown with HTML and CSS to create a button-like link
+button_code = f"<a href='{url}' target='_blank'><button style='color: black; background-color: #FFFFFF; border: 1px solid black; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;'>Visit our Website</button></a>"
+
+# Display the button
+st.markdown(button_code, unsafe_allow_html=True)
 st.divider()
 for i in range(5):
     if st.session_state[f'read_{i}']:
