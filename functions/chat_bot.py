@@ -286,8 +286,8 @@ class RestaurantRecommendationBot():
 
 # ---------------------------- FILOMENA ----------------------------#
     
-personality_finder = QuestionAnsweringBot()
-personality_finder.initialize_qa(files=['text_data\Product.pdf'])
+# personality_finder = QuestionAnsweringBot()
+# personality_finder.initialize_qa(files=['text_data\Product.pdf'])
 
 
 

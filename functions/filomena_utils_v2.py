@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from unidecode import unidecode
 import re
+import random
 # !python -m spacy download en_core_web_md
 
 
@@ -145,6 +146,28 @@ def get_personality(username):
     else:
         return 'Not Available'
     
+
+def get_preferences(personality):
+    questions = {'location': 'Where is the city where you eat?',
+                 'nationality': 'What is the nationality of the food you are looking for?',
+                 'cuisine': 'What cuisine do you want to eat?',
+                 'style': 'What restaurant style do you prefer?',
+                 'budget': 'What is your budget in euros, per meal?',
+                 'dinner_hour': 'What time interval do you want to have dinner? Provide in the format: "HH:MM - HH:MM"',
+                 'lunch_hour': 'What time interval do you want to have lunch? Provide in the format: "HH:MM - HH:MM"',
+                 'favourite_meal': 'What meal do you feel like having?',
+                'preference': 'What do you priorize the most: price, ambience, food quality or service quality?'}
+    if personality != 'Not Available':
+        return [f'I see that you belong to the food personality {personality}',questions['location']]
+    else:
+        possible_questions = list(questions.keys())
+        possible_questions.remove('location')
+        selected = random.sample(possible_questions, 2)
+        selected = [questions[sel] for sel in selected]
+        selected.append(questions['location'])
+        return selected
+
+    
 # ------------------------ Relevant Variables ------------------------#
 
 identification_vars = get_identification_and_user()
@@ -181,12 +204,12 @@ instructions = {
                                 'when to use': """The user asks the assistant for a restaurant recommendation."""},
                 '[INSTRUCTION: Deliver Restaurant Recommendation]':
                 {'description': f"""The assistant should deliver a restaurant recommendation.""",
-                                'when to use': """The user provides with the information about their personality type or preferences to generate a restaurant recommendation."""},}
-
+                                'when to use': """The user provides with information about their dining preferences and location after the assistant requests them for a restaurant recommendation."""},
+}
 
 #Prompts para a identificação de instruções (peça central da Filomena)
-instruction_identifier = {'system_configuration': f"""You are a Bot that helps categorize user queries (query) into different types of instructions. Your role is to be able to identify the type of instruction based on guidelines. You respond in a very simple and direct way, always with the following output: [INSTRUCTION: Instruction Identifier] | query""",
-                           'task': f"""TASK: Your job is to assign an Instruction Identifier based on the user input `QUERY` and the last message from a  chat history `CHAT HISTORY`. You will receive a description about each Instruction Identifier in `CONTEXT`. OUTPUT: You will return the answer in the following format:[INSTRUCTION: Instruction Identifier] | query `CONTEXT`: {instructions} """ }
+instruction_identifier = {'system_configuration': f"""You are a Bot that helps categorize user queries `QUERY` into different types of instructions. Your role is to be able to identify the type of instruction based on guidelines. You respond in a very simple and direct way. `OUTPUT`:  [INSTRUCTION: Instruction Identifier] | `QUERY`""",
+                           'task': f"""TASK: Your job is to assign an Instruction Identifier based on the user input `QUERY` and the last message from a  chat history `CHAT HISTORY`. You will receive a description about each Instruction Identifier (`CONTEXT`). `CONTEXT`: {instructions}. `OUTPUT`: You will return the answer in the following format:[INSTRUCTION: Instruction Identifier] | `QUERY` """ }
 
 #Prompts para dar greeting ao utilizador
 greeter_prompts = {'system_configuration': f"""You are a Bot named Filomena that works for FlavourFlix, speaking with a human. Your role is to greet the human in a casual, friendly and professional way""",
@@ -211,33 +234,26 @@ restaurant_desc_bot_prompts = {'question_preparer': {'system_configuration': """
                             'task': """TASK: Extract the restaurant name (`RESTAURANT NAME`) mentioned in the question `QUESTION`. OUTPUT: `RESTAURANT NAME`. """},}
 
 
-restaurant_recommender_prompts = {
-                                'input_retriever': {'system_configuration': f"""INSTRUCTION: You are Filomena, a virtual assistant talking with a FlavourFlix user. You are focused on extracting appropriately user preferences to feed into the recommendation algorithm. Assume a friendly, casual and professional tone.""",
-                                                    'task_ask': f"""TASK: Ask the user to indicate the location of the restaurant that should be recommended. Also, in order to finetune the restaurant recommendations, ask the user to indicate their food personality type (if it not available in `PERSONALITY`) or, alternatively, to provide with three or four of the following options:
-        - location (str):  The city the user wants to eat in.
-        - nationality (str): Nationality of the food the user wants to eat.
-        - cuisine_type (str): The type of cuisine the user wants to eat.
-        - restaurant_style (str): The style of the restaurant the user wants to eat at.
-        - price_range (float): The price value in euros the user is willing to pay per meal per person.
-        - dinner_hour (str): The timeslot the user wants to have dinner in the format "HH:MM - HH:MM".
-        - lunch_hour (str): The timeslot the user wants to have lunch in the format "HH:MM - HH:MM".
-        - favourite_food (str): The specific dish or meal the user wants to eat.
-        - preference (str): The user's preference. Can only be one of the following:
-                - [averageRating, averagePrice, averageRatingSummary, ambienceRatingSummary, serviceRatingSummary, foodRatingSummary].
 
-        The personality type can be one of the following:
-        - The Adventurer
-        - Fine Dining Connoisseur
-        - Comfort Food Lover
-        - Low Cost Foodie
-        - Conscious Eater
+restaurant_recommender_prompts = {'input_retriever':  {'system_configuration': """INSTRUCTION: You are a bot that works for FlavourFlix' restaurant recommendation department. Your job is to receive sentences and condense them into a given format. """, 
+                                                        'task_make_question': f"""TASK: Consider the sentences in `CONTEXT`. Incorporate them into a `PHRASE` that is coherent and readable for a human, as if you were answering to a human who just stated to you that they want to receive a restaurant recommendation. You must assume a friendly and casual tone.""",
+                                                        'task_format_inputs': f"""TASK: Consider the sentences in `CONTEXT`. Extract the information within them and present it as a dictionary. The keys of the dictionary are described in `KEYS`. If the information is not available, the value of the key should be None. `KEYS`: [personality, location, nationality, cuisine_type, restaurant_style, price_range, dinner_hour, lunch_hour, favourite_food, priority] """,}}
+                                                      
+personality_bot_prompts = {'input_retriever': {'system_configuration': 'INSTRUCTION: You are a Bot that presents ',}}
 
-        `PERSONALITY`: {personality_type}	    
-        """,
-        'task_format': f"""TASK: Format and synthetize the provided `USER INPUTS` into a dictionary with the described `KEYS`:
-        `KEYS`: [personality, nationality, location, favourite_food, restaurant_style, cuisine_type, lunch_hour, 
-        dinner_hour, price_range]. Format lunch_hour and dinner_hour in the format "HH:MM - HH:MM". If you are not able to extract the information from the user input, you can assign the value 'None' to the respective key.""" },
-                                'restaurant_recommender': {'task': """TASK: Generate a restaurant recommendation based on the `USER INPUTS`"""}
-}
-
-
+f"""INSTRUCTIONS:
+Present the following `questions` to the user, whose values will serve as input for a classification model:
+{questionnaire}
+The answers should be on a scale from 1 to 5, where 1 is "Strongly Disagree" and 5 is "Strongly Agree".
+You also must add an final annotation <<<CLASSIFICATION_ON>>>
+Get the values provided and generate a dictionary with the identifier of the question as the key and the value with the number provided by the user. 
+Example of your request message to the user (for simplicity, shown with only 3 questions but you should ask all 10):
+<message>
+Yes, I can find your personality. To do that, I need you two answer the following questions, on a scale from 1 to 5, where \
+     1 is "Strongly Disagree" and 5 is "Strongly Agree". 
+a) "I am open to trying unfamiliar and exotic dishes."
+b) "The presentation and plating of my meal is very important."
+c) "The presentation and plating of my meal is very important."
+<<<CLASSIFICATION_ON>>>
+</message>
+"""
