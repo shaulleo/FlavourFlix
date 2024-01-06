@@ -4,6 +4,7 @@ import time
 from streamlit_extras.switch_page_button import switch_page 
 from functions.utils import *
 from streamlit_extras.stylable_container import stylable_container
+from functions.chat_bot_v2 import personality_based_recommendation
 
 st.set_page_config(page_title='Profile', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="auto")
 display_header()
@@ -59,6 +60,8 @@ if 'personality_generated' not in st.session_state:
     st.session_state['personality_generated'] = None
 if 'answered' not in st.session_state:
     st.session_state['answered'] = None
+if 'current_location' not in st.session_state:
+    st.session_state['current_location'] = None
 
 #Show a question
 def question_presentation(question: str, question_identifier: str, num: int):
@@ -99,7 +102,22 @@ def personality_inputs():
         question_presentation(question, question_identifier,  num)
         st.divider()
         
-            
+def restaurant_card(restaurant, title, number=None):
+    with stylable_container(
+         key="container_with_border",
+            css_styles=css_styles_justify):
+        st.markdown(f"<h5 style='text-align: left; color: black;'>{title}</h5>", unsafe_allow_html=True)
+        col1, col2 = st.columns([4, 5], gap='small')
+        with col1:
+            st.image(restaurant['photo'], width=200)
+        with col2:
+            st.markdown(f"**{restaurant['name'].strip()}**")
+            st.caption(f"*{restaurant['address'].strip()}*")
+            st.caption(f"**Rating**: {restaurant['ratingValue']}/10.0")
+        if st.button(f"View Details for {restaurant['name']}", key=f'restaurant{number}'):
+            st.session_state.selected_restaurant = restaurant['name']
+            switch_page("restaurant")
+                        
 def personality_presentation(observation = None):
     """ Displays the personality of the user after filling in the questionnaire.
     Parameters:
@@ -133,6 +151,25 @@ def personality_presentation(observation = None):
     back_to_search = st.button("Back to Search")
     if back_to_search:
         switch_page('search')
+
+        
+    st.subheader('Based on your personality, we recommend the following restaurants:')
+    st.write('')
+    restaurants = personality_based_recommendation(personality=personality)
+    for i in range(3):
+        first_restaurant = restaurants.iloc[0]
+        second_restaurant = restaurants.iloc[1]
+        third_restaurant = restaurants.iloc[2]
+        fourth_restaurant = restaurants.iloc[3]
+        fift_restaurant = restaurants.iloc[4]
+        
+    # Display the restaurant cards
+    restaurant_card(first_restaurant, 'Restaurant #1', '1')
+    restaurant_card(second_restaurant, 'Restaurant #2', '2')
+    restaurant_card(third_restaurant, 'Restaurant #3', '3')
+    restaurant_card(fourth_restaurant, 'Restaurant #4', '4')
+    restaurant_card(fift_restaurant, 'Restaurant #5', '5')
+        
     
 
 def generate_personality():
