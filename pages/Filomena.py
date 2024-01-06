@@ -3,7 +3,7 @@ from functions.utils import *
 import time
 import os
 import streamlit as st
-from functions.chat_bot import *
+from functions.chat_bot_v2 import *
 from functions.utils import local_settings
 from streamlit_extras.switch_page_button import switch_page 
 

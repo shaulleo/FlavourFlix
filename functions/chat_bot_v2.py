@@ -18,10 +18,9 @@ from langdetect import detect
 from functions.location import *
 from functions.preprocessement import *
 from langchain.agents import tool
-from langchain.agents import load_tools, initialize_agent
+from langchain.agents import initialize_agent
 from langchain.agents import AgentType
 import pickle
-from unidecode import unidecode 
 from functions.preprocessement import *
 
 
@@ -216,7 +215,7 @@ def user_preferences_recommendation(location: str=None, nationality: str= None, 
 @tool
 def get_recommendation(personality: str=None, location: str =None, nationality: str= None, cuisine_type: str=None,
                                      restaurant_style: str = None, price_range: str=None, dinner_hour: str=None, 
-                                     lunch_hour: str=None, favourite_food: str=None, preference: str='ratingValue'):
+                                     lunch_hour: str=None, favourite_food: str=None, priority: str='ratingValue'):
     """Gets restaurant recommendations based on the user's personality or 
     personal preferences stated throughout the chat.
     Parameters:
@@ -230,7 +229,7 @@ def get_recommendation(personality: str=None, location: str =None, nationality: 
         - dinner_hour (str): The timeslot the user wants to have dinner in the format "HH:MM - HH:MM".
         - lunch_hour (str): The timeslot the user wants to have lunch in the format "HH:MM - HH:MM".
         - favourite_food (str): The specific dish or meal the user wants to eat.
-        - preference (str): The user's preference. Can only be one of the following:
+        - priority (str): The user's preference. Can only be one of the following:
                 - [ratingValue, averagePrice, ambienceRatingSummary, serviceRatingSummary, foodRatingSummary]. 
     Returns:
         - rec_restaurants (DataFrame): A DataFrame with the recommended restaurants.
@@ -239,7 +238,7 @@ def get_recommendation(personality: str=None, location: str =None, nationality: 
         recommendations = personality_based_recommendation(personality, location)
     else:
         recommendations = user_preferences_recommendation(location, nationality, cuisine_type,restaurant_style, price_range, dinner_hour, 
-                                     lunch_hour, favourite_food, preference)
+                                     lunch_hour, favourite_food, priority)
     return recommendations
 
 
@@ -386,10 +385,6 @@ class QuestionAnsweringBot():
         Returns:
             - response (str): The answer to the user's question.
         """
-        # retriever = 
-        # retriever.get_relevant_documents(question)
-        #self.vectordb.similarity_search(query_prepared, k=1),
-
         query_prepared = self.prepare_question(query)
         if len((self.model_messages)) <= 5:
             response = self.agent_chain( 
@@ -462,34 +457,56 @@ class RestaurantRecommendationBot():
             - response (str): The restaurant recommendation to the user's question.
         """
         inputs = self.format_inputs(query)
-        prompt = restaurant_recommender_prompts['restaurant_recommender']['task'] + f""" USER INPUTS: {inputs}"""
-        response = self.agent_executor.invoke({"input": query})
+        response = self.agent_executor.invoke({"input": inputs})
         return response['output']
     
     def ask_for_inputs(self):
-        """Asks the user for their preferences or personality type when asked to recommend a restaurant.
+        """Asks the user for their dining preferences and/or location to produce restaurant recommendations.
         Parameters:
             - None
         Returns:
-            - response (str): The user's answer on their preferences or personality type.
-        """
-        prompt = restaurant_recommender_prompts['input_retriever']['task_ask']
-        response = self.input_obtainer.get_completion(prompt)
+            - response (str): A question about the user's dining preferences."""
+        prompt = restaurant_recommender_prompts['input_retriever']['task_make_question'] + f""" CONTEXT: {get_preferences(personality_type)}; PHRASE:  """
+        response = self.input_obtainer.get_completion(prompt, temperature=0.9)
         return response
     
     def format_inputs(self, query: str):
         """Formats the user's inputs to be used by the agent.
         Parameters:
-            - query (str): The user's query where they specify their preferences or personality type.
+            - query (str): The user's query where they specify their dining preferences and location.
         Returns:    
             - response (str): The user's inputs formatted to be used by the agent."""
-        
-        prompt = restaurant_recommender_prompts['input_retriever']['task_format'] + f""" USER INPUTS: {query} """
-        response = self.input_obtainer.get_completion(prompt)
+        prompt = restaurant_recommender_prompts['input_retriever']['task_format_inputs'] + f""" CONTEXT: {self.input_obtainer.messages[-1]['content']}; {query}"""
+        response = self.input_obtainer.get_completion(prompt, temperature=0.0)
         return response
 
 
+# class PersonalityBot():
+#     def __init__(self):
+#         self.classifier = pickle.load(open('data/personality_classifier.pkl', 'rb'))
+#         self.describer = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, 
+#                                        system_behavior = personality_bot_prompts['personality_describer']['system_configuration'])
+#         self.messages = []
+#         self.model_messages = []
+#         self.questionnairer = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, 
+#                                        system_behavior = personality_bot_prompts['personality_questionnairer']['system_configuration'])
+#         self.personality = personality_type
+    
+#     # def obtain_personality(self, query: str):
+#     #    pass
+        
+#     def obtain_questionnaire_answers(self):
+#         response = ''
+        
+        
+
+
 # ----------------------------- Filomena ----------------------------- #
+
+class PersonalityBot():
+    def __init__(self):
+        self.classifier = pickle.load(open('data/personality_classifier.pkl', 'rb'))
+
 
 class Filomena():
     def __init__(self):
@@ -545,6 +562,8 @@ class Filomena():
             response = self.restaurant_recommendation_agent.ask_for_inputs()
         elif instruction_name == '[INSTRUCTION: Deliver Restaurant Recommendation]':
             response = self.restaurant_recommendation_agent.generate_recommendation(query)
+        # elif instruction_name == '[INSTRUCTION: What is my personality]':
+            
         else:
             response = 'Sorry, I am not yet capable of performing this task or instruction. Can I help you with anything else?'
 
