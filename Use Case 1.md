@@ -14,7 +14,7 @@ Filomena is a ChatBot with many functionalities - one of its main innovations is
 
 Moreover, despite talking about FlavourFlix, Filomena is also able to describe the functionalities of the web platform, such as describing the FlavourFlix food personalities, answer Frequently Asked Questions (FAQ), troubleshoot issues the user may find within the web app and, - finally but not least -, she can also present an overview of Portuguese gastronomic culture and present some fun facts about the typical cuisine of Portugal.
 
-All of these possibilities are enabled by Filomena's capabilities of selecting relevant excerpts from a Vector Database containing embeddings of multiple text data files. These are selected through the keywords of the query provided.
+All of these possibilities are enabled by Filomena's capabilities of selecting relevant excerpts from a Vector Database containing embeddings of multiple text data files. These are selected through the keywords of the query provided, and may be found in the [Data Description](https://github.com/shaulleo/FlavourFlix/blob/main/Data%20Description.md).
 
 ## Summary of Topics Accepted
 - Issues with FlavourFlix Platform.
