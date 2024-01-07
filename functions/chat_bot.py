@@ -490,7 +490,7 @@ class PersonalityBot():
         self.questionnairer = GPT_Helper(OPENAI_API_KEY=local_settings.OPENAI_API_KEY, 
                                        system_behavior = personality_bot_prompts['input_retriever']['system_configuration'])
         self.personality = personality_type
-        self.describer.initialize_qa(files=['text_data\Product.pdf'])
+        self.describer.initialize_qa(files=['text_data/Product.pdf'])
     
     def obtain_personality(self, query: str):
        """
