@@ -1,5 +1,3 @@
-O que é que achas disto para Use Case 4, das Recommendations? 
-
 <div align="center"> 
   <h3>USE CASE 4</h3> 
   <h1> CHAT WITH FILOMENA ABOUT YOUR TASTES AND CULINARY PREFERENCES </h1> 
@@ -7,13 +5,15 @@ O que é que achas disto para Use Case 4, das Recommendations?
 
 </div> 
 
-![Placeholder Image](ext_images\pexels-elevate-1267320.jpg) 
+<div align="center">
+  <img src="ext_images\pexels-elevate-1267320.jpg" alt="Placeholder image" style="width: 100%;">
+</div>
 
 ## Description 
 
 Among the wide range of features, Filomena is also able to provide customized restaurant recommendations. Namely, she provides with the possibility of filtering restaurants by cuisine type, location, time interval, and some other factors.  
 
-Thanks to Filomena's ability of understanding the user's needs and preferences, it is able to search in its database the restaurants matching the user's preferences, and returned them. 
+Thanks to Filomena's ability of understanding the user's needs and preferences, it is able to search in its database and return the restaurants matching the user's preferences. 
 
 ## Examples  
 <div align="center">
