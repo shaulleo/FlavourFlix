@@ -24,20 +24,23 @@ For this reason, we considered appropriate to define a manual of guidelines to i
 
 
 1.  In certain cases, such as producing restaurant recommendations, Filomena can become a bit slow to deliver their response. In this case, patience is key.
+2.  When querying Filomena, the prompt should be concise and direct.
+3. The language may be either casual or formal, but slang should be avoided.
+4.  The prompts should not be vague, but rather clearly explain the question being considered. Avoid ambiguity to make the responses more focused.
+5.  Make only one request per prompt. For example, instead of making two questions in one prompt, use one prompt per question. 
+6.  Ensure there are no misspellings in your request.
+7.  If the initial response is not perfect, ask follow-up questions or rephrase your input for better results.
+8.  FlavourFlix has a conversation history. To maintain a coherent conversation, reference those previous messages. If you're continuing a topic, briefly summarize the context to ensure Filomena understands the ongoing discussion. This helps create a more natural and context-aware interaction.
+9.  Refine your queries based on the model's responses. Ask for clarification or provide more details to guide the model toward the desired outcome.
+10.  Experiment with different phrasings and approaches if the initial response is not satisfactory. Iterative conversations often lead to improved results.
+11.  Filomena is not built to answer questions about themeses besides FlavourFlix context and portuguese gastronomy. Thus, anything that is distant from this scope may be completely innacurate.
 
-2.  When querying Filomena, the prompt should be concise and direct. The language may be either casual or formal, but slang should be avoided.
-3.  The prompts should not be vague, but rather clearly explain the question being considered.
-4.  Make only one request per prompt.
-5.  Ensure there are no misspellings in your request.
-6.  If the initial response is not perfect, ask folow-up questions or rephrase your input for better results.
-7.  Maintain a coherent conversation by referencing previous messages. If you're continuing a topic, briefly summarize the context to ensure Filomena understands the ongoing discussion.
-8.  Refine your queries based on the model's responses. Ask for clarification or provide more details to guide the model toward the desired outcome.
 
 ### Questioning Based on Documents Retrieval
 
 1. Specify what you are looking for with keywords directly linked to FlavourFlix.
 2. Do not ask for things unrelated with FlavourFlix or the Portuguese gastronomic culture.
-3. Use short sentences.
+3. Use short and clear sentences.
 4. Avoid making multiple questions in the same prompt.
 
 __Keyword Examples__
@@ -51,6 +54,7 @@ FlavourFlix; Food Personality; Founders of FlavourFlix; Analytics Dashboard; Cur
 1. Clearly state that you are looking for the description of a given restaurant.
 2. Indicate clearly the name of the restaurant you are looking for, ensuring it is complete and correct.
 3. In order to avoid confusing restaurant's names with people's names (e.g: "O Marinho"), identify that you are looking for a restaurant.
+4. Writing down the name wrongly may result in errors. 
 
 ### Asking for Restaurant Recommendations
 
@@ -63,8 +67,13 @@ FlavourFlix; Food Personality; Founders of FlavourFlix; Analytics Dashboard; Cur
 
 ### Uncovering your Food Personality
 
+1. At first, state that you want to know your Food Personality.
+2. If Filomena already has access to this variable (e.g: you have already taken the Food Personality quiz directly in the app), she will describe to you your Food Personality prediction. Otherwise, she will prompt you to answer a the questions of the quiz.
+3. Answer the questions correctly and clearly, by expressing your answers on a scale from 1 (**Strongly Disagree**) to 5 (**Strongly Agree**). It is best to make your answers in the same order the questions appear in, OR, write down the question and the respective answer in front.
+4. Ensure the answers to the quiz are all answered simultaneously in the same request.
+5. If these steps were sucessful, Filomena will predict your personality type and describe it.
 
-
+   
 ## Prompt Examples - Do's & Dont's
 
 ### Questioning Based on Documents Retrieval
@@ -77,14 +86,14 @@ DO NOT: "What is my personality?"
 
 __Guideline 2.__
 ```
-DO: "What is a 'Pastél de Nata'?"
+DO: "Describe me portuguese festivities?"
 DO NOT: "Who wrote the song 'Thriller'?"
 ```
 
 __Guideline 3.__
 ```
 DO: "Tell me more about FlavourFlix app features?"
-DO NOT: "Tell me more..."
+DO NOT: "Tell me more about the FlavourFlix features what they can do how were they created what is behind them?"
 ```
 
 __Guideline 4.__ 
@@ -121,11 +130,6 @@ DO: "I did not like it. Please provide me with another restaurant recommendation
 DO NOT: "I don't like it."
 ```
 ### Uncovering your Food Personality
-
-1. At first, clearly state that you want to know your food personality. 
-2. Filomena asks you to answer to a questionnaire with 10 queries on a scale from 1 to 5, whereas 1 represents "Strongly Disagree" and 5 represents "Strongly Agree".
-3. Provide the answers to Filomena's questionnaire in the required format.
-4. If the inputs are correctly presented and the user responds to all of the questions, Filomena is able to use the Classifier and uncover the Food Personality of the user.
 
 __STEP 1.__
 ```
