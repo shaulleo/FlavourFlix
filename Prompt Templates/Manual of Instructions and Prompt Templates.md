@@ -30,8 +30,8 @@ For this reason, we considered appropriate to define a manual of guidelines to i
 4.  Make only one request per prompt.
 5.  Ensure there are no misspellings in your request.
 6.  If the initial response is not perfect, ask folow-up questions or rephrase your input for better results.
-7.  Refine your queries based on the model's responses. Ask for clarification or provide more details to guide the model toward the desired outcome.
-8.  Filomena has a conversation history. Maintain a coherent conversation by referencing previous messages. If you're continuing a topic, briefly summarize the context to ensure Filomena understands the ongoing discussion. 
+7.  Maintain a coherent conversation by referencing previous messages. If you're continuing a topic, briefly summarize the context to ensure Filomena understands the ongoing discussion.
+8.  Refine your queries based on the model's responses. Ask for clarification or provide more details to guide the model toward the desired outcome.
 
 ### Questioning Based on Documents Retrieval
 
@@ -49,7 +49,7 @@ FlavourFlix; Food Personality; Founders of FlavourFlix; Analytics Dashboard; Cur
 ### Requesting Restaurant Descriptions
 
 1. Clearly state that you are looking for the description of a given restaurant.
-2. Indicate clearly the name of the restaurant you are looking for.
+2. Indicate clearly the name of the restaurant you are looking for, ensuring it is complete and correct.
 3. In order to avoid confusing restaurant's names with people's names (e.g: "O Marinho"), identify that you are looking for a restaurant.
 
 ### Asking for Restaurant Recommendations
