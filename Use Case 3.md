@@ -46,7 +46,7 @@ To maximize Filomena's potential when answering your questions, please refer to 
 
 ## Actors
 
-- FlavourFlix' user, who wants to learn more about a specific restaurant.
+- FlavourFlix' user, who wants to learn more about their food personality.
 - Filomena, FlavourFlix' assistant.
 
 ### Preconditions
