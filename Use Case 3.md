@@ -4,12 +4,14 @@
 <p><em> Ever wondered how to describe in three words your patterns and trends within food and dining experiences? Filomena has got you covered! </em></p>
 </div>
 
-![Placeholder Image](ext_images\personalities\fine_dining_connoisseur.png)
+<div align="center">
+  <img src="ext_images\personalities\fine_dining_connoisseur.png" alt="Placeholder Image - Fine Dining Connoisseur" style="width: 49%;">
+</div>
+
 
 ## Description
 
-Not only Filomena can respond to your questions, she can also determine your personality type through a questionnaire.  There are several possibilities, a user can have an Adventurer personality, or be a Fine Dining Connoisseur, Low Cost Foodie, Comfort Food Lover or even a Conscious Eater. 
-
+Not only Filomena can respond to your questions, she can also determine your personality type through a questionnaire.  There are several possibilities: a user can have an Adventurer personality, or be a Fine Dining Connoisseur, Low Cost Foodie, Comfort Food Lover or even a Conscious Eater. 
 This process is enabled by integrating a Machine Learning classifier within a LLM agent such that, based on a query of the user responding to the provided questionnaire, Filomena is able to categorize the inputs and retrieve the user's personality. 
 
 
@@ -24,7 +26,7 @@ This process is enabled by integrating a Machine Learning classifier within a LL
 
 
 
-## Personality Description
+## Personalities' Description
 
 - __The Adventurer__:  Enjoys trying new, exotic, and often challenging foods. Prefers variety and
 unique culinary experiences over comfort foods.
@@ -74,7 +76,7 @@ The User responds to Filomena's questionnaire in the required format.
 
 6. __Filomena Uncovers the User's Personality__:
 
-If the inputs are correctly presented and the user responds to all of the questions, Filomena is able to use the Classifier and uncover the Food Personality of the user.
+If the inputs are correctly presented and the user responds to all of the questions, Filomena is able to use the classifier and uncover the Food Personality of the user.
 
 ### Alternative Flows
 1. __Feeding the Wrong or Misunderstanding of Inputs__:
