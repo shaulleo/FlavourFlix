@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
         show_prompt_templates(show="👩‍🍳 What is FlavourFlix?", prompt="What is FlavourFlix?", num=1)
         show_prompt_templates(show="🍽️ Recommend me a Restaurant", prompt="Please recommend me a restaurant.", num=2)
-        show_prompt_templates(show="🥮 What is a Pastel de Nata?", prompt="What is a Pastel de Nata?", num=3)
+        show_prompt_templates(show="🥮 What is a Pastel de Nata?", prompt="What is a pastel de nata?", num=3)
  
         if prompt := st.chat_input("Talk with Filomena..."):
             display_chat(prompt=prompt)

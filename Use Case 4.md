@@ -7,7 +7,7 @@ O que é que achas disto para Use Case 4, das Recommendations?
 
 </div> 
 
-![Placeholder Image](link_to_image) 
+![Placeholder Image](ext_images\pexels-elevate-1267320.jpg) 
 
 ## Description 
 
@@ -24,7 +24,7 @@ For more examples, refer to [this link](link_to_examples).
 
 ## Prompt Templates and Instructions  
 
-To maximize Filomena's potential when answering your questions, please refer to the [Filomena's Instructions Documentation](link_to_documentation) and follow the guidelines and prompt templates presented there. 
+To maximize Filomena's potential when answering your questions, please refer to the [Filomena's Instructions Documentation](https://github.com/shaulleo/FlavourFlix/blob/main/Prompt%20Templates/Manual%20of%20Instructions%20and%20Prompt%20Templates.md) and follow the guidelines and prompt templates presented there. 
 
 ## Actors 
 
