@@ -5,12 +5,15 @@
 
 </div>
 
+<p align="center">
+  <a href="https://github.com/shaulleo/FlavourFlix">
+    <img src="ext_images/pexels-cátia-matos-984888.jpg" alt="Portuguese Restaurant" >
+  </a>
 
-![Image](FlavourFlix/ext_images/pexels-cátia-matos-984888.jpg)
 
 ## Description
 
-The virtual assistant Filomena comprises a wide range of features. Namely, she provides with the possibility of getting to know a restaurant without ever leaving the house, by gathering a synthetic but rather complete description of the restaurant, including information about their average prices, cuisine types, restaurant style and much more.
+The virtual assistant Filomena comprises a wide range of features. Moreover, she provides with the possibility of getting to know a restaurant without ever leaving the house, by gathering a synthetic but rather complete description of the restaurant, including information about their average prices, cuisine types, restaurant style and much more.
 
 This is possibilited by Filomena's ability of extracting the restaurant's name from the user input, preprocessing it, and sending it to an agent which performs a search operation of the restaurant within FlavourFlix' restaurant database. The latter may be found in the [Data Description](https://github.com/shaulleo/FlavourFlix/blob/main/Data%20Description.md).
 
@@ -19,11 +22,10 @@ This is possibilited by Filomena's ability of extracting the restaurant's name f
 ![Example Image 2](example_image_2_link)
 ![Example Image 3](example_image_3_link)
 
-For more examples, refer to [this link](link_to_examples).
 
 ## Prompt Templates and Instructions
 
-To maximize Filomena's potential when answering your questions, please refer to the [Filomena's Instructions Documentation](link_to_documentation) and follow the guidelines and prompt templates presented there.
+To maximize Filomena's potential when answering your questions, please refer to the [Filomena's Instructions Documentation](https://github.com/shaulleo/FlavourFlix/blob/main/Prompt%20Templates/Manual%20of%20Instructions%20and%20Prompt%20Templates.md) and follow the guidelines and prompt templates presented there.
 
 ## Actors
 
@@ -53,7 +55,7 @@ Filomena is able to portray information about the restaurant by preprocessing th
 
 5. __Continuous Questioning__:
 
-The User may continue making interacting with Filomena, even change topics. She is able to answer based on a number of given prior messages.
+The User may continue interacting with Filomena, even change topics. She is able to answer based on a number of given prior messages.
 
 ### Alternative Flows
 1. __Filomena's Misunderstanding__:

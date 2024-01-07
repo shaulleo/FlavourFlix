@@ -4,7 +4,7 @@
 <p><em> Ever wondered how to describe in three words your patterns and trends within food and dining experiences? Filomena has got you covered! </em></p>
 </div>
 
-![Placeholder Image](link_to_image)
+![Placeholder Image](ext_images\personalities\fine_dining_connoisseur.png)
 
 ## Description
 
@@ -14,15 +14,16 @@ This process is enabled by integrating a Machine Learning classifier within a LL
 
 
 ## Examples 
+
 ![Example Image 1](example_image_1_link)
 ![Example Image 2](example_image_2_link)
 ![Example Image 3](example_image_3_link)
 
-For more examples, refer to [this link](link_to_examples).
+
 
 ## Personality Description
 
-- __The Adventurer __:  Enjoys trying new, exotic, and often challenging foods. Prefers variety and
+- __The Adventurer__:  Enjoys trying new, exotic, and often challenging foods. Prefers variety and
 unique culinary experiences over comfort foods.
 
 - __Fine Dining Connoisseur__: Appreciates high-end, gourmet food. Values presentation, quality
@@ -36,7 +37,7 @@ emotional connection and nostalgia associated with food.
 
 ## Prompt Templates and Instructions
 
-To maximize Filomena's potential when answering your questions, please refer to the [Filomena's Instructions Documentation](link_to_documentation) and follow the guidelines and prompt templates presented there.
+To maximize Filomena's potential when answering your questions, please refer to the [Filomena's Instructions Documentation](https://github.com/shaulleo/FlavourFlix/blob/main/Prompt%20Templates/Manual%20of%20Instructions%20and%20Prompt%20Templates.md) and follow the guidelines and prompt templates presented there.
 
 ## Actors
 
@@ -76,4 +77,4 @@ If the inputs are correctly presented and the user responds to all of the questi
 1. __Feeding the Wrong or Misunderstanding of Inputs__:
 
 If Filomena is not able to grasp the User's questionnaire responses or the user was not able to provide all the answers, Filomena states that she was not possible to complete the request and recommends the user to perform the questionnaire directly in the app.
-![image](https://github.com/shaulleo/FlavourFlix/assets/99772221/801f26be-1604-44d9-a62c-5e88c7dc23ed)
+
