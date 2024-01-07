@@ -5,8 +5,9 @@
 
 </div>
 
-
-![Placeholder Image](ext_images\pexels-elle-hughes-1549178.jpg)
+<div align="center">
+  <img src="ext_images\pexels-elle-hughes-1549178.jpg" alt="Placeholder image- typical portuguese snack" style="width: 100%;">
+</div>
 
 ## Description
 
