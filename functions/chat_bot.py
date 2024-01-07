@@ -88,7 +88,7 @@ def personality_based_recommendation(personality: str, location:str=None):
     
     elif personality == 'Fine Dining Connoisseur':
         rec_restaurants = rec_restaurants[rec_restaurants['style'].isin(['Fine Dining', 'Modern', 'View', 'Central Location', 'Brunch', 'Meetings'])] 
-        rec_restaurants = rec_restaurants[(rec_restaurants['ambienceRating'] >= 8) & (rec_restaurants['serviceRating'] >= 8)]
+        rec_restaurants = rec_restaurants[(rec_restaurants['ambienceRatingSummary'] >= 8) & (rec_restaurants['serviceRatingSummary'] >= 8)]
         rec_restaurants.sort_values(by=['ambienceRatingSummary', 'serviceRatingSummary'], ascending=False, inplace=True)
     
     elif personality == 'Low Cost Foodie':
@@ -112,11 +112,12 @@ def personality_based_recommendation(personality: str, location:str=None):
                                      rec_restaurants[(rec_restaurants['style'] != 'Homemade') | (rec_restaurants['style'] != 'Healthy')]])
         rec_restaurants.sort_values(by=['foodRatingSummary'], ascending=False, inplace=True)
 
-    return rec_restaurants.head(5)
+    rec_restaurants = rec_restaurants.head(5)
+    return rec_restaurants[['name', 'location', 'cuisine']]
 
 def user_preferences_recommendation(location: str=None, nationality: str= None, cuisine_type: str=None,
-                                     restaurant_style: str = None, price_range: str=None, dinner_hour: str=None, 
-                                     lunch_hour: str=None, favourite_food: str=None, preference: str='ratingValue'):
+                                     restaurant_style: str = None, price_range: str=None, time_slot: str=None, 
+                                     favourite_food: str=None, preference: str='ratingValue'):
     
     """Gets restaurant recommendations based on the user's preferences.
     Parameters:
@@ -125,8 +126,7 @@ def user_preferences_recommendation(location: str=None, nationality: str= None, 
         - cuisine_type (str): The type of cuisine the user wants to eat.
         - restaurant_style (str): The style of the restaurant the user wants to eat at.
         - price_range (str): The price value in euros the user is willing to pay per meal per person.
-        - dinner_hour (str): The timeslot the user wants to have dinner in the format "HH:MM - HH:MM".
-        - lunch_hour (str): The timeslot the user wants to have lunch in the format "HH:MM - HH:MM".
+        - time_slot (str): The timeslot in which the user wants to have a meal in the format "HH:MM - HH:MM".
         - favourite_food (str): The specific dish or meal the user wants to eat.
         - preference (str): The user's preference. Can only be one of the following:
                 - [ratingValue, averagePrice, ambienceRatingSummary, serviceRatingSummary, foodRatingSummary].
@@ -142,16 +142,6 @@ def user_preferences_recommendation(location: str=None, nationality: str= None, 
         #Find the restaurants in the location
         equal_location = restaurant_data[restaurant_data['location'] == location]
         rec_restaurants = equal_location
-        #Find the restaurants
-        latitude, longitude = find_coordinates(location)
-        # if latitude is not None and longitude is not None:
-        #     selected_location = Location(latitude, longitude)
-        #     restaurant_data = nearYou(selected_location, restaurant_data)
-        #     restaurant_data['minutes_away_car'] = restaurant_data.apply(lambda row: selected_location.getDirections(row['latitude'], row['longitude'], ['driving'])['driving'].minutes, axis=1)
-        #     near_location = restaurant_data[restaurant_data['minutes_away_car'] <= 20]
-        #     rec_restaurants = pd.concat([near_location, equal_location], ignore_index=True)
-        # else:
-            # rec_restaurants = equal_location
     else:
         rec_restaurants = restaurant_data  
 
@@ -190,17 +180,13 @@ def user_preferences_recommendation(location: str=None, nationality: str= None, 
     
     if len(rec_restaurants) > 5:
         if price_range is not None:
-            rec_restaurants[rec_restaurants['averagePrice'] <= price_range +4]
+            rec_restaurants[rec_restaurants['averagePrice'] <= int(price_range) +4]
     else:
         return rec_restaurants
 
     if len(rec_restaurants) > 5:
-        if lunch_hour is not None and dinner_hour is not None:
-            rec_restaurants = filter_schedule(rec_restaurants, dinner_hour, lunch_hour)
-        elif dinner_hour is not None:
-            rec_restaurants = filter_schedule(rec_restaurants, dinner_hour, lunch_hour)
-        elif lunch_hour is not None:
-            rec_restaurants = filter_schedule(rec_restaurants, dinner_hour, lunch_hour)
+        if time_slot is not None:
+            rec_restaurants = filter_schedule(rec_restaurants, time_slot)
     else:
         return rec_restaurants
     
@@ -209,13 +195,14 @@ def user_preferences_recommendation(location: str=None, nationality: str= None, 
     else:
         rec_restaurants = rec_restaurants.sort_values(by=[preference], ascending=False)
 
-    return rec_restaurants.head(5)
+    rec_restaurants = rec_restaurants.head(5)
+    return rec_restaurants[['name', 'location', 'cuisine']]
         
 
 @tool
 def get_recommendation(personality: str=None, location: str =None, nationality: str= None, cuisine_type: str=None,
-                                     restaurant_style: str = None, price_range: str=None, dinner_hour: str=None, 
-                                     lunch_hour: str=None, favourite_food: str=None, priority: str='ratingValue'):
+                                     restaurant_style: str = None, price_range: str=None, time_slot: str=None, 
+                                     favourite_food: str=None, priority: str='ratingValue'):
     """Gets restaurant recommendations based on the user's personality or 
     personal preferences stated throughout the chat.
     Parameters:
@@ -226,8 +213,7 @@ def get_recommendation(personality: str=None, location: str =None, nationality: 
         - cuisine_type (str): The type of cuisine the user wants to eat.
         - restaurant_style (str): The style of the restaurant the user wants to eat at.
         - price_range (str): The price value in euros the user is willing to pay per meal per person.
-        - dinner_hour (str): The timeslot the user wants to have dinner in the format "HH:MM - HH:MM".
-        - lunch_hour (str): The timeslot the user wants to have lunch in the format "HH:MM - HH:MM".
+        - time_slot (str): The timeslot in which the user wants to have a meal in the format "HH:MM - HH:MM".
         - favourite_food (str): The specific dish or meal the user wants to eat.
         - priority (str): The user's preference. Can only be one of the following:
                 - [ratingValue, averagePrice, ambienceRatingSummary, serviceRatingSummary, foodRatingSummary]. 
@@ -237,8 +223,8 @@ def get_recommendation(personality: str=None, location: str =None, nationality: 
     if personality != None:
         recommendations = personality_based_recommendation(personality, location)
     else:
-        recommendations = user_preferences_recommendation(location, nationality, cuisine_type,restaurant_style, price_range, dinner_hour, 
-                                     lunch_hour, favourite_food, priority)
+        recommendations = user_preferences_recommendation(location, nationality, cuisine_type,restaurant_style, price_range, time_slot,
+                                    favourite_food, priority)
     return recommendations
 
 
@@ -458,7 +444,8 @@ class RestaurantRecommendationBot():
         """
         inputs = self.format_inputs(query)
         response = self.agent_executor.invoke({"input": inputs})
-        return response['output']
+        response = re.sub(r'\d+\.', '\n', response['output'])
+        return response
     
     def ask_for_inputs(self):
         """Asks the user for their dining preferences and/or location to produce restaurant recommendations.
