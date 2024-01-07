@@ -9,7 +9,6 @@ import requests
 import numpy as np
 from sklearn.metrics.pairwise import haversine_distances
 from math import radians
-from functions.env_colors import *
 from functions.utils import *
 import streamlit as st
 
@@ -28,7 +27,7 @@ class Distance:
         - __str__(self): Description method of the class.
         
     """
-    def __init__(self, km=None, meters=None, miles = None, minutes=None, hours=None):
+    def __init__(self, km: float=None, meters: float=None, miles:float = None, minutes: int=None, hours:str=None):
         """ Class Constructor """
         self.km = km
         self.meters = meters
@@ -47,16 +46,13 @@ class Distance:
         class_name = str(type(self)).split('.')[-1].replace("'>", "")
 
         print(
-            f" 🗺️ Class: {TerminalTextColor.BLUE}{class_name}{TerminalTextColor.RESET}\n{'-' * n_repeat}")
+            f" 🗺️ Class: {class_name}\n{'-' * n_repeat}")
 
         for k in self.__dict__:
-            attributes += f"\n{shift}{shift}- {k}: {TerminalTextColor.BLUE}{self.__dict__[k]}{TerminalTextColor.RESET}"
+            attributes += f"\n{shift}{shift}- {k}: {self.__dict__[k]}"
 
         print(f"\n{shift}🏷️ Attributes: ")
         print(attributes)
-
-
-
         title = '- END -'
         print(f'\n{title}{"-" * (n_repeat-len(title))}')
 
@@ -76,7 +72,7 @@ class Location:
         - __str__(self): Description method of the class.
     """
 
-    def __init__(self, latitude=None, longitude=None, region=None, city=None):
+    def __init__(self, latitude:float=None, longitude:float=None, region:str=None, city:str=None):
         """ Class Constructor """
         self.latitude = latitude
         self.longitude = longitude
@@ -92,6 +88,7 @@ class Location:
         Returns:
             - None 
         """
+        #Open the Chrome Browser
         options = Options()
         options.add_argument("--use--fake-ui-for-media-stream")
         driver = webdriver.Chrome()
@@ -100,17 +97,19 @@ class Location:
         driver.get("https://mycurrentlocation.net/")
         wait = WebDriverWait(driver, timeout)
         time.sleep(15)
+        #Extract the coordinates after the page loads and the user allows the location sharing
         self.latitude = driver.find_element(By.XPATH, '//*[@id="detail-latitude"]').text
         self.longitude = driver.find_element(By.XPATH, '//*[@id="detail-longitude"]').text
+        #Extract the region and city if possible
         self.region = driver.find_element(By.XPATH, '//*[@id="detail-location-name"]').text
         if self.region is None or self.region == '' or self.region == '':
             pass
         else:
             self.city = self.region.split(',')[1].strip()
+        #Close the browser
         driver.quit()
 
-    def getDirections(self, end_latitude, end_longitude, travel_modes='driving'):
-
+    def getDirections(self, end_latitude:float, end_longitude:float, travel_modes:str='driving'):
         """ Gets the distance between the location object and a given point.
         Parameters:
             - end_latitude (float): Latitude of the end point.
@@ -119,7 +118,7 @@ class Location:
         Returns:
             - all_results (dict): Dictionary containing the distance and travel time between the two points for each travel mode.
         """
-
+        #If there is nto access to the location coordinates, raise an exception
         if self.latitude is None or self.longitude is None:
             raise Exception("Location coordinates not found. Please run getLocation() first or specify initial point coordinates.")
 
@@ -128,7 +127,10 @@ class Location:
         if type(travel_modes) == str:
             travel_modes = [travel_modes]
 
+        #For each travel mode
         for mode in travel_modes:
+
+            #Make a call to the Bing MAps API
             base_url = "https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix"
             params = {
                 "origins": f"{self.latitude}, {self.longitude}",
@@ -138,9 +140,9 @@ class Location:
                 "distanceUnit": "km",
                 "timeUnit": "minute"
             }
-
             response = requests.get(base_url, params=params)
 
+            #If the call is successful, extract the distance and travel time
             if response.status_code == 200:
                 data = response.json()
 
@@ -151,13 +153,12 @@ class Location:
                         travel_min = result["results"][0]["travelDuration"] #curretly in minutes
                         travel_km = result["results"][0]["travelDistance"] #currently in kms
                         
+                        #Save the results in the dictionary as a Distance object
                         all_results[mode] = Distance(minutes = int(travel_min), 
                                                 hours = f'{int(travel_min//60)}h{int(travel_min%60)}', 
                                                 meters = np.round(travel_km*1000, 2),
                                                 km = np.round(travel_km, 2),
                                                 miles= np.round(travel_km/1.609, 2))
-                        
-
                     else:
                         print(f"No results found for Travel Mode: {mode}")
                 else:
@@ -178,14 +179,12 @@ class Location:
         shift = "   "
         attributes = ""
         n_repeat = 80
-
         class_name = str(type(self)).split('.')[-1].replace("'>", "")
-
         print(
-            f" 📍 Class: {TerminalTextColor.BLUE}{class_name}{TerminalTextColor.RESET}\n{'-' * n_repeat}")
+            f" 📍 Class: {class_name}\n{'-' * n_repeat}")
 
         for k in self.__dict__:
-            attributes += f"\n{shift}{shift}- {k}: {TerminalTextColor.BLUE}{self.__dict__[k]}{TerminalTextColor.RESET}"
+            attributes += f"\n{shift}{shift}- {k}: {self.__dict__[k]}"
 
         print(f"\n{shift}🏷️ Attributes: ")
         print(attributes)
@@ -194,7 +193,7 @@ class Location:
 
         
 
-def nearYou(location, df, top=None):
+def nearYou(location: Location, df: pd.DataFrame, top: int=None):
     """Finds the top nearest restaurants to the user.
     Parameters:
         - location (Location): Location object of the user.
@@ -203,13 +202,15 @@ def nearYou(location, df, top=None):
     Returns:
         - distances_df (pandas.DataFrame): DataFrame containing the top nearest restaurants to the user. """
     try:
+        #Compute the radians of the current location
         distances_df = df.copy()
         current_radians = [radians(float(location.latitude)), radians(float(location.longitude))]
+        #Compute the distance between the current location and each restaurant
         distances_df['haversine_distances'] = distances_df.apply(lambda row: haversine_distances([current_radians, [radians(row.latitude), radians(row.longitude)]]), axis=1)
         distances_df['haversine_distances'] = distances_df['haversine_distances']  * 6371000/1000
         distances_df['haversine_distances'] = distances_df['haversine_distances'].apply(lambda x: x[1][0])
+        #Sort the restaurants by distance
         distances_df.sort_values(by='haversine_distances', inplace=True)
-        
         if top is None:
             return distances_df
         else:

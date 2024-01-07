@@ -10,8 +10,10 @@ from functions.utils import *
 from streamlit_folium import st_folium
 import folium
 
+#General configurations
 st.set_page_config(page_title='Search', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
 
+#Import the data and standardize it
 data = pd.read_csv('data/preprocessed_restaurant_data.csv')
 data['location'] = data['location'].apply(lambda x: standardize_location(x))
 data['menu_standard'] = data['menu_pre_proc'].apply(lambda x: standardize_text(x))
@@ -20,9 +22,12 @@ data['menu_standard'] = data['menu_pre_proc'].apply(lambda x: standardize_text(x
 #Capitalize the beginning of words in the location column
 data['location'] = data['location'].apply(lambda x: x.title())
 
+
 st.header("Let us help you find the perfect restaurant for you!")
 st.markdown('<br>', unsafe_allow_html=True)
 st.markdown('<br>', unsafe_allow_html=True)
+
+#Intialize session states
 if 'filters' not in st.session_state:
     st.session_state.filters = False
     #Significa que ainda não capturou a localização do user
@@ -35,12 +40,21 @@ if 'menu_search' not in st.session_state:
     st.session_state.menu_search = None
 
 
-def apply_filters(filtered_df):
+def apply_filters(filtered_df: pd.DataFrame):
+    """ Apply filters to the data based on 
+    the forms and search bar.
+    Parameters:
+        - filtered_df (pd.DataFrame): Dataframe with the filtered data.
+    Returns:
+        - filtered_df (pd.DataFrame): Dataframe with the new filtered data."""
+    
+    # Check if filters are applied
     if 'filters' not in st.session_state:
         st.session_state.filters = True
     if st.session_state.filters == False:
         st.session_state.filters = True
 
+    # Apply location filter if selected and considering current location
     if st.session_state.location and st.session_state.location != "All Locations":
         if st.session_state.location == 'Current Location':
             if st.session_state.current_location == False:
@@ -52,15 +66,19 @@ def apply_filters(filtered_df):
         else:
             filtered_df = filtered_df[filtered_df['location'] == st.session_state.location]
 
+    # Apply cuisine filter if selected
     if st.session_state.cuisine and st.session_state.cuisine != 'All Cuisine Types':
         filtered_df = filtered_df[filtered_df['cuisine'] == st.session_state.cuisine]
 
+    # Apply price filter if selected
     if st.session_state.min_price is not None:
         filtered_df = filtered_df[filtered_df['averagePrice'] >= st.session_state.min_price]
 
+    # Apply price filter if selected
     if st.session_state.max_price is not None:
         filtered_df = filtered_df[filtered_df['averagePrice'] <= st.session_state.max_price]
     
+    # Apply menu search if selected
     if st.session_state.menu_search is not None:
         menu_search = standardize_text(st.session_state.menu_search)
         if menu_search != "":
@@ -72,6 +90,7 @@ def apply_filters(filtered_df):
     return filtered_df
 
 def clear_filters():
+    """ Clear all filters session states."""
     st.session_state.location = None
     st.session_state.cuisine = None
     st.session_state.min_price = None
@@ -80,7 +99,18 @@ def clear_filters():
     st.session_state.menu_search = None
 
 
-def show_filters_columns(data):
+def show_filters_columns(data: pd.DataFrame):
+    """ Show the filters forms. 
+    Parameters:
+        - data (pd.DataFrame): Dataframe with the data.
+    Returns:
+        - location (str): Location selected.
+        - cuisine (str): Cuisine selected.
+        - min_price (int): Min price selected.
+        - max_price (int): Max price selected.
+        - menu_search (str): Menu search input."""
+    
+    # Location Filters
     locations = ["All Locations"] + ['Current Location'] + data['location'].unique().tolist()
     selected_location = st.selectbox("Select Location", locations, key='selected_location', index=0)
     if selected_location != "All Locations":
@@ -88,6 +118,7 @@ def show_filters_columns(data):
     else:
         st.session_state.location = None
 
+    # Cuisine Filters
     cuisine_types = ["All Cuisine Types"] + data['cuisine'].unique().tolist()
     selected_cuisine = st.selectbox("Select Cuisine Type", cuisine_types, key='selected_cuisine' )
     if selected_cuisine != "All Cuisine Types":
@@ -113,15 +144,24 @@ def show_filters_columns(data):
 
     return  st.session_state.location, st.session_state.cuisine, st.session_state.min_price, st.session_state.max_price, st.session_state.menu_search
 
-def show_results(data):
+def show_results(data: pd.DataFrame):
+    """ Show the results of the filters.
+    Parameters:
+        - data (pd.DataFrame): Dataframe with the data.
+    Returns:
+        - None"""
+    #Number of cards per row
     N_cards_per_row = 3
     j = 0
+
+    #Per row and per column
     for n_row, row in data.reset_index().iterrows():
         i = n_row%N_cards_per_row
         if i==0:
             st.write("---")
             cols = st.columns(N_cards_per_row, gap="large")
         with cols[n_row%N_cards_per_row]:
+            #Set up a container with the restaurant information and a button to view details
             with st.container():
                 st.image(row['photo'], width=250)
             st.markdown(f"**{row['name'].strip()}**")
@@ -134,11 +174,19 @@ def show_results(data):
             j += 1
 
 def filters_page():
+    """ Show the filters page.
+    Parameters:
+        - None
+    Returns:
+        - None"""
+    
     filtered_df = data.copy()
+    # Check if filters are applied
     if 'applied' not in st.session_state:
         st.session_state.applied = False
     col1, col2 = st.columns([2, 5], gap='medium')
 
+    # Check if filters are applied within the session states and show them
     if st.session_state.applied == False:
         with col1:
             location, cuisine, min_price, max_price, menu_search = show_filters_columns(filtered_df)
@@ -149,22 +197,25 @@ def filters_page():
             st.session_state.menu_search = menu_search
 
         with col2:
+            #Apply the filters if not applied before
             filtered_df = apply_filters(filtered_df)
             # Check if there are matching results
             if not filtered_df.empty:
+                #Show results
                 show_results(filtered_df)
             else:
+                #Error messages
                 st.markdown("#### Ups! We couldn't find any restaurants matching your criteria. :disappointed: Please try a different search. ")
                 st.markdown('<br>', unsafe_allow_html=True)
                 st.markdown('Do you have any suggestions for new restaurants? Please share them with us by clicking on the "Suggest a Restaurant" button below.')
                 if st.button("Suggest a Restaurant"):
                     switch_page("contact us")
 
-
+#If the user is correctly logged in
 if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
+    #Show everything as normal
     pages_logged_in()
     filters_page()
-
 else:
     pages_logged_off()
     filters_page()

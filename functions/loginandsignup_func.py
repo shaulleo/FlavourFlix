@@ -71,7 +71,7 @@ def get_usernames():
     return usernames
 
 
-def validate_email(email):
+def validate_email(email: str):
     """
     Verify if input email is valid.
     Parameters:
@@ -88,7 +88,7 @@ def validate_email(email):
     return False
 
 
-def validate_username(username):
+def validate_username(username: str):
     """
     Verify if input username is valid.
     Parameters:

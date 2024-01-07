@@ -1,10 +1,7 @@
-
 #Source code: https://github.com/Frost-Codes/Streamlit-Authentication/blob/main/main.py
-
 import streamlit as st
 import streamlit_authenticator as stauth
 from functions.loginandsignup_func import *
-# from pages.SignUp import *
 from functions.streamlitfunc  import *
 import time
 from streamlit_extras.switch_page_button import switch_page 
@@ -12,12 +9,7 @@ from streamlit_extras.switch_page_button import switch_page
 #Set up the header section
 st.set_page_config(page_title='Log In', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
 display_header()
-# header_image = "ext_images/logo1.jpeg"  
-# c1, c2, c3 = st.columns([1, 1, 1], gap = 'small')
-# with c2:
-#     st.image(header_image, width=400)
-# st.divider()    
-# st.markdown('<br>', unsafe_allow_html=True)
+
 
 
 def log_in():
@@ -91,7 +83,6 @@ if ('authentication_status' in st.session_state) and (st.session_state['authenti
 #If the user is not logged in, show the pages logged off and prompt the user to log in or sign up
 else:
     col1, col2,  = st.columns(2)
-    #pages_logged_off()
     with col2:
         log_in()
     with col1:

@@ -16,11 +16,10 @@ Among the wide range of features, Filomena is also able to provide customized re
 Thanks to Filomena's ability of understanding the user's needs and preferences, it is able to search in its database the restaurants matching the user's preferences, and returned them. 
 
 ## Examples  
-![Example Image 1](example_image_1_link) 
-![Example Image 2](example_image_2_link) 
-![Example Image 3](example_image_3_link) 
+<div align="center">
+  <img src="ext_images\filomena makes a recommendation.jpg" alt="Filomena makes a recommendation" style="width: 100%;">
+</div>
 
-For more examples, refer to [this link](link_to_examples).  
 
 ## Prompt Templates and Instructions  
 

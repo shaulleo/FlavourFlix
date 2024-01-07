@@ -5,7 +5,6 @@ import re
 import os
 import unicodedata
 import ast
-from functions.env_colors import *
 from dotenv import find_dotenv, load_dotenv
 import openai
 from pydantic_settings import BaseSettings
@@ -141,23 +140,6 @@ def check_if_open(restaurant_schedule:dict, date:str=None, time:str=None):
     return 'Closed'
 
 
-# #Wrapper to Call the OpenAI API and get answers from the GPT-3 Model
-# class GPTWrapper:
-#     def __init__(self, openai_api_key):
-#         self.openai_api_key = openai_api_key
-
-#         self.client = openai.OpenAI(api_key = self.openai_api_key)
-
-#     def get_completion(self, prompt, model="gpt-3.5-turbo"):
-#         messages = [{"role": "user", "content": prompt}]
-
-#         completion = self.client.chat.completions.create(
-#             model = model, 
-#             messages= messages,
-#             temperature=0)
-        
-#         return completion.choices[0].message.content
-    
 
 
 

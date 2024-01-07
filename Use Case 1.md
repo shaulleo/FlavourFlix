@@ -25,11 +25,15 @@ All of these possibilities are enabled by Filomena's capabilities of selecting r
 - Trivia about Portugal's Gastronomic Culture.
 
 ## Examples 
-![Example Image 1](example_image_1_link)
-![Example Image 2](example_image_2_link)
-![Example Image 3](example_image_3_link)
+<div align="center">
+  <img src="ext_images\flavourflix mission.jpg" alt="Filomena describes FlavourFlix' mission" style="width: 32.5%;">
+  <img src="ext_images\portuguese festivities.jpg" alt="Filomena describes Portuguese culinary festivities" style="width: 32.5%;">
+  <img src="ext_images\when was ff created.jpg" alt="Filomena states when FlavourFlix was created" style="width: 32.5%;">
+</div>
 
-For more examples, refer to [this link](link_to_examples).
+<br>
+
+For more examples, refer to [this link](https://github.com/shaulleo/FlavourFlix/blob/main/5%20Question-Answer.md).
 
 ## Prompt Templates and Instructions
 

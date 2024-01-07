@@ -17,10 +17,10 @@ The virtual assistant Filomena comprises a wide range of features. Moreover, she
 
 This is possibilited by Filomena's ability of extracting the restaurant's name from the user input, preprocessing it, and sending it to an agent which performs a search operation of the restaurant within FlavourFlix' restaurant database. The latter may be found in the [Data Description](https://github.com/shaulleo/FlavourFlix/blob/main/Data%20Description.md).
 
-## Examples 
-![Example Image 1](example_image_1_link)
-![Example Image 2](example_image_2_link)
-![Example Image 3](example_image_3_link)
+## Examples  
+<div align="center">
+  <img src="ext_images\describe a restaurant.png" alt="Filomena describes FlavourFlix' mission" style="width: 100%;">
+</div>
 
 
 ## Prompt Templates and Instructions
