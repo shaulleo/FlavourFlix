@@ -29,7 +29,7 @@ For this reason, we considered appropriate to define a manual of guidelines to i
 3.  The prompts should not be vague, but rather clearly explain the question being considered.
 4.  Make only one request per prompt.
 5.  Ensure there are no misspellings in your request.
-
+6.  If the initial response is not perfect, ask folow-up questions or rephrase your input for better results.
 
 ### Questioning Based on Documents Retrieval
 
