@@ -111,8 +111,8 @@ DO NOT: "Recommend me a restaurant in Lisbon that serves pizza."
 
 __STEP 2.__
 ```
-DO: "The restaurant must be in Lisbon. My personality type is 'Comfort Food Lover'".
-DO NOT: "I want a restaurant that will make me feel food."
+DO: "The restaurant must be in Lisbon. My food personality is 'Comfort Food Lover'".
+DO NOT: "I want a restaurant that will make me feel good."
 ```
 
 __STEP 3.__
@@ -122,3 +122,26 @@ DO NOT: "I don't like it."
 ```
 ### Uncovering your Food Personality
 
+1. At first, clearly state that you want to know your food personality. 
+2. Filomena asks you to answer to a questionnaire with 10 queries on a scale from 1 to 5, whereas 1 represents "Strongly Disagree" and 5 represents "Strongly Agree".
+3. Provide the answers to Filomena's questionnaire in the required format.
+4. If the inputs are correctly presented and the user responds to all of the questions, Filomena is able to use the Classifier and uncover the Food Personality of the user.
+
+__STEP 1.__
+```
+DO: "I want to know more about my food personality, please."
+DO NOT: "What is my food personality? Can you explain the food personalities?"
+```
+
+__STEP 2.__
+Answering the questionnaire:
+```
+DO: "How open are you to trying unfamiliar and exotic dishes? Answer:2, How important is the presentation and plating of your food? Answer:4, (...)"
+DO NOT: "I think it's 0"
+```
+
+__STEP 3.__
+```
+DO: "I want to know more about the food personality "Confort Food Lover""
+DO NOT: "What is Food Lover?"
+```
