@@ -29,7 +29,7 @@ This repository contains the complete project designed for the curricular unit "
 #### Description and Motivation
 
 FlavourFlix represents the result of the Capstone Project undertaken as part of the bachelor’s degree in data science. 
-It is intended, in this project, to incorporate a diversified set of data science tools and techniques, concerning namely web scraping, data retrieval and generation, machine learning, text mining, natural language processing, API integration, and large language models.
+In this project, it is intendedto incorporate a diversified set of data science tools and techniques. The procedures applied relate to web scraping, data retrieval and generation, machine learning, text mining, natural language processing, API integration, and large language models.
 
 The idea behind FlavourFlix was to integrate the social network elements present in food and restauration-related platforms such as TheFork and Zomato combined with the recommendation capabilities that distinguish Netflix and YouTube, for example, by ultimately enabling an end-user to obtain customized restaurant recommendations.
 
@@ -64,7 +64,7 @@ This project aims to showcase our abilities in integrating multiple technologies
 
 ## Getting Started
 
-To set up this project locally, fork the repository and following these steps.
+To set up this project locally, fork the repository and follow these steps.
 
 ### Prerequisites and Project Set up
 
@@ -74,7 +74,7 @@ To set up this project locally, fork the repository and following these steps.
 
 🗺️ __Bing MAPS API Key__: It is necessary to have a Bing Maps API key from Bing Maps Dev Center to perform geocoding operations, determine user current location and travel times between locations.
 
-⚠️ The API keys must be stored in a file named .env in the following format: 
+⚠️ The API keys must be stored in a file named __.env__ in the following format: 
 
 ``` 
 OPENAI_API_KEY = 'Your OpenAI key'
@@ -83,9 +83,9 @@ BING_MAPS_API_KEY = 'Your Bing Maps API key'
 MAPS_BASE_URL='http://dev.virtualearth.net/REST/v1/Locations'
 DETA_KEY = 'Your DETA key'
 ```
-This procedure ensures the file is inacessible to others and that the API keys do not inccur in additional costs.
+Add the __.env__ file to the .gitignore. This procedure ensures the file is inacessible to others and that the API keys do not inccur in additional costs.
 
-> __Note__: It is especially important to ensure that the variables in the __.env__ file are named as demonstrated in the code above. This specific name aligns with the Settings class in the util.py file, which is a specialization of the BaseSettings from the pydantic-settings package.
+> __Note__: It is especially important to ensure that the variables in the __.env__ file are named as demonstrated in the code above. This specific name aligns with the Settings class in the functions/utils.py file, which is a specialization of the BaseSettings from the pydantic-settings package to load the environment variables.
 
 It is recommended to create a separate environment designated for this project to avoid conflicts between packages and dependencies. It is also necessary to install in the project environment the packages within the requirements files. The type of requirements depend on your computer.
 
@@ -97,7 +97,6 @@ requirementsb.txt: If you are using a Mac.
 
 After ensuring all of these elements are satisfied, the project is set up.
 
-
 ## Usage
 
 All features were implemented such that someone can use this project project for the following tasks:
@@ -106,18 +105,23 @@ All features were implemented such that someone can use this project project for
 
 2. __Search for Restaurants__: Users are also provided with a search engine that can filter restaurants by their location, cuisine, style, price range, and specific food elements.
 
-3. __Gain Interesting Insights__: Users can utilize the Analytics Dashboard to gain interesting insights into local restaurants, including the number of establishments, prevalent cuisine types, and average pricing, based on general data and the user's location.
+3. __Gain Interesting Insights__: Users can utilize the Analytics Dashboard to gain interesting insights into local restaurants, including the number of establishments, prevalent cuisine types, and average pricing, based on general data and/or current location.
 
 4. __Have some fun with the Questionnaire__: Users can determine their food personality by filling in a simple questionnaire referring to their dining tendencies and preferences.
 
 5. __Simulate Reservations__: Reservations can be simulated through the app, whereas it is only possible to proceed with it if the fields of the reservation align with the restaurant's schedules and table capacity.
 
-6. __Read Blog Entries and Testimonials__: The webapp and website are populated with blog entries about FlavourFlix and culinary experiences.
+6. __Read Blog Entries and Testimonials__: The app and website are populated with blog entries about FlavourFlix and culinary experiences.
 
 7. __Learn with Filomena__: Filomena not only provides with recommendations, but is also able to determine the user's food personality if prompted, as answer questions about FlavourFlix and the gastronomic culture of Portugal.
 
 
-_For examples on how to, namely, effectively use the Filomena page please refer to the [Use Cases](https://example.com) and [Prompt Templates](https://example.com)_
+_For examples on how to, namely, effectively use the Filomena page please refer to the Use Cases and [Prompt Templates](https://example.com)_
+ 
+* [Use Case 1](https://github.com/shaulleo/FlavourFlix/blob/main/Use%20Case%201.md)
+* [Use Case 2](https://github.com/shaulleo/FlavourFlix/blob/main/Use%20Case%202.md)
+* [Use Case 3](https://github.com/shaulleo/FlavourFlix/blob/main/Use%20Case%203.md).
+* [Use Case 4](https://github.com/shaulleo/FlavourFlix/blob/main/Use%20Case%203.md).
 
 
 ## Authors
