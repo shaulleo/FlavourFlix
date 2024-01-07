@@ -30,6 +30,8 @@ For this reason, we considered appropriate to define a manual of guidelines to i
 4.  Make only one request per prompt.
 5.  Ensure there are no misspellings in your request.
 6.  If the initial response is not perfect, ask folow-up questions or rephrase your input for better results.
+7.  Refine your queries based on the model's responses. Ask for clarification or provide more details to guide the model toward the desired outcome.
+8.  Filomena has a conversation history. Maintain a coherent conversation by referencing previous messages. If you're continuing a topic, briefly summarize the context to ensure Filomena understands the ongoing discussion. 
 
 ### Questioning Based on Documents Retrieval
 
