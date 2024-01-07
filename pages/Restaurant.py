@@ -10,26 +10,32 @@ from streamlit_extras.stylable_container import stylable_container
 from streamlit_carousel import carousel
 from streamlit_extras.switch_page_button import switch_page
 
-
+#General configurations
 st.set_page_config(page_title='Restaurant', page_icon="ext_images\page_icon.png", layout="wide", initial_sidebar_state="collapsed")
-header_image = "ext_images/logo1.jpeg"  
-c1, c2, c3 = st.columns([1, 1, 1], gap = 'small')
-with c2:
-    st.image(header_image, width=400)
-st.divider()    
-st.markdown('<br>', unsafe_allow_html=True)
+display_header()
 
+#Import restaurant data
 data = pd.read_csv('data/preprocessed_restaurant_data.csv')
 
 
 
-def find_res_photos(restaurant):
+def find_res_photos(restaurant: str):
+    """Find the photos of a restaurant in the dataset.
+    Parameters:
+        - restaurant (str): Name of the restaurant.
+    Returns:
+        - images (list): List of dictionaries containing the image info.
+    """
+    #Import original un preprocessed data
     data_with_photos = pd.read_csv('data/og_restaurant_data.csv')
+    #Find the columns referring to photos
     photo_columns = [col for col in list(data_with_photos.columns) if 'photos' in col]
     photo_columns.append('name')
     data_with_photos = data_with_photos[photo_columns]
+    #Find the photos of the restaurant
     res_photos = data_with_photos[data_with_photos['name'] == restaurant]
     res_photos = res_photos.dropna(axis=1, how='all')
+    #Create a list of dictionaries containing the image info and the image itself
     images = []
     photo_columns = [col for col in list(res_photos.columns) if 'photos' in col]
     for col in photo_columns:
@@ -37,11 +43,19 @@ def find_res_photos(restaurant):
                           text = f'{res_photos["name"].values[0]}',
                           img = res_photos[col].values[0])
         images.append(image_info)
-    
     return images
 
 
-def show_menu(restaurant, menu_col1, menu_col2):
+def show_menu(restaurant: pd.Series, menu_col1: str, menu_col2: str):
+    """Show the menu of a restaurant.
+    Parameters:
+        - restaurant (pd.Series): Restaurant data.
+        - menu_col1 (str): Name of the column containing the Portuguese menu.
+        - menu_col2 (str): Name of the column containing the English menu.
+    Returns:
+        - None"""
+    
+    #Preprocess the menu columns
     if type(restaurant[menu_col1].iloc[0]) == str:
         menu1 = restaurant[menu_col1].iloc[0]
         menu1 = menu1.replace('"{', '{')
@@ -80,10 +94,12 @@ def show_menu(restaurant, menu_col1, menu_col2):
         menu_items2 = None
         menu2 = 'Not Available'
 
+    #Continue searching button
     continue_searching = st.button("Continue Searching", key=f'continue_searching_1')
     if continue_searching:
         switch_page("Search")
 
+    #Show both menus with an expander
     with st.expander("Check out the menu!"):
         not_available = False
         col1, col2 = st.columns([1, 1])
@@ -124,7 +140,13 @@ def show_menu(restaurant, menu_col1, menu_col2):
             st.markdown('Sorry! It seems that the restaurant did not make their menu available yet... :disappointed:')
 
 
-def show_schedule(restaurant):
+def show_schedule(restaurant: pd.Series):
+    """Show the schedule of a restaurant.
+    Parameters:
+        - restaurant (pd.Series): Restaurant data.
+    Returns:
+        - None"""
+    #Show the restaurant schedule with an expander
     with st.expander("View Restaurant Schedule"):
         if restaurant['schedule'].iloc[0] == 'Not Available':
             st.markdown('Sorry! It seems that the restaurant did\nnot make their schedule available yet... :disappointed:')
@@ -135,14 +157,25 @@ def show_schedule(restaurant):
                 st.markdown(f" - {hours}")
 
 
-def show_time_away(restaurant):
+def show_time_away(restaurant: pd.Series):
+    """Show the time away from the restaurant based on the users 
+    preference (typically walks or drives by car) .
+    Parameters:
+        - restaurant (pd.Series): Restaurant data.
+    Returns:
+        - None"""
+    #If usser is logged in
     if 'authentication_status' in st.session_state and st.session_state['authentication_status'] == True:
         if 'username'  in st.session_state and 'email' in st.session_state:
             clients = pd.read_csv('data/clientData.csv')
+            #If current location is active
             if "current_location" in st.session_state and st.session_state.current_location != False:
+                #If user is in the database
                 if 'email' in clients['email'].values:
+                    #Find the users preference (driving or walking)
                     current_client = clients[clients['email'] == st.session_state['email']].iloc[0]
                     prefers_driving = current_client['travel_car']
+                    #Display the time away from the restaurant by car or by foot
                     if prefers_driving:
                         by_car = st.session_state.current_location.getDirections(restaurant['latitude'].iloc[0], restaurant['longitude'].iloc[0], ['driving'])
                         distance = f'{by_car["driving"].meters} meters' if by_car['driving'].meters < 1000 else f"{by_car['driving'].km} km"
@@ -154,6 +187,7 @@ def show_time_away(restaurant):
                         time_away = f"{by_foot['walking'].minutes}min away" if by_foot['walking'].minutes < 60 else f"{by_foot['walking'].hours} away"
                         st.markdown(f"🚶 **{distance}** ({time_away})")
                 else:
+                    #By default if no preference is found, the user prefers to drive by car
                     by_car = st.session_state.current_location.getDirections(restaurant['latitude'].iloc[0], restaurant['longitude'].iloc[0], ['driving'])
                     distance = f'{by_car["driving"].meters} meters' if by_car['driving'].meters < 1000 else f"{by_car['driving'].km} km"
                     time_away = f"{by_car['driving'].minutes}min away" if by_car['driving'].minutes < 60 else f"{by_car['driving'].hours} away"
@@ -167,7 +201,12 @@ def show_time_away(restaurant):
         
 
 def restaurant_details():
-
+    """Show the details of a restaurant.
+    Parameters:
+        - None
+    Returns:
+        - None"""
+    #Find the details of the selected restaurant
     food_rating = data.loc[data['name'] == selected_restaurant, 'foodRatingSummary'].iloc[0]
     service_rating = data.loc[data['name'] == selected_restaurant, 'serviceRatingSummary'].iloc[0]
     ambience_rating = data.loc[data['name'] == selected_restaurant, 'ambienceRatingSummary'].iloc[0]
@@ -183,6 +222,7 @@ def restaurant_details():
 
     st.markdown(f"<h1 style='text-align: center; color: black;'>{selected_restaurant}</h1>", unsafe_allow_html=True)
 
+    #Show the food rating, service rating, ambience rating, maximum party size and michelin award with metric cards
     st.markdown('<br>', unsafe_allow_html=True)
     m1, m2, m3, m4, m5 = st.columns([1,1,1, 1, 1])
     with m1:
@@ -192,13 +232,7 @@ def restaurant_details():
             food_rating = f'{np.round(food_rating, 2)}/10.0'
         with stylable_container(
         key="container_with_border",
-        css_styles="""
-            {
-                border: 1px solid rgba(49, 51, 63, 0.2);
-                border-radius: 0.5rem;
-                padding: calc(1em - 1px)
-            }
-            """):
+        css_styles=css_styles_res_dets):
             st.metric(label = '🍲 Food Rating', value = f"{food_rating}")
 
     with m2:
@@ -209,13 +243,7 @@ def restaurant_details():
     
         with stylable_container(
         key="container_with_border",
-        css_styles="""
-            {
-                border: 1px solid rgba(49, 51, 63, 0.2);
-                border-radius: 0.5rem;
-                padding: calc(1em - 1px)
-            }
-            """    ):
+        css_styles=css_styles_res_dets ):
             st.metric(label = '👨‍🍳 Service Rating', value = f"{service_rating}")
 
     with m4:
@@ -225,13 +253,7 @@ def restaurant_details():
             max_party_size = int(max_party_size)
         with stylable_container(
         key="container_with_border",
-        css_styles="""
-            {
-                border: 1px solid rgba(49, 51, 63, 0.2);
-                border-radius: 0.5rem;
-                padding: calc(1em - 1px)
-            }
-            """,    ):
+        css_styles=css_styles_res_dets):
             st.metric(label = '🧑🏽‍🤝‍🧑🏿 Maximum Party Size', value = max_party_size)
     
     with m3:
@@ -244,45 +266,24 @@ def restaurant_details():
             michelin_score = 'Michelin ⭐' if michelin_value == 1 else 'None'
             with stylable_container(
             key="container_with_border",
-            css_styles="""
-                {
-                    border: 1px solid rgba(49, 51, 63, 0.2);
-                    border-radius: 0.5rem;
-                    padding: calc(1em - 1px)
-                    align-items: center;
-                }
-                """,
+            css_styles=css_styles_res_dets,
         ):
                 st.metric(label= 'Awarded with', value=michelin_score)
         else:
             with stylable_container(
             key="container_with_border",
-            css_styles="""
-                {
-                    border: 1px solid rgba(49, 51, 63, 0.2);
-                    border-radius: 0.5rem;
-                    padding: calc(1em - 1px)
-                    align-items: center;
-                }
-                """,
+            css_styles= css_styles_res_dets,
         ):
                 st.metric(label= '🏙️ Ambience Rating', value=f'{ambience_rating}')
 
     with m5:
         with stylable_container(
         key="container_with_border",
-        css_styles="""
-            {
-                border: 1px solid rgba(49, 51, 63, 0.2);
-                border-radius: 0.5rem;
-                padding: calc(1em - 1px)
-                align-items: center;
-            }
-            """,
+        css_styles=css_styles_res_dets,
     ):
             st.metric(label= '🧑🏻‍🤝‍🧑🏿 Current Ocupation', value=current_occupation)
 
-
+    #Show the images of the restaurant with a carousel
     st.markdown('<br>', unsafe_allow_html=True)
     st.markdown('<br>', unsafe_allow_html=True)
     col1, col2 = st.columns([3,3], gap = 'large')
@@ -290,6 +291,7 @@ def restaurant_details():
         images = find_res_photos(selected_restaurant)
         carousel(items=images, width=1.15)
 
+    #Show the restaurant details with a container
     with col2:
         with stylable_container(
         key="container_with_border",
@@ -319,16 +321,18 @@ def restaurant_details():
             st.markdown(f"**Outdoor Area:** {outdoor_area}")
             st.markdown(f"**Average Price:** {data.loc[data['name'] == selected_restaurant, 'averagePrice'].iloc[0]}€")
             st.markdown(f"**Promotion**: {promotion}")
-
+            #Show time away from the restaurant
             show_time_away(data.loc[data['name'] == selected_restaurant])
+            #Show the reserve button
             if st.button(f"Reserve Now!"):
                 st.session_state.selected_restaurant = selected_restaurant
                 st.session_state.reserve = True
                 switch_page("reservations")
+    #Show menu and schedule
     show_menu(data.loc[data['name'] == selected_restaurant], 'menu_pt', 'menu_en')
     show_schedule(data.loc[data['name'] == selected_restaurant])
     
-
+#Initialize session state variables
 if 'selected_restaurant' not in st.session_state:
     selected_restaurant = st.session_state.selected_restaurant = None
 else:
@@ -336,10 +340,9 @@ else:
 if 'reserve' not in st.session_state:
     st.session_state.reserve = False
 
-    
-    # If the user has not selected a restaurant yet, show a selectbox
-# Get a list of all the restaurants
+
 restaurants = ["Search"] + data['name'].unique().tolist()
+#If no restaurant is selected
 if selected_restaurant is None:
     # Create a selectbox for the user to choose a restaurant
     selected = st.selectbox("Select a Restaurant", restaurants)
@@ -350,7 +353,7 @@ if selected_restaurant is None:
         restaurant_details()
     else:
         st.write("Please select a restaurant from the list above.")   
-
+#Show the restaurant details
 elif st.session_state.selected_restaurant is not None and st.session_state.reserve == False:
     selected = st.selectbox("Select a Restaurant",  options=restaurants)
     if st.session_state.selected_restaurant != selected:
@@ -358,13 +361,13 @@ elif st.session_state.selected_restaurant is not None and st.session_state.reser
             selected = st.session_state.selected_restaurant
             selected_restaurant = data.loc[data['name'] == selected, 'name'].iloc[0]
             st.session_state.selected_restaurant = selected_restaurant
+            #Show the restaurant details
             restaurant_details()
         else: 
             selected_restaurant = data.loc[data['name'] == selected, 'name'].iloc[0]
-        # Store the selected restaurant in session state
+            # Store the selected restaurant in session state
             st.session_state.selected_restaurant = selected_restaurant
             restaurant_details()
-
     elif selected == st.session_state.selected_restaurant:
         selected_restaurant = data.loc[data['name'] == selected, 'name'].iloc[0]
         st.session_state.selected_restaurant = selected_restaurant

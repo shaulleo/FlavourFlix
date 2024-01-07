@@ -7,15 +7,11 @@ from streamlit_extras.switch_page_button import switch_page
 from functions.utils import *
 from streamlit_extras.stylable_container import stylable_container
 
+#Initial configurations
 st.set_page_config(page_title='Profile', page_icon='ext_images/page_icon.png', layout= "wide" , initial_sidebar_state="collapsed")
+display_header()
 
-header_image = "ext_images/logo1.jpeg"  
-c1, c2, c3 = st.columns([1, 1, 1], gap = 'small')
-with c2:
-    st.image(header_image, width=400)
-st.divider()    
-st.markdown('<br>', unsafe_allow_html=True)
-
+#Initialize session states
 if 'save' not in st.session_state:
     st.session_state['save'] = None
 if 'edit' not in st.session_state:
@@ -26,42 +22,61 @@ if 'user_data' not in st.session_state:
     st.session_state['user_data'] = None
 
 
-def click_save(user_data):
+def click_save(user_data: dict):
+    """Control session states and save user data after clicking save button.
+    Parameters:
+        - user_data (dict): dictionary with user data.
+    Returns:
+        - None"""
     st.session_state['save'] = True
     st.session_state['edit'] = False
     st.session_state['run'] += 1
     save_user_data(user_data)
 
 def click_edit():
+    """Control session states and edit user data after clicking edit button.
+    Parameters:
+        - None
+    Returns:
+        - None"""
     st.session_state['edit'] = True
     st.session_state['save'] = False
     st.session_state['run'] += 1
 
 def gather_client_data():
+    """Gather user data from the form.
+    Parameters:
+        - None
+    Returns:
+        - None"""
+    
+    #Find email and username
     email = st.session_state['email']
     username = st.session_state['username']
-
+    #Set title
     st.markdown(f'## {username}, please fill in the following information for more accurate recommendations.')
     st.caption("Note that the information you provide will only be used to improve your experience on our website.\nWe will never share your personal information with third parties.")
 
     st.divider()
+    #Personal Information Subsection
     st.markdown('### Personal Information')
 
+    #Forms for personal information
     col1, col2 = st.columns(2)
     with col1:
         first_name = st.text_input("**First Name**", key=f'first_name_{st.session_state["run"]}')
-    #last_name = st.text_input("Last Name", key=f'last_name_{st.session_state["run"]}')
         gender = st.selectbox("**How do you identify yourself?**",[ 'Female', 'Male', 'Other'], key=f'gender_{st.session_state["run"]}')
-    #dob = st.date_input("When were you born?", min_value= date.fromisoformat('1899-12-31'), max_value = date.fromisoformat('2005-12-31'), format="YYYY/MM/DD", value=date.fromisoformat('2005-01-01'), key=f'dob_{st.session_state["run"]}')
         nationality = st.text_input('**What is your nationality?**', key=f'nationality_{st.session_state["run"]}')
-    #district = st.selectbox("Where are you based in?",['Aveiro', 'Beja', 'Braga', 'Bragança', 'Castelo Branco', 'Coimbra', 'Évora', 'Faro', 'Guarda', 'Leiria', 'Lisboa', 'Portalegre', 'Porto', 'Santarém', 'Setúbal', 'Viana do Castelo', 'Vila Real', 'Viseu', 'Açores', 'Madeira'], key=f'district_{st.session_state["run"]}')
     with col2:
         last_name = st.text_input("**Last Name**", key=f'last_name_{st.session_state["run"]}')
         dob = st.date_input("**When were you born?**", min_value= date.fromisoformat('1899-12-31'), max_value = date.fromisoformat('2005-12-31'), format="YYYY/MM/DD", value=date.fromisoformat('2005-01-01'), key=f'dob_{st.session_state["run"]}')
         district = st.selectbox("**Where are you based in?**",['   ','Aveiro', 'Beja', 'Braga', 'Bragança', 'Castelo Branco', 'Coimbra', 'Évora', 'Faro', 'Guarda', 'Leiria', 'Lisboa', 'Portalegre', 'Porto', 'Santarém', 'Setúbal', 'Viana do Castelo', 'Vila Real', 'Viseu', 'Açores', 'Madeira'], key=f'district_{st.session_state["run"]}')
     
     st.divider()
+    #Lifestyle and General Preferences Subsection
     st.markdown('### Lifestyle and General Preferences')
+
+    #Forms for lifestyle and general preferences
     col3, col4 = st.columns(2)
     with col3:
         st.write('')
@@ -76,14 +91,20 @@ def gather_client_data():
     dinner_hour = st.slider("**Dinner Hour**", min_value=18, max_value=23,value=(18, 23), key=f'dinner_hour_{st.session_state["run"]}')
 
     st.divider()
+    #Dietary Preferences Subsection
     st.markdown('### Dietary Preferences')
+
+    #Forms for dietary preferences
     dietary_restrictions = st.selectbox("**Dietary Restrictions**", ["None", "Vegetarian", "Vegan"], key=f'dietary_restrictions_{st.session_state["run"]}')
     allergies = st.text_input("**Do you have any allergies? If so, which?**", key=f'allergies_{st.session_state["run"]}')
     favourite_food = st.text_area("**What is your favourite food? Feel free to write in Portuguese!**", key=f'favourite_food_{st.session_state["run"]}')
     dislike_food = st.text_area("**What is your least favourite food? Feel free to write in Portuguese!**", key=f'dislike_food_{st.session_state["run"]}')
     
     st.divider()
+    #Restaurant Preferences Subsection
     st.markdown('### Restaurant Preferences')
+
+    #Forms for restaurant preferences
     restaurant_style = st.selectbox("**What Restaurant Style do you prefer?**", ['   ','Festivities', 'Chill Out', 'Buffet', 'Family', 'Modern',
        'Fine Dining', 'Groups', 'Central Location', 'Friends',
        'Not Available', 'Brunch', 'Casual', 'Homemade', 'Meetings',
@@ -97,6 +118,7 @@ def gather_client_data():
        'Syrian', 'Iranian', 'Lebanese', 'Chinese', 'Tibetan',
        'Vietnamese', 'Argentinian'], key=f'cuisine_type_{st.session_state["run"]}')
 
+    #Save user data in a dictionary
     user_data = {
             "email": email,
             "username": username,
@@ -121,13 +143,25 @@ def gather_client_data():
             "smoker_n": smoker
         }
     
+    #Update session state
     st.session_state['user_data'] = user_data
 
 
-def save_user_data(user_data):
+def save_user_data(user_data: dict):
+    """Save user data in a csv file.
+    Parameters:
+        - user_data (dict): dictionary with user data.
+    Returns:
+        - None"""
+    
+    #Read client data
     client_data = pd.read_csv('data/clientData.csv', sep=',')
+    #Append new data
     client_data = pd.concat([client_data, pd.DataFrame([user_data])], ignore_index=True)
+    #Drop duplicates
     client_data.drop_duplicates(subset=['email', 'username'], keep = 'last', inplace=True)
+
+    #Save data
     if not any(x =='   ' for x in user_data.values()) and not (user_data['first_name'] == '' and user_data['last_name'] == ''):
         client_data.to_csv('data/clientDataClean.csv', index=False)
         with st.spinner('Saving your data...'):
@@ -137,12 +171,21 @@ def save_user_data(user_data):
             st.error('Please fill in all the fields!', icon='🚨')   
 
 
-def show_client_data(client_data, email):
+def show_client_data(client_data: pd.DataFrame, email: str):
+    """Show user data in a stylable container.
+    Parameters:
+        - client_data (pd.DataFrame): dataframe with user data.
+        - email (str): user email.
+    Returns:
+        - None"""
+    
+    #CSS styles
     st.title(f'{st.session_state["username"]}\'s Profile')
-    #st.divider()
     st.markdown('<br>', unsafe_allow_html=True)
     st.markdown('### Personal Information 😊')
     st.markdown('<br>', unsafe_allow_html=True)
+
+    #Display user data
     c1, c2, c3 = st.columns(3)
     with c1:
         with stylable_container(key="container_with_border", css_styles=css_styles_justify):

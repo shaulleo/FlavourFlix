@@ -6,7 +6,6 @@ import re
 import unicodedata
 import requests
 from functions.utils import *
-from functions.env_colors import *
 from functions.location import *
 #from functions.utils import standardize_text
 
@@ -106,7 +105,7 @@ def find_coordinates(address: str):
     return latitude, longitude
 
 
-def find_random_time(time_string:str, start=True):
+def find_random_time(time_string:str, start: bool=True):
     """Finds a random time within a given time range.
     Parameters:
         - time_string (str): Time range.
@@ -205,7 +204,7 @@ def promotion_generator(schedule: dict, prob:float):
         return 'No Offers'
     
 
-def clean_chef_names(name):
+def clean_chef_names(name:str):
     """Cleans the name of a chef.
     Parameters:
         - name (str): Name of the chef.

@@ -1,6 +1,4 @@
-#Video https://www.youtube.com/watch?v=8X1OidYYVQw&ab_channel=SnakeByte
 #Source code: https://github.com/Frost-Codes/Streamlit-Authentication/blob/main/main.py
-
 
 import streamlit as st
 import streamlit_authenticator as stauth
@@ -8,23 +6,25 @@ from functions.loginandsignup_func import *
 from functions.streamlitfunc import *
 from streamlit_extras.switch_page_button import switch_page 
 
-
-header_image = "ext_images/logo1.jpeg"  
-c1, c2, c3 = st.columns([1, 1, 1], gap = 'large')
-with c2:
-    st.image(header_image, width=400)
-st.divider()    
-st.markdown('<br>', unsafe_allow_html=True)
+#General configurations
+display_header()
 
 def sign_up():
     """ 
     Shows the Sign Up page of FlavourFlix.
+    Parameters:
+        - None
+    Returns:
+        - None
     """
 
+    # Show the pages available when logged out
     pages_logged_off()
 
+    #Sign up form
     with st.form(key='signup', clear_on_submit=True):
         st.subheader(':black[Sign up to FlavourFlix now!]')
+        #Ask for user credentials
         email = st.text_input(':blue[Email]', placeholder='Enter Your Email')
         username = st.text_input(':blue[Username]', placeholder='Enter Your Username')
         password1 = st.text_input(':blue[Password]', placeholder='Enter Your Password', type='password')
@@ -35,8 +35,10 @@ def sign_up():
         with btn1:
             st.form_submit_button('Create your Account!')
 
+        #Verify if the input credentials are valud such as email, usernames, passwords.
         if email:
             if validate_email(email):
+                #Ensure email is not already in use
                 if email not in get_user_emails():
                     if validate_username(username):
                         if username not in get_usernames():
@@ -77,11 +79,13 @@ def sign_up():
                 )
 
 
-
+#If the user is correctly logged in
 if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
+    #Show everything as normal and do not show sign up page
     pages_logged_in()
     switch_page('home')
 else:
+    #Show sign up page
     pages_logged_off()
     sign_up()
 

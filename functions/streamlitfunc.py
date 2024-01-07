@@ -55,7 +55,7 @@ def pages_logged_off():
          Page("pages/Blog.py", "Blog Page", "📚"),])
 
 
-
+#Define often used css styles
 css_styles_center = """{   
                         border: 1px solid rgba(49, 51, 63, 0.2);
                         border-radius: 0.5rem;
@@ -70,8 +70,15 @@ css_styles_justify = """{
                         text-align: justify;
                         font-size: 20px;}"""
 
+css_styles_res_dets = """
+            {
+                border: 1px solid rgba(49, 51, 63, 0.2);
+                border-radius: 0.5rem;
+                padding: calc(1em - 1px)
+            }
+            """
 
-def show_schedule(restaurant):
+def show_schedule(restaurant:pd.DataFrame):
     """ Show the schedule of the restaurant.
     Parameters:
         - restaurant (pd.DataFrame): Restaurant information.

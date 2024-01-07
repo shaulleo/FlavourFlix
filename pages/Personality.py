@@ -93,24 +93,35 @@ def personality_inputs():
     Returns:
         - None
     """
+    #Initialize the session states
     for i in questions.keys():
         st.session_state[i] = None
     st.subheader('To discover your food personality, please answer the degree to which you agree with the following statements:')
     st.markdown('<br>', unsafe_allow_html=True)
 
+    #Show the questions
     for num, (question_identifier, question) in enumerate(questions.items()):
         question_presentation(question, question_identifier,  num)
         st.divider()
         
-def restaurant_card(restaurant, title, number=None):
+def restaurant_card(restaurant: pd.Series, title: str, number: int=None):
+    """ Displays a card with the information of a restaurant.
+    Parameters:
+        - restaurant (pd.Series): Series with the information of the restaurant.
+        - title (str): Title of the card.
+        - number (int): Number of the card.
+    """
+    #Create the card
     with stylable_container(
          key="container_with_border",
             css_styles=css_styles_justify):
         st.markdown(f"<h5 style='text-align: left; color: black;'>{title}</h5>", unsafe_allow_html=True)
         col1, col2 = st.columns([4, 5], gap='small')
         with col1:
+            #Show the restaurant image
             st.image(restaurant['photo'], width=200)
         with col2:
+            #Show the restaurant information
             st.markdown(f"**{restaurant['name'].strip()}**")
             st.caption(f"*{restaurant['address'].strip()}*")
             st.caption(f"**Rating**: {restaurant['ratingValue']}/10.0")
@@ -118,21 +129,21 @@ def restaurant_card(restaurant, title, number=None):
             st.session_state.selected_restaurant = restaurant['name']
             switch_page("restaurant")
                         
-def personality_presentation(observation = None):
+
+def personality_presentation(observation: pd.Series = None):
     """ Displays the personality of the user after filling in the questionnaire.
     Parameters:
-        - observation (pd.DataFrame): Row with the user's answers.
+        - observation (pd.Series): Row with the user's answers.
     Returns:
         - None.
     """
-
     #Initialize the personality
     if 'personality' in st.session_state and st.session_state['personality'] is not None:
         personality = st.session_state['personality']
     else:
         personality = observation['personality'].values[0]
 
-
+    #Aesthetic configurations to display the personality
     col1, col2, col3, col4 = st.columns([0.4, 0.1, 0.4, 0.1 ])
     with col1:
         image_path = food_personalities[personality]["image"]
@@ -148,11 +159,12 @@ def personality_presentation(observation = None):
                     css_styles=css_styles_justify,
         ):
             st.markdown( f'You are a **{personality}**! {food_personalities[personality]["description"]}')
+    #Display the back to search button
     back_to_search = st.button("Back to Search")
     if back_to_search:
         switch_page('search')
 
-        
+    #Display the restaurants recommended for the user        
     st.subheader('Based on your personality, we recommend the following restaurants:')
     st.write('')
     restaurants = personality_based_recommendation(personality=personality)
@@ -180,8 +192,11 @@ def generate_personality():
     Returns:
         - None
         """
+    #Get the answers from the user
     model_input = [question_to_num[st.session_state[question]] for question in questions]
+    #Predict the personality
     personality_type = model.predict([model_input])[0] 
+    #Save the personality in the session state
     st.session_state["personality"] = personality_type
     st.session_state['personality_generated'] = True
     save_results()
@@ -194,11 +209,13 @@ def save_results():
     Returns:
         - None
         """
+    #Store the answers
     answers = {}
     answers['username'] = st.session_state['username']
     for i in questions.keys():
         answers[i] = question_to_num[st.session_state[i]]
         answers['personality'] = st.session_state['personality']
+    #Save them in the database
     answers = pd.DataFrame(answers, index=[0])
     og_answers = pd.read_csv("data/training_answers/perturbed_total_answers.csv")
     og_answers = pd.concat([og_answers, answers], axis=0)
@@ -212,6 +229,7 @@ def check_submission():
         - None.
     Returns:
         - None."""
+    #Control session states for submission
     if 'submit' in st.session_state and st.session_state['submit'] == True:
         st.session_state['answered'] = True
         generate_personality()
@@ -225,6 +243,7 @@ def click_submit():
     Returns:
         - None
     """
+    #Check if all questions were answered and control session states for submission
     st.session_state['submit'] = True
     for i in questions.keys():
         if st.session_state[i] is None:
@@ -234,14 +253,17 @@ def click_submit():
     check_submission()
     
 
-
+#If the user is logged in correctly
 if ('authentication_status' in st.session_state) and (st.session_state['authentication_status'] == True) and ('username' in st.session_state) and ('email' in st.session_state):
+    #Show the pages normally
     pages_logged_in()
     data = pd.read_csv("data/training_answers/perturbed_total_answers.csv")
+    #If the user has already answered the questionnaire, show the personality
     if st.session_state['username'] in data['username'].values and st.session_state['personality'] is None:
         personality_presentation(data[data['username'] == st.session_state['username']])
     elif st.session_state['personality'] is not None and st.session_state['answered'] == True:
         personality_presentation()
+    #If the user has not answered the questionnaire, show the questions
     elif st.session_state['answered'] is None:
         personality_inputs()
         st.button("Submit", on_click=click_submit)
