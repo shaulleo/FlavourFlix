@@ -6,7 +6,7 @@
 </div>
 
 
-![Placeholder Image](link_to_image)
+![Placeholder Image](ext_images/pexels-cátia-matos-984888.jpg)
 
 ## Description
 
