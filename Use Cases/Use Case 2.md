@@ -6,7 +6,7 @@
 </div>
 
 
-![Image](./ext_images/pexels-cátia-matos-984888.jpg)
+![Image](FlavourFlix/ext_images/pexels-cátia-matos-984888.jpg)
 
 ## Description
 
