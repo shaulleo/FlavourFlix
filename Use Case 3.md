@@ -16,8 +16,9 @@ This process is enabled by integrating a Machine Learning classifier within a LL
 ## Examples 
 
 <div align="center">
-  <img src="ext_images\personality fil 1.png" alt="Filomena finds your personality 1" style="width: 50%;">
-  <img src="ext_images\personality fil 2.png" alt="Filomena finds your personality 2" style="width: 50%;">
+  <img src="ext_images\personality fil 1.png" alt="Filomena finds your personality 1" style="width: 49%;">
+  <img src="ext_images\personality fil 2.png" alt="Filomena finds your personality 2" style="width: 
+  49%;">
 
 </div>
 
