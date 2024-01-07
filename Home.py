@@ -9,15 +9,23 @@ import folium
 from streamlit_folium import st_folium
 from functions.location import *
 
+#Import data
 data = pd.read_csv('data/preprocessed_restaurant_data.csv')
 filtered_df = data.copy()
 
+#General configurations
 st.set_page_config(page_title="FlavourFlix", page_icon="ext_images/page_icon.png",  layout='wide', initial_sidebar_state = 'collapsed')
-
 display_header() 
 
 
 def show_kpis():
+    """Shows the KPIs of the platform.
+    Parameters:
+        - None
+    Returns:
+        - None
+    """
+    #Distinct Restaurants
     cola, colb = st.columns(2)
     with cola:
         with stylable_container(
@@ -25,27 +33,34 @@ def show_kpis():
                 css_styles=css_styles_justify,
             ):
                     st.metric(label = 'Distinct Restaurants', value = f'🍽️ {len(data.index)}')
-    
+        #Active Users
         with stylable_container(
                 key="container_with_border",
                 css_styles=css_styles_justify,
             ):
                     st.metric(label = 'Active Users', value = f'👥 1500+')
     with colb:
+        #Satisfaction Rate
         with stylable_container(
                 key="container_with_border",
                 css_styles=css_styles_justify,
             ):
                     st.metric(label = 'Satisfaction Rate', value = f'⭐ 9.7/10')
-    
+        #Cuisine Types
         with stylable_container(
                 key="container_with_border",
                 css_styles=css_styles_justify,
             ):
                     st.metric(label = 'Cuisine Types', value = f'🍲 {len(data["cuisine"].unique())}')
 
-def show_analytics(data):
+def show_analytics(data: pd.DataFrame):
+    """Shows the analytics of the platform.
+    Parameters:
+        - data (pd.DataFrame): Dataframe with the restaurant data.
+    Returns:
+        - None"""
     c1, c2, c3 = st.columns([0.25, 0.25, 0.5])
+    #Show currently open restaurants
     with c1:
         data['currently_open'] = data['schedule'].apply(lambda x: check_if_open(x))
         open_restaurants = len(data[data['currently_open'] == 'Open'])
@@ -54,6 +69,7 @@ def show_analytics(data):
             css_styles=css_styles_justify
         ):
             st.metric(label='Currently Open', value=f'🍽️ {open_restaurants}')
+    #Show the average price
     with c2:
         avg_price = data['averagePrice'].mean()
         with stylable_container(
@@ -62,6 +78,7 @@ def show_analytics(data):
         ):
             st.metric(label='Average Price', value=f'💶 {avg_price:.0f}€')
     with c3:
+        #Show the most common cuisine
         common_cuisines = data['cuisine'].value_counts().head(1).index[0]
         with stylable_container(
                 key="container_with_border",
@@ -70,7 +87,14 @@ def show_analytics(data):
             st.metric(label='Most Common Cuisine', value=f'🍲 {common_cuisines}')
            
 
-def restaurant_card(restaurant, title, ratingcol='ratingValue'):
+def restaurant_card(restaurant: pd.Series, title: str, ratingcol:str='ratingValue'):
+    """ Shows a card with the information of a restaurant.
+    Parameters:
+        - restaurant (pd.Series): Series with the information of the restaurant.
+        - title (str): Title of the card.
+        - ratingcol (str): Column to use for the rating.
+    Returns:
+        - None"""
     with stylable_container(
          key="container_with_border",
             css_styles=css_styles_justify):
@@ -79,28 +103,36 @@ def restaurant_card(restaurant, title, ratingcol='ratingValue'):
         with col1:
             st.image(restaurant['photo'], width=200)
         with col2:
+            #Show information about the restaurant
             st.markdown(f"**{restaurant['name'].strip()}**")
             st.caption(f"*{restaurant['address'].strip()}*")
             st.caption(f"**Rating**: {restaurant[ratingcol]}/10.0")
+        #Show button to view details
         if st.button(f"View Details for {restaurant['name']}", key=f'highest_rated_{ratingcol}'):
             st.session_state.selected_restaurant = restaurant['name']
             switch_page("restaurant")
 
-def show_top_rated(data):
+def show_top_rated(data: pd.DataFrame):
+    """Shows the top rated restaurants.
+    Parameters:
+        - data (pd.DataFrame): Dataframe with the restaurant data.
+    Returns:
+        - None"""
+    #Select ratings
     highest_rating = data[data['ratingValue'] == data['ratingValue'].max()].iloc[0]
     highest_food = data[data['foodRatingSummary'] == data['foodRatingSummary'].max()].iloc[0]
     highest_service = data[data['serviceRatingSummary'] == data['serviceRatingSummary'].max()].iloc[0]
     highest_ambience = data[data['ambienceRatingSummary'] == data['ambienceRatingSummary'].max()].iloc[0]
     st.markdown(f"<h3 style='text-align: center; color: black;'>Top Rated Restaurants</h3>", unsafe_allow_html=True)
+    #Show the cards
     restaurant_card(highest_rating, 'Best Ratings', 'ratingValue')
     restaurant_card(highest_food, 'Highest Food Rating', 'foodRatingSummary')
     restaurant_card(highest_service, 'Best Service', 'serviceRatingSummary')
     restaurant_card(highest_ambience, 'Best Ambience', 'ambienceRatingSummary')
           
 
+#If the user is not logged in or the login did not occur successfully, show a spcific Home page that prompts the usr to login or sign up
 if 'authentication_status' not in st.session_state or st.session_state['authentication_status'] ==False:
-    #Se o estado de autenticação não existir ou for falso e não haver memória de userlogin,
-    # mostra a Home page com as opções de login e signup
     if 'username' not in st.session_state and 'email' not in st.session_state:
         pages_logged_off()
         st.markdown('<br>', unsafe_allow_html=True)
@@ -114,7 +146,6 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
             st.image(header_image)
         with col1:
             st.markdown(f"<h1 style='text-align: left; color: black;'>Welcome to FlavourFlix!</h1>", unsafe_allow_html=True)
-            # st.header("Welcome to FlavourFlix!")
             st.markdown('<br>', unsafe_allow_html=True)
             st.markdown("###### FlavourFlix is a platform that recommends restaurants based on your preferences.")
             st.markdown('<br>', unsafe_allow_html=True)
@@ -153,8 +184,7 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
             if st.button('Contact Us', key='contact_button'):
                 switch_page('contact us')
 
-    #Se o estado de autenticação não existir ou for falso mas há memória de user login, então
-    #indica que há algum tipo de erro e manda de volta para a página do login para o refazer.
+    #If the user is logged in but the authentication did not occur successfully, then display an error message and redirect to the login page
     else:
         st.error('Ups! Something went wrong. Please try login again.', icon='🚨')
         st.session_state['authentication_status'] = False
@@ -162,7 +192,7 @@ if 'authentication_status' not in st.session_state or st.session_state['authenti
             time.sleep(3)
         switch_page('log in')
 else:
-    #Se a autenticação for válida, mostra a Home page com as várias funcionalidades
+    #If the login was successful, then display the Home page with the options available to the user
     if 'username' in st.session_state and 'email' in st.session_state:
         pages_logged_in()
         cola, colb, colc, cold, cole, colf = st.columns(6, gap='small')
@@ -234,8 +264,7 @@ else:
                 st.caption("""Note that the pins presented on the map are not the exact location of the restaurants,
                            but rather an estimation.""", unsafe_allow_html=True)
                   
-                       
-    #Se tiver autenticado com true mas não há credenciais, então indica que há algum tipo de erro e manda de volta para o login          
+    #If the user is logged in but the authentication did not occur successfully, then display an error message and redirect to the login page         
     else:
         st.error('Ups! Something went wrong. Please try login again.', icon='🚨')
         st.session_state['authentication_status'] = False
