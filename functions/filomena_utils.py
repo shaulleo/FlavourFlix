@@ -100,7 +100,7 @@ def get_data_match(data, word, col_to_match, method='dot'):
     return data_match   
 
 
-def filter_schedule(restaurants, dinner_hour = None, lunch_hour = None):
+def filter_schedule(restaurants, time_slot=None):
     def contains_time_interval(schedule):
         if schedule in ['Closed', 'Not Available']:
             return False
@@ -116,28 +116,22 @@ def filter_schedule(restaurants, dinner_hour = None, lunch_hour = None):
             times = day_schedule.split(', ')
             for time in times:
                 start, end = map(pd.to_datetime, time.split(' - '))
-                if dinner_hour and lunch_hour:
-                    if (start <= dinner_start <= end) or (start <= dinner_end <= end) or (start <= lunch_start <= end) or (start <= lunch_end <= end):
-                        return True
-                elif dinner_hour:
-                    if (start <= dinner_start <= end) or (start <= dinner_end <= end):
-                        return True
-                elif lunch_hour:
-                    if (start <= lunch_start <= end) or (start <= lunch_end <= end):
-                        return True
+                if (start <= time_start <= end) or (start <= time_end <= end):
+                    return True
                 else:
                     return False
         return False
 
-    dinner_start, dinner_end = map(pd.to_datetime, dinner_hour.split(' - '))
-    lunch_start, lunch_end = map(pd.to_datetime, lunch_hour.split(' - '))
+    time_start, time_end = map(pd.to_datetime, time_slot.split(' - '))
 
     filtered_restaurants = []
+
     for index, row in restaurants.iterrows():
         if contains_time_interval(row['schedule']):
-            filtered_restaurants.append(row['name'])
+            filtered_restaurants.append(row.to_dict())
 
-    return filtered_restaurants
+    return pd.DataFrame(filtered_restaurants)
+
 
 def get_personality(username):
     personality_questionnaire = pd.read_csv('data/training_answers/perturbed_total_answers.csv')

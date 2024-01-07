@@ -81,6 +81,21 @@ def display_assistant_msg(message: str, animated=True):
         with st.chat_message("assistant",  avatar=filomena_pic):
             st.markdown(message)
 
+def show_prompt_templates(show:str, prompt:str = None, num=1):
+    if prompt is None:
+        prompt = show
+        
+    with st.sidebar:
+        button =  st.button(show, key=f"button_{num}")
+            
+    if button and prompt:
+        display_chat(prompt=prompt)
+
+
+def display_chat(prompt):
+    display_user_msg(message=prompt)
+    assistant_response = st.session_state.chatbot.generate_response(query=prompt)
+    display_assistant_msg(message=assistant_response)
 
 
 if __name__ == "__main__":
@@ -94,17 +109,23 @@ if __name__ == "__main__":
         with colb:
             st.title("Talk with Filomena 🍲")
             st.write("Ask me anything about FlavourFlix, food personalities, or even restaurant recommendations and I'll do my best to answer you! 🇵🇹")
-            st.caption("Note that the answers are not always 100% accurate, but I'm learning! Use the promp templates in the sidebar to maximize my potential." )
+            st.caption("Note that the answers are not always 100% accurate, but I'm learning! Use the prompt templates in the sidebar to maximize my potential." )
 
         st.write('')
 
+
         initialize()
         display_history_messages()
+        
+        st.sidebar.title("Prompt Templates")
+        st.sidebar.write("Click on a prompt to send it to Filomena.")
 
+        show_prompt_templates(show="👩‍🍳 What is FlavourFlix?", prompt="What is FlavourFlix?", num=1)
+        show_prompt_templates(show="🍽️ Recommend me a Restaurant", prompt="Please recommend me a restaurant.", num=2)
+        show_prompt_templates(show="🥮 What is a Pastel de Nata?", prompt="What is a Pastel de Nata?", num=3)
+ 
         if prompt := st.chat_input("Talk with Filomena..."):
-            display_user_msg(message=prompt)
-            assistant_response = st.session_state.chatbot.generate_response(query=prompt)
-            display_assistant_msg(message=assistant_response)
+            display_chat(prompt=prompt)
 
 
     else:

@@ -212,27 +212,24 @@ _Description:_ this .csv file contains detailed information about various restau
 
 ## Text Data
 
-### Text File 1: Blog Posts
 
-- PDF file with the Blog Posts present in FlavourFlix used within the vector database of the ChatBot for document retrieval. Highlights blog content, author names and roles, blog post date and title. Generated using ChatGPT and was prior corrected by the group.
-
-### Text File 2: Company
+### Text File 1: Company
 
 - PDF file explaining the FlavourFlix company, project, background, mission, values and so on. Was used within the vector database of the ChatBot for document retrieval. Generated using ChatGPT and was prior corrected by the group.
 
-### Text File 3: FlavourFlix FAQ
+### Text File 2: FlavourFlix FAQ
 
 - PDF file with Frequently Asked Questions (FAQ's) and respective answers. Used within the vector database of the ChatBot for document retrieval. Generated using ChatGPT and was prior corrected by the group.
 
-### Text File 4: Problem Identification and Resolution Protocol within the FlavourFlix website
+### Text File 3: Problem Identification and Resolution Protocol within the FlavourFlix website
 
 - PDF file explaining possible problems a user may face when experimenting with FlavourFlix' products and ways of resolution. Used within the vector database of the ChatBot for document retrieval. Generated using ChatGPT and was prior corrected by the group.
 
-### Text File 5: Product
+### Text File 4: Product
 
 - PDF file explaining the products FlavourFlix offers, such as the Analytics Dashboard, the virtual assistant Filomena and so on. Was used within the vector database of the ChatBot for document retrieval. Generated using ChatGPT and was prior corrected by the group.
 
-### Text File 6: Traditional Portuguese Dishes
+### Text File 5: Traditional Portuguese Dishes
 
 - PDF file describing the portuguese gastronomic culture, such as recipes, traditions and ingredients. Obtained by compiling and clening the information retrieved from documents on the internet about this matter. Was used within the vector database of the ChatBot for document retrieval.
 
