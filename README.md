@@ -29,7 +29,7 @@ This repository contains the complete project designed for the curricular unit "
 #### Description and Motivation
 
 FlavourFlix represents the result of the Capstone Project undertaken as part of the bachelor’s degree in data science. 
-In this project, it is intendedto incorporate a diversified set of data science tools and techniques. The procedures applied relate to web scraping, data retrieval and generation, machine learning, text mining, natural language processing, API integration, and large language models.
+In this project, it is intended to incorporate a diversified set of data science tools and techniques. The procedures applied relate to web scraping, data retrieval and generation, machine learning, text mining, natural language processing, API integration, and large language models.
 
 The idea behind FlavourFlix was to integrate the social network elements present in food and restauration-related platforms such as TheFork and Zomato combined with the recommendation capabilities that distinguish Netflix and YouTube, for example, by ultimately enabling an end-user to obtain customized restaurant recommendations.
 
