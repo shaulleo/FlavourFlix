@@ -36,7 +36,7 @@ def log_in():
     #Define the credentials for the authenticator and the login form
     for index in range(len(emails)):
         credentials['usernames'][usernames[index]] = {'name': emails[index], 'password': passwords[index]}
-    Authenticator = stauth.Authenticate(credentials, cookie_name='flavourflix_auth', key='abcdef', cookie_expiry_days=2)
+    Authenticator = stauth.Authenticate(credentials, cookie_name='flavourflix_auth', key='abcdef', cookie_expiry_days=0)
     email, authentication_status, username = Authenticator.login(':black[Login]', 'main')
     st.session_state['username'] = username
     st.session_state['email'] = email
