@@ -118,7 +118,7 @@ def personality_based_recommendation(personality: str, location:str=None):
 
     #Return the top 5 restaurants
     rec_restaurants = rec_restaurants.head(5)
-    return rec_restaurants[['name', 'location', 'cuisine']]
+    return rec_restaurants[['name', 'location', 'cuisine', 'address', 'photo', 'ratingValue', 'averagePrice']]
 
 def user_preferences_recommendation(location: str=None, nationality: str= None, cuisine_type: str=None,
                                      restaurant_style: str = None, price_range: str=None, time_slot: str=None, 
@@ -209,7 +209,7 @@ def user_preferences_recommendation(location: str=None, nationality: str= None, 
 
     #Return the top 5 restaurants
     rec_restaurants = rec_restaurants.head(5)
-    return rec_restaurants[['name', 'location', 'cuisine']]
+    return rec_restaurants[['name', 'location', 'cuisine', 'address', 'photo', 'ratingValue', 'averagePrice']]
         
 #Tool for an agent
 @tool
